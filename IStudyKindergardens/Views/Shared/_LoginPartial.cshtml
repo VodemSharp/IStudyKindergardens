@@ -1,0 +1,21 @@
+﻿@using Microsoft.AspNet.Identity
+@if (Request.IsAuthenticated)
+{
+
+    //<li>
+    //    @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
+    //</li>
+<li>
+    <a href="/Account/Logout"><span class="glyphicon glyphicon-log-out"></span> Вихід</a>
+</li>
+
+}
+else
+{
+    <li>
+        <a href="/Account/Login"><span class="glyphicon glyphicon-log-in"></span> Вхід</a>
+    </li>
+    <li>
+        <a href="/Account/Register"><span class="glyphicon glyphicon-pencil"></span> Реєстрація</a>
+    </li>
+}

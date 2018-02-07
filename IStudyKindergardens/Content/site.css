@@ -1,0 +1,136 @@
+﻿.navbar-brand-custom {
+    text-decoration: none;
+}
+
+    .navbar-brand-custom h1 {
+        color: #fff;
+        margin-top: 2px;
+        margin-bottom: 0px;
+        display: inline-block;
+        font-size: 26px;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    }
+
+    .navbar-brand-custom h4 {
+        display: none;
+        color: #fff;
+        margin-top: 0px;
+        font-size: 13px;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    }
+
+.register-brand-custom {
+    text-decoration: none;
+}
+
+    .register-brand-custom h1 {
+        color: #444;
+        margin: 0px;
+        font-size: 44px;
+        font-family: /*Verdana*/ /*Nyala*/ 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    }
+
+.logo-text {
+    display: inline-block;
+}
+
+.custom-color-1 {
+    color: #b8c7ce;
+    padding: 0;
+    margin: 0;
+}
+
+.register-box {
+    margin: 3% auto;
+    width: 500px;
+}
+
+.register-logo {
+    width: 500px;
+}
+
+body {
+    min-width: 600px;
+}
+
+.login-box-msg {
+    font-size: 20px;
+    padding: 0px 20px 5px 20px;
+}
+
+.sidebar-toggle{
+    text-decoration: none;
+}
+
+.description-block-custom
+{
+    text-align: left;
+    margin: 5px 0px 5px 0px;
+    padding: 0px 10px 0px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    display: inline-block;
+    width: 100%;
+}
+
+.description-image-block-custom
+{
+    text-align: left;
+    margin: 5px 0px 5px 0px;
+    padding: 10px 10px 10px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    display: inline-block;
+    width: 100%;
+}
+
+.description-image-block-custom img
+{
+    margin: 0px 10px 0px 0px;
+    width: 115px;
+    float: left;
+}
+
+.description-image-block-custom h4
+{
+    margin: 0px 10px 10px 0px;
+        display: inline-block;
+}
+
+.description-image-block-custom h5
+{
+    margin: 0px 10px 0px 0px;
+    text-align: justify;
+}
+
+
+.description-image-custom
+{
+    margin: 0px 0px 5px 0px;
+        width: 100%;
+}
+
+.btn-group-vertical
+{
+    display: block;
+}
+
+.photo-album
+{
+    border: none;
+}
+
+.description-block-custom
+{
+        border: none;
+}
+
+.description-block-custom p
+{
+    text-align: justify;
+}
+
+.mini-photo
+{
+    width: 100%;
+}
