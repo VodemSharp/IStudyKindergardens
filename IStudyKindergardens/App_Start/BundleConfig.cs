@@ -34,6 +34,9 @@ namespace IStudyKindergardens
             bundles.Add(new ScriptBundle("~/js/jqueryval").Include(
                         "~/Scripts/jquery.validate*"));
 
+            bundles.Add(new ScriptBundle("~/js/ajax").Include(
+                        "~/Scripts/jquery.unobtrusive-ajax.js"));
+
             bundles.Add(new ScriptBundle("~/js/modernizr").Include(
                         "~/Scripts/modernizr-*"));
 

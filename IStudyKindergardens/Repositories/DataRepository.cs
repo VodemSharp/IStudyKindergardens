@@ -11,6 +11,8 @@ namespace IStudyKindergardens.Repositories
     public interface IDataRepository
     {
         void AddSiteUser(SiteUser siteUser, bool IsAdministration);
+        void AddTempPicture(string name);
+
         IEnumerable<SiteUser> GetSiteUsers();
     }
 
@@ -38,6 +40,12 @@ namespace IStudyKindergardens.Repositories
                 var userManager = new ApplicationUserManager(new UserStore<ApplicationUser>(db));
                 userManager.AddToRole(siteUser.Id, role);
             }
+            db.SaveChanges();
+        }
+
+        public void AddTempPicture(string name)
+        {
+            db.TempPictures.Add(new TempPicture { Name = name, Time = DateTime.Now });
             db.SaveChanges();
         }
 
