@@ -1,5 +1,8 @@
 ﻿using IStudyKindergardens.Models;
 using IStudyKindergardens.Repositories;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -14,11 +17,44 @@ namespace IStudyKindergardens.Controllers
 {
     public class AdminController : Controller
     {
+        private ApplicationSignInManager _signInManager;
+        private ApplicationUserManager _userManager;
+
         private IDataRepository dataRepository;
 
         public AdminController(IDataRepository dataRepository)
         {
             this.dataRepository = dataRepository;
+        }
+
+        public AdminController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
+        {
+            UserManager = userManager;
+            SignInManager = signInManager;
+        }
+
+        public ApplicationSignInManager SignInManager
+        {
+            get
+            {
+                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
+            }
+            private set
+            {
+                _signInManager = value;
+            }
+        }
+
+        public ApplicationUserManager UserManager
+        {
+            get
+            {
+                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                _userManager = value;
+            }
         }
 
         // GET: Admin
@@ -43,9 +79,28 @@ namespace IStudyKindergardens.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public ActionResult AddUser(RegisterViewModel model, bool isAdministration)
+        public ActionResult AddUser(AddUserViewModel model)
         {
-            return View();
+            if (ModelState.IsValid)
+            {
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, PhoneNumber = "+38 " + model.PhoneNumber };
+                var result = UserManager.Create(user, model.Password);
+                if (result.Succeeded)
+                {
+                    if (model.PictureName == null)
+                    {
+                        dataRepository.AddSiteUser(model, user.Id);
+                    }
+                    else
+                    {
+                        dataRepository.AddSiteUser(model, user.Id, Server);
+                    }
+                    return RedirectToAction("Users", "Admin");
+                }
+
+                AddErrors(result);
+            }
+            return View(model);
         }
 
         [HttpPost]
@@ -86,7 +141,6 @@ namespace IStudyKindergardens.Controllers
                             fs.Write(bytes, 0, bytes.Length);
                         }
                     }
-                    Session["picture"] = fileName;
                     return Json(fileName);
                 }
             }
@@ -94,22 +148,21 @@ namespace IStudyKindergardens.Controllers
         }
 
         [HttpPost]
-        public JsonResult DeletePicture()
+        public JsonResult DeletePicture(string id)
         {
             try
             {
-                System.IO.File.Delete(Server.MapPath("~/Images/Uploaded/Temp/") + Session["picture"].ToString());
-                Session["picture"] = null;
+                System.IO.File.Delete(Server.MapPath("~/Images/Uploaded/Temp/") + id);
                 return Json(true);
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return Json(false);
             }
         }
 
-            // GET: Admin/Kindergardens
-            public ActionResult Kindergardens()
+        // GET: Admin/Kindergardens
+        public ActionResult Kindergardens()
         {
             return View();
         }
@@ -119,5 +172,64 @@ namespace IStudyKindergardens.Controllers
         {
             return View();
         }
+
+        #region Helpers
+        // Used for XSRF protection when adding external logins
+        private const string XsrfKey = "XsrfId";
+
+        private IAuthenticationManager AuthenticationManager
+        {
+            get
+            {
+                return HttpContext.GetOwinContext().Authentication;
+            }
+        }
+
+        private void AddErrors(IdentityResult result)
+        {
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error);
+            }
+        }
+
+        private ActionResult RedirectToLocal(string returnUrl)
+        {
+            if (Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        internal class ChallengeResult : HttpUnauthorizedResult
+        {
+            public ChallengeResult(string provider, string redirectUri)
+                : this(provider, redirectUri, null)
+            {
+            }
+
+            public ChallengeResult(string provider, string redirectUri, string userId)
+            {
+                LoginProvider = provider;
+                RedirectUri = redirectUri;
+                UserId = userId;
+            }
+
+            public string LoginProvider { get; set; }
+            public string RedirectUri { get; set; }
+            public string UserId { get; set; }
+
+            public override void ExecuteResult(ControllerContext context)
+            {
+                var properties = new AuthenticationProperties { RedirectUri = RedirectUri };
+                if (UserId != null)
+                {
+                    properties.Dictionary[XsrfKey] = UserId;
+                }
+                context.HttpContext.GetOwinContext().Authentication.Challenge(properties, LoginProvider);
+            }
+        }
+        #endregion
     }
 }

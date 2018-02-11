@@ -214,6 +214,26 @@
     <Compile Include="Migrations\201802082126505_TimeReform.Designer.cs">
       <DependentUpon>201802082126505_TimeReform.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201802102330343_AddSiteUserClaim.cs" />
+    <Compile Include="Migrations\201802102330343_AddSiteUserClaim.Designer.cs">
+      <DependentUpon>201802102330343_AddSiteUserClaim.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201802111358309_LittleChange.cs" />
+    <Compile Include="Migrations\201802111358309_LittleChange.Designer.cs">
+      <DependentUpon>201802111358309_LittleChange.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201802111431029_LittleChange2.cs" />
+    <Compile Include="Migrations\201802111431029_LittleChange2.Designer.cs">
+      <DependentUpon>201802111431029_LittleChange2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201802111436159_LittleChange3.cs" />
+    <Compile Include="Migrations\201802111436159_LittleChange3.Designer.cs">
+      <DependentUpon>201802111436159_LittleChange3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201802111438447_LittleChange4.cs" />
+    <Compile Include="Migrations\201802111438447_LittleChange4.Designer.cs">
+      <DependentUpon>201802111438447_LittleChange4.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AddUserViewModel.cs" />
@@ -813,6 +833,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Images\Uploaded\Source\" />
     <Folder Include="Images\Uploaded\Temp\" />
   </ItemGroup>
   <ItemGroup>
@@ -834,6 +855,21 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201802082126505_TimeReform.resx">
       <DependentUpon>201802082126505_TimeReform.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802102330343_AddSiteUserClaim.resx">
+      <DependentUpon>201802102330343_AddSiteUserClaim.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802111358309_LittleChange.resx">
+      <DependentUpon>201802111358309_LittleChange.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802111431029_LittleChange2.resx">
+      <DependentUpon>201802111431029_LittleChange2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802111436159_LittleChange3.resx">
+      <DependentUpon>201802111436159_LittleChange3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802111438447_LittleChange4.resx">
+      <DependentUpon>201802111438447_LittleChange4.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

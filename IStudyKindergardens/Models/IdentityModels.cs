@@ -43,15 +43,48 @@ namespace IStudyKindergardens.Models
         public string FathersName { get; set; }
         public string DateOfBirth { get; set; }
 
+        public ICollection<SiteUserClaim> SiteUserClaims { get; set; }
         public ICollection<Rating> Ratings { get; set; }
         public ICollection<Comment> Comments { get; set; }
         public ICollection<Post> Posts { get; set; }
 
         public SiteUser()
         {
+            SiteUserClaims = new List<SiteUserClaim>();
             Ratings = new List<Rating>();
             Comments = new List<Comment>();
             Posts = new List<Post>();
+        }
+    }
+
+    public class SiteUserClaim
+    {
+        [Key]
+        public int Id { get; set; }
+    
+        [ForeignKey("SiteUser")]
+        public string SiteUserId { get; set; }
+        public SiteUser SiteUser { get; set; }
+        
+        [ForeignKey("ClaimType")]
+        public int ClaimTypeId { get; set; }
+        public ClaimType ClaimType { get; set; }
+
+        public string ValueClaim { get; set; }
+    }
+
+    public class ClaimType
+    {
+        [Key]
+        public int Id { get; set; }
+
+        public string Type { get; set; }
+
+        public ICollection<SiteUserClaim> SiteUserClaims { get; set; }
+
+        public ClaimType()
+        {
+            SiteUserClaims = new List<SiteUserClaim>();
         }
     }
 
@@ -155,6 +188,8 @@ namespace IStudyKindergardens.Models
         public DbSet<Post> Posts { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<TempPicture> TempPictures { get; set; }
+        public DbSet<SiteUserClaim> SiteUserClaims { get; set; }
+        public DbSet<ClaimType> ClaimTypes { get; set; }
 
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)

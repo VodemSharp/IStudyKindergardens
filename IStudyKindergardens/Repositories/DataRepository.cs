@@ -10,8 +10,10 @@ namespace IStudyKindergardens.Repositories
 {
     public interface IDataRepository
     {
-        void AddSiteUser(SiteUser siteUser, bool IsAdministration);
         void AddTempPicture(string name);
+
+        void RegisterSiteUser(SiteUser siteUser);
+        void AddSiteUser(AddUserViewModel model, string userId, HttpServerUtilityBase Server = null);
 
         IEnumerable<SiteUser> GetSiteUsers();
     }
@@ -20,25 +22,30 @@ namespace IStudyKindergardens.Repositories
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        private void CreateRole(string name)
-        {
-            var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(db));
-            if (roleManager.FindByNameAsync(name) != null)
-            {
-                var role = new IdentityRole { Name = name };
-                roleManager.Create(role);
-            }
-        }
-
-        public void AddSiteUser(SiteUser siteUser, bool IsAdministration)
+        public void RegisterSiteUser(SiteUser siteUser)
         {
             db.SiteUsers.Add(siteUser);
-            if (IsAdministration)
+            db.SaveChanges();
+        }
+
+        public void AddSiteUser(AddUserViewModel model, string userId, HttpServerUtilityBase Server = null)
+        {
+            SiteUser siteUser = new SiteUser { Name = model.Name, Surname = model.Surname, FathersName = model.FathersName, DateOfBirth = model.DateOfBirth, Id = userId };
+            db.SiteUsers.Add(siteUser);
+            if (model.PictureName != null)
             {
-                string role = "Administration";
-                CreateRole(role);
-                var userManager = new ApplicationUserManager(new UserStore<ApplicationUser>(db));
-                userManager.AddToRole(siteUser.Id, role);
+                ClaimType claimType;
+                try
+                {
+                    claimType = db.ClaimTypes.Where(c => c.Type == "Picture").First();
+                }
+                catch (Exception)
+                {
+                    claimType = db.ClaimTypes.Add(new ClaimType { Type = "Picture" });
+                }
+                db.SiteUserClaims.Add(new SiteUserClaim { ClaimTypeId = claimType.Id, SiteUserId = siteUser.Id, ValueClaim = model.PictureName });
+                System.IO.File.Copy(Server.MapPath("~/Images/Uploaded/Temp/" + model.PictureName), Server.MapPath("~/Images/Uploaded/Source/" + model.PictureName));
+                System.IO.File.Delete(Server.MapPath("~/Images/Uploaded/Temp/" + model.PictureName));
             }
             db.SaveChanges();
         }

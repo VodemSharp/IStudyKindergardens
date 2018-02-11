@@ -29,22 +29,36 @@ namespace IStudyKindergardens.Controllers
         [AllowAnonymous]
         public JsonResult CheckDateOfBirth(string DateOfBirth)
         {
-            if (DateOfBirth[0] == 'd' || DateOfBirth[1] == 'd' || DateOfBirth[3] == 'm' || DateOfBirth[4] == 'm' || DateOfBirth[6] == 'y' || DateOfBirth[7] == 'y' || DateOfBirth[8] == 'y' || DateOfBirth[9] == 'y')
+            try
+            {
+                if (DateOfBirth[0] == 'd' || DateOfBirth[1] == 'd' || DateOfBirth[3] == 'm' || DateOfBirth[4] == 'm' || DateOfBirth[6] == 'y' || DateOfBirth[7] == 'y' || DateOfBirth[8] == 'y' || DateOfBirth[9] == 'y')
+                {
+                    return Json(false, JsonRequestBehavior.AllowGet);
+                }
+                return Json(true, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception)
             {
                 return Json(false, JsonRequestBehavior.AllowGet);
             }
-            return Json(true, JsonRequestBehavior.AllowGet);
         }
 
         [AllowAnonymous]
         public JsonResult CheckPhoneNumber(string PhoneNumber)
         {
             //(777) 777-7777
-            if (PhoneNumber[1] == '_' || PhoneNumber[2] == '_' || PhoneNumber[3] == '_' || PhoneNumber[6] == '_' || PhoneNumber[7] == '_' || PhoneNumber[8] == '_' || PhoneNumber[10] == '_' || PhoneNumber[11] == '_' || PhoneNumber[12] == '_' || PhoneNumber[13] == '_')
+            try
+            {
+                if (PhoneNumber[1] == '_' || PhoneNumber[2] == '_' || PhoneNumber[3] == '_' || PhoneNumber[6] == '_' || PhoneNumber[7] == '_' || PhoneNumber[8] == '_' || PhoneNumber[10] == '_' || PhoneNumber[11] == '_' || PhoneNumber[12] == '_' || PhoneNumber[13] == '_')
+                {
+                    return Json(false, JsonRequestBehavior.AllowGet);
+                }
+                return Json(true, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception)
             {
                 return Json(false, JsonRequestBehavior.AllowGet);
             }
-            return Json(true, JsonRequestBehavior.AllowGet);
         }
 
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
@@ -90,12 +104,12 @@ namespace IStudyKindergardens.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Register(RegisterViewModel model)
+        public ActionResult Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email, PhoneNumber = "+38 " + model.PhoneNumber };
-                var result = await UserManager.CreateAsync(user, model.Password);
+                var result = UserManager.Create(user, model.Password);
                 if (result.Succeeded)
                 {
 
@@ -107,9 +121,9 @@ namespace IStudyKindergardens.Controllers
                     // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
                     SiteUser siteUser = new SiteUser { Name = model.Name, Surname = model.Surname, FathersName = model.FathersName, DateOfBirth = model.DateOfBirth, Id = user.Id };
-                    dataRepository.AddSiteUser(siteUser, false);
+                    dataRepository.RegisterSiteUser(siteUser);
 
-                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                    SignInManager.SignIn(user, isPersistent: false, rememberBrowser: false);
                     return RedirectToAction("Index", "Home");
 
                 }

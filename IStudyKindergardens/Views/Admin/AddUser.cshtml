@@ -11,9 +11,16 @@
 					<div class="row">
 						<div class="form-group has-feedback col-md-3">
 							<div class="img-thumbnail" style="background-color: #3c8dbc; margin-bottom: 5px;">
-								<img id="userPicture" style="width: 100%;" src="~/Images/Default/anonym.png" />
+								@if (ViewBag.Picture != null)
+								{
+									<img id="userPicture" style="width: 100%;" src="~/Images/Default/@ViewBag.Picture" />
+								}
+								else
+								{
+									<img id="userPicture" style="width: 100%;" src="~/Images/Default/anonym.png" />
+								}
 							</div>
-							<div style="display: none;" id="loading"><p>Загрузка...</p></div>
+							<div style="display: none;" id="loading"><p>Завантаження...</p></div>
 							<div class="img-thumbnail" style="width: 100%; margin-bottom: 5px;">
 								<input type="file" name="uploadFile" id="uploadFile" />
 							</div>
@@ -25,7 +32,8 @@
 						<div class="form-group has-feedback col-md-9">
 							@using (Html.BeginForm("AddUser", "Admin", FormMethod.Post))
 							{
-								@Html.HiddenFor(m => m.PictureName)
+								@Html.AntiForgeryToken()
+								@Html.HiddenFor(m => m.PictureName, new { id = "modelPictureName" })
 								<div class="row">
 									<div class="form-group has-feedback col-md-6">
 										@Html.LabelFor(m => m.Surname, "Прізвище")
@@ -104,6 +112,20 @@
 </section>
 
 @Scripts.Render("~/js/ajax")
+@Scripts.Render("~/js/inputmask")
+
+<script>
+	$(function () {
+		$('input').iCheck({
+			checkboxClass: 'icheckbox_square-blue',
+			radioClass: 'iradio_square-blue',
+			increaseArea: '0%' // optional
+		});
+	});
+	$(function () {
+		$("[data-mask]").inputmask();
+	});
+</script>
 
 <script type="text/javascript">
 	$('#uploadFile').on('change', function (e) {
@@ -128,6 +150,7 @@
 						}
 						else {
 							$('#userPicture').attr('src', '/Images/Uploaded/Temp/' + result);
+							$('#modelPictureName').attr('value', result);
 						}
 						$("#loading").attr("style", "display: none;");
 					},
@@ -146,10 +169,12 @@
 	$('#deleteFile').on('click', function (e) {
 		$.ajax({
                     type: "POST",
-                    url: '@Url.Action("DeletePicture", "Admin")',
+					url: '@Url.Action("DeletePicture", "Admin")',
+					data: { id: $('#modelPictureName').attr('value') },
 					success: function (result) {
 						if (result) {
 							$('#userPicture').attr('src', '/Images/Default/anonym.png');
+							$('#modelPictureName').attr('value', '');
 						}
 						else {
 							alert('Файл не вдалось видалити!');
