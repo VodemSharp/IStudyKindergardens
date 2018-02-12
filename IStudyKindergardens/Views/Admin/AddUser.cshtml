@@ -11,14 +11,7 @@
 					<div class="row">
 						<div class="form-group has-feedback col-md-3">
 							<div class="img-thumbnail" style="background-color: #3c8dbc; margin-bottom: 5px;">
-								@if (ViewBag.Picture != null)
-								{
-									<img id="userPicture" style="width: 100%;" src="~/Images/Default/@ViewBag.Picture" />
-								}
-								else
-								{
-									<img id="userPicture" style="width: 100%;" src="~/Images/Default/anonym.png" />
-								}
+								<img id="userPicture" style="width: 100%;" src="~/Images/Default/anonym.png" />
 							</div>
 							<div style="display: none;" id="loading"><p>Завантаження...</p></div>
 							<div class="img-thumbnail" style="width: 100%; margin-bottom: 5px;">
@@ -35,49 +28,51 @@
 								@Html.AntiForgeryToken()
 								@Html.HiddenFor(m => m.PictureName, new { id = "modelPictureName" })
 								<div class="row">
-									<div class="form-group has-feedback col-md-6">
+									<div class="form-group has-feedback col-md-4">
 										@Html.LabelFor(m => m.Surname, "Прізвище")
 										@Html.TextBoxFor(m => m.Surname, new { @class = "form-control", @placeholder = "Прізвище" })
 										@Html.ValidationMessageFor(m => m.Surname, "", new { @class = "text-danger" })
 									</div>
-									<div class="form-group has-feedback col-md-6">
+									<div class="form-group has-feedback col-md-4">
 										@Html.LabelFor(m => m.Name, "Ім'я")
 										@Html.TextBoxFor(m => m.Name, new { @class = "form-control", @placeholder = "Ім'я" })
 										@Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
 									</div>
-								</div>
-								<div class="row">
-									<div class="form-group has-feedback col-md-6">
+									<div class="form-group has-feedback col-md-4">
 										@Html.LabelFor(m => m.FathersName, "Ім'я по батькові")
 										@Html.TextBoxFor(m => m.FathersName, new { @class = "form-control", @placeholder = "Ім'я по батькові" })
 										@Html.ValidationMessageFor(m => m.FathersName, "", new { @class = "text-danger" })
 									</div>
-									<div class="form-group has-feedback col-md-6">
+								</div>
+								<div class="row">
+									<div class="form-group has-feedback col-md-4">
 										<div class="form-group">
 											@Html.LabelFor(m => m.DateOfBirth, "Дата народження")
 											<div class="input-group">
 												<div class="input-group-addon">
-													<i class="fa fa-calendar"></i>
+													<i class="glyphicon glyphicon-calendar"></i>
 												</div>
 												@Html.TextBoxFor(m => m.DateOfBirth, new { @placeholder = "Дата народження", @class = "form-control", @data_inputmask = "'alias': 'dd/mm/yyyy'", @data_mask = "" })
 											</div>
 											@Html.ValidationMessageFor(m => m.DateOfBirth, "", new { @class = "text-danger" })
 										</div>
 									</div>
-								</div>
-								<div class="row">
-									<div class="form-group has-feedback col-md-6">
+									<div class="form-group has-feedback col-md-4">
 										@Html.LabelFor(m => m.Email, "Емейл")
-										@Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = "Емейл" })
+										<div class="input-group">
+											<div class="input-group-addon">
+												<i class="glyphicon glyphicon-envelope"></i>
+											</div>
+											@Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = "Емейл" })
+										</div>
 										@Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
 									</div>
-									<div class="form-group has-feedback col-md-6">
+									<div class="form-group has-feedback col-md-4">
 										<div class="form-group">
 											@Html.LabelFor(m => m.PhoneNumber, "Номер телефону")
 											<div class="input-group">
 												<div class="input-group-addon">
 													+38
-													@*<i class="fa fa-phone"></i>*@
 												</div>
 												@Html.TextBoxFor(m => m.PhoneNumber, new { @placeholder = "Номер телефону", @class = "form-control", @data_inputmask = "'mask': '(999) 999-9999'", @data_mask = "" })
 											</div>

@@ -16,6 +16,8 @@ namespace IStudyKindergardens.Repositories
         void AddSiteUser(AddUserViewModel model, string userId, HttpServerUtilityBase Server = null);
 
         IEnumerable<SiteUser> GetSiteUsers();
+        SiteUser GetSiteUserById(string id);
+        string GetPictureUIDById(string id);
     }
 
     public class DataRepository : IDisposable, IDataRepository
@@ -43,7 +45,7 @@ namespace IStudyKindergardens.Repositories
                 {
                     claimType = db.ClaimTypes.Add(new ClaimType { Type = "Picture" });
                 }
-                db.SiteUserClaims.Add(new SiteUserClaim { ClaimTypeId = claimType.Id, SiteUserId = siteUser.Id, ValueClaim = model.PictureName });
+                db.SiteUserClaims.Add(new SiteUserClaim { ClaimTypeId = claimType.Id, SiteUserId = siteUser.Id, ClaimValue = model.PictureName });
                 System.IO.File.Copy(Server.MapPath("~/Images/Uploaded/Temp/" + model.PictureName), Server.MapPath("~/Images/Uploaded/Source/" + model.PictureName));
                 System.IO.File.Delete(Server.MapPath("~/Images/Uploaded/Temp/" + model.PictureName));
             }
@@ -59,6 +61,16 @@ namespace IStudyKindergardens.Repositories
         public IEnumerable<SiteUser> GetSiteUsers()
         {
             return db.SiteUsers.ToList<SiteUser>();
+        }
+
+        public SiteUser GetSiteUserById(string id)
+        {
+            return db.SiteUsers.Where(su => su.Id == id).First();
+        }
+
+        public string GetPictureUIDById(string id)
+        {
+            return db.SiteUserClaims.Where(suc => suc.SiteUserId == id).First().ClaimValue;
         }
 
         protected void Dispose(bool disposing)

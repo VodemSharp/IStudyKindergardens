@@ -70,7 +70,7 @@ namespace IStudyKindergardens.Models
         public int ClaimTypeId { get; set; }
         public ClaimType ClaimType { get; set; }
 
-        public string ValueClaim { get; set; }
+        public string ClaimValue { get; set; }
     }
 
     public class ClaimType

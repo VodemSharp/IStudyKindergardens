@@ -203,6 +203,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\KindergardenController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -233,6 +234,10 @@
     <Compile Include="Migrations\201802111438447_LittleChange4.cs" />
     <Compile Include="Migrations\201802111438447_LittleChange4.Designer.cs">
       <DependentUpon>201802111438447_LittleChange4.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201802121144277_LittleChange5.cs" />
+    <Compile Include="Migrations\201802121144277_LittleChange5.Designer.cs">
+      <DependentUpon>201802121144277_LittleChange5.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -830,6 +835,7 @@
     <Content Include="Views\Admin\Index.cshtml" />
     <Content Include="Views\Admin\AddUser.cshtml" />
     <Content Include="Views\Admin\_UploadPicturePartial.cshtml" />
+    <Content Include="Views\User\Number.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -870,6 +876,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201802111438447_LittleChange4.resx">
       <DependentUpon>201802111438447_LittleChange4.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802121144277_LittleChange5.resx">
+      <DependentUpon>201802121144277_LittleChange5.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

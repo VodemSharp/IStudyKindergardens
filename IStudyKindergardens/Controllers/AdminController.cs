@@ -116,31 +116,35 @@ namespace IStudyKindergardens.Controllers
                     dataRepository.AddTempPicture(fileName);
                     string path = Server.MapPath("~/Images/Uploaded/Temp/" + fileName);
                     upload.SaveAs(path);
-                    using (MemoryStream memory = new MemoryStream())
+                    try
                     {
-                        using (Image img = Image.FromFile(path))
+                        using (MemoryStream memory = new MemoryStream())
                         {
-                            PropertyItem item = img.GetPropertyItem(274);
-                            if (item.Value[0] == 3)
+                            using (Image img = Image.FromFile(path))
                             {
-                                img.RotateFlip(RotateFlipType.Rotate180FlipXY);
+                                PropertyItem item = img.GetPropertyItem(274);
+                                if (item.Value[0] == 3)
+                                {
+                                    img.RotateFlip(RotateFlipType.Rotate180FlipXY);
+                                }
+                                else if (item.Value[0] == 6)
+                                {
+                                    img.RotateFlip(RotateFlipType.Rotate270FlipXY);
+                                }
+                                else if (item.Value[0] == 8)
+                                {
+                                    img.RotateFlip(RotateFlipType.Rotate90FlipXY);
+                                }
+                                img.Save(memory, ImageFormat.Jpeg);
                             }
-                            else if (item.Value[0] == 6)
+                            using (FileStream fs = new FileStream(path, FileMode.Create, FileAccess.ReadWrite))
                             {
-                                img.RotateFlip(RotateFlipType.Rotate270FlipXY);
+                                byte[] bytes = memory.ToArray();
+                                fs.Write(bytes, 0, bytes.Length);
                             }
-                            else if (item.Value[0] == 8)
-                            {
-                                img.RotateFlip(RotateFlipType.Rotate90FlipXY);
-                            }
-                            img.Save(memory, ImageFormat.Jpeg);
-                        }
-                        using (FileStream fs = new FileStream(path, FileMode.Create, FileAccess.ReadWrite))
-                        {
-                            byte[] bytes = memory.ToArray();
-                            fs.Write(bytes, 0, bytes.Length);
                         }
                     }
+                    catch(Exception) { }
                     return Json(fileName);
                 }
             }
