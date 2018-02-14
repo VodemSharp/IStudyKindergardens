@@ -16,13 +16,16 @@ namespace IStudyKindergardens.Controllers
     [Authorize]
     public class AccountController : Controller
     {
-        private ApplicationSignInManager _signInManager;
-        private ApplicationUserManager _userManager;
+        private readonly ApplicationUserManager _userManager;
+        private readonly ApplicationSignInManager _signInManager;
+        private readonly IAuthenticationManager _authManager;
+        private readonly IDataRepository dataRepository;
 
-        private IDataRepository dataRepository;
-
-        public AccountController(IDataRepository dataRepository)
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IAuthenticationManager authManager, IDataRepository dataRepository)
         {
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _authManager = authManager;
             this.dataRepository = dataRepository;
         }
 
@@ -61,21 +64,11 @@ namespace IStudyKindergardens.Controllers
             }
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
-        {
-            UserManager = userManager;
-            SignInManager = signInManager;
-        }
-
         public ApplicationSignInManager SignInManager
         {
             get
             {
-                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
-            }
-            private set
-            {
-                _signInManager = value;
+                return _signInManager;
             }
         }
 
@@ -83,11 +76,7 @@ namespace IStudyKindergardens.Controllers
         {
             get
             {
-                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-            private set
-            {
-                _userManager = value;
+                return _userManager;
             }
         }
 
@@ -448,25 +437,25 @@ namespace IStudyKindergardens.Controllers
         //    return View();
         //}
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (_userManager != null)
-                {
-                    _userManager.Dispose();
-                    _userManager = null;
-                }
-
-                if (_signInManager != null)
-                {
-                    _signInManager.Dispose();
-                    _signInManager = null;
-                }
-            }
-
-            base.Dispose(disposing);
-        }
+        //protected override void Dispose(bool disposing)
+        //{
+        //    if (disposing)
+        //    {
+        //        if (_userManager != null)
+        //        {
+        //            _userManager.Dispose();
+        //            _userManager = null;
+        //        }
+        //
+        //        if (_signInManager != null)
+        //        {
+        //            _signInManager.Dispose();
+        //            _signInManager = null;
+        //        }
+        //    }
+        //
+        //    base.Dispose(disposing);
+        //}
 
         #region Helpers
         // Used for XSRF protection when adding external logins
@@ -476,7 +465,7 @@ namespace IStudyKindergardens.Controllers
         {
             get
             {
-                return HttpContext.GetOwinContext().Authentication;
+                return _authManager;
             }
         }
 

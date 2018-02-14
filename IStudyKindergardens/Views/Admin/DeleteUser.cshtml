@@ -1,0 +1,24 @@
+﻿@model IStudyKindergardens.Models.DeleteUserViewModel
+
+<section class="content">
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="box box-info">
+				<div class="box-header">
+					<h3 class="box-title">Ви дійсно хочете видалити користувача @ViewBag.SNF</h3>
+				</div><!-- /.box-header -->
+				<div class="box-body">
+					<div class="row">
+						@using (Html.BeginForm("DeleteUser", "Admin", FormMethod.Post))
+						{
+							@Html.HiddenFor(m => m.Id)
+							<div class="form-group has-feedback col-md-12">
+								<input type="submit" class="btn btn-primary btn-block btn-flat" value="Видалити користувача">
+							</div>
+						}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>

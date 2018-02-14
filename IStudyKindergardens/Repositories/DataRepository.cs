@@ -17,6 +17,8 @@ namespace IStudyKindergardens.Repositories
 
         void EditSiteUser(EditUserViewModel model, string userId, HttpServerUtilityBase Server);
 
+        void DeleteSiteUser(string userId, HttpServerUtilityBase server);
+
         IEnumerable<SiteUser> GetSiteUsers();
         SiteUser GetSiteUserById(string id);
         string GetPictureUIDById(string id);
@@ -72,7 +74,13 @@ namespace IStudyKindergardens.Repositories
 
         public SiteUser GetSiteUserById(string id)
         {
-            return db.SiteUsers.Where(su => su.Id == id).First();
+            SiteUser siteUser = null;
+            try
+            {
+                siteUser = db.SiteUsers.Where(su => su.Id == id).First();
+            }
+            catch (Exception) { }
+            return siteUser;
         }
 
         public string GetPictureUIDById(string id)
@@ -111,6 +119,25 @@ namespace IStudyKindergardens.Repositories
             }
             siteUser.DateOfBirth = model.DateOfBirth;
             db.SaveChanges();
+        }
+
+        public void DeleteSiteUser(string userId, HttpServerUtilityBase server)
+        {
+            try
+            {
+                SiteUserClaim siteUserClaim = db.SiteUserClaims.Where(suc => suc.SiteUserId == userId && suc.ClaimType.Type == "Picture").First();
+                System.IO.File.Delete(server.MapPath("~/Images/Uploaded/Source/" + siteUserClaim.ClaimValue));
+                db.SiteUserClaims.Remove(siteUserClaim);
+                //
+                SiteUser siteUser = db.SiteUsers.Include("ApplicationUser").Where(su => su.Id == userId).First();
+                if (siteUser != null)
+                {
+                    db.Users.Remove(siteUser.ApplicationUser);
+                    db.SiteUsers.Remove(siteUser);
+                    db.SaveChanges();
+                }
+            }
+            catch (Exception) { }
         }
 
         protected void Dispose(bool disposing)

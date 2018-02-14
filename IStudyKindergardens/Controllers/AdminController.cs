@@ -17,31 +17,22 @@ namespace IStudyKindergardens.Controllers
 {
     public class AdminController : Controller
     {
-        private ApplicationSignInManager _signInManager;
-        private ApplicationUserManager _userManager;
-
+        private readonly ApplicationUserManager _userManager;
+        private readonly ApplicationSignInManager _signInManager;
         private IDataRepository dataRepository;
 
-        public AdminController(IDataRepository dataRepository)
+        public AdminController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IDataRepository dataRepository)
         {
+            _userManager = userManager;
+            _signInManager = signInManager;
             this.dataRepository = dataRepository;
-        }
-
-        public AdminController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
-        {
-            UserManager = userManager;
-            SignInManager = signInManager;
         }
 
         public ApplicationSignInManager SignInManager
         {
             get
             {
-                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
-            }
-            private set
-            {
-                _signInManager = value;
+                return _signInManager;
             }
         }
 
@@ -49,11 +40,7 @@ namespace IStudyKindergardens.Controllers
         {
             get
             {
-                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-            private set
-            {
-                _userManager = value;
+                return _userManager;
             }
         }
 
@@ -158,6 +145,25 @@ namespace IStudyKindergardens.Controllers
             }
         }
 
+        [HttpGet]
+        public ActionResult DeleteUser(string id)
+        {
+            SiteUser siteUser = dataRepository.GetSiteUserById(id);
+            if (siteUser == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            ViewBag.SNF = String.Format("{0} {1} {2}", siteUser.Surname, siteUser.Name, siteUser.FathersName);
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult DeleteUser(DeleteUserViewModel model)
+        {
+            dataRepository.DeleteSiteUser(model.Id, Server);
+            return RedirectToAction("Users", "Admin");
+        }
+
         // GET: Admin/Kindergardens
         public ActionResult Kindergardens()
         {
@@ -173,14 +179,6 @@ namespace IStudyKindergardens.Controllers
         #region Helpers
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";
-
-        private IAuthenticationManager AuthenticationManager
-        {
-            get
-            {
-                return HttpContext.GetOwinContext().Authentication;
-            }
-        }
 
         private void AddErrors(IdentityResult result)
         {
