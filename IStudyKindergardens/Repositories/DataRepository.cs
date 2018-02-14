@@ -13,7 +13,9 @@ namespace IStudyKindergardens.Repositories
         void AddTempPicture(string name);
 
         void RegisterSiteUser(SiteUser siteUser);
-        void AddSiteUser(AddUserViewModel model, string userId, HttpServerUtilityBase Server = null);
+        void AddSiteUser(AddUserViewModel model, string userId, HttpServerUtilityBase Server);
+
+        void EditSiteUser(EditUserViewModel model, string userId, HttpServerUtilityBase Server);
 
         IEnumerable<SiteUser> GetSiteUsers();
         SiteUser GetSiteUserById(string id);
@@ -30,24 +32,29 @@ namespace IStudyKindergardens.Repositories
             db.SaveChanges();
         }
 
-        public void AddSiteUser(AddUserViewModel model, string userId, HttpServerUtilityBase Server = null)
+        private void AddPictureClaim(string id, string pictureName, HttpServerUtilityBase server)
+        {
+            ClaimType claimType;
+            try
+            {
+                claimType = db.ClaimTypes.Where(c => c.Type == "Picture").First();
+            }
+            catch (Exception)
+            {
+                claimType = db.ClaimTypes.Add(new ClaimType { Type = "Picture" });
+            }
+            db.SiteUserClaims.Add(new SiteUserClaim { ClaimTypeId = claimType.Id, SiteUserId = id, ClaimValue = pictureName });
+            System.IO.File.Copy(server.MapPath("~/Images/Uploaded/Temp/" + pictureName), server.MapPath("~/Images/Uploaded/Source/" + pictureName));
+            System.IO.File.Delete(server.MapPath("~/Images/Uploaded/Temp/" + pictureName));
+        }
+
+        public void AddSiteUser(AddUserViewModel model, string userId, HttpServerUtilityBase server)
         {
             SiteUser siteUser = new SiteUser { Name = model.Name, Surname = model.Surname, FathersName = model.FathersName, DateOfBirth = model.DateOfBirth, Id = userId };
             db.SiteUsers.Add(siteUser);
             if (model.PictureName != null)
             {
-                ClaimType claimType;
-                try
-                {
-                    claimType = db.ClaimTypes.Where(c => c.Type == "Picture").First();
-                }
-                catch (Exception)
-                {
-                    claimType = db.ClaimTypes.Add(new ClaimType { Type = "Picture" });
-                }
-                db.SiteUserClaims.Add(new SiteUserClaim { ClaimTypeId = claimType.Id, SiteUserId = siteUser.Id, ClaimValue = model.PictureName });
-                System.IO.File.Copy(Server.MapPath("~/Images/Uploaded/Temp/" + model.PictureName), Server.MapPath("~/Images/Uploaded/Source/" + model.PictureName));
-                System.IO.File.Delete(Server.MapPath("~/Images/Uploaded/Temp/" + model.PictureName));
+                AddPictureClaim(siteUser.Id, model.PictureName, server);
             }
             db.SaveChanges();
         }
@@ -70,7 +77,40 @@ namespace IStudyKindergardens.Repositories
 
         public string GetPictureUIDById(string id)
         {
-            return db.SiteUserClaims.Where(suc => suc.SiteUserId == id).First().ClaimValue;
+            return db.SiteUserClaims.Where(suc => suc.SiteUserId == id && suc.ClaimType.Type == "Picture").First().ClaimValue;
+        }
+
+        public void EditSiteUser(EditUserViewModel model, string userId, HttpServerUtilityBase server)
+        {
+            SiteUser siteUser = db.SiteUsers.Where(su => su.Id == userId).First();
+            siteUser.Name = model.Name;
+            siteUser.Surname = model.Surname;
+            siteUser.FathersName = model.FathersName;
+            siteUser.ApplicationUser.Email = model.Email;
+            siteUser.ApplicationUser.PhoneNumber = "+38 " + model.PhoneNumber;
+            if (model.PictureName != null)
+            {
+                SiteUserClaim siteUserClaim;
+                try
+                {
+                    siteUserClaim = db.SiteUserClaims.Where(suc => suc.SiteUserId == userId && suc.ClaimType.Type == "Picture").First();
+                    siteUserClaim.ClaimValue = model.PictureName;
+                }
+                catch (Exception)
+                {
+                    AddPictureClaim(siteUser.Id, model.PictureName, server);
+                }
+            }
+            else
+            {
+                try
+                {
+                    db.SiteUserClaims.Remove(db.SiteUserClaims.Where(suc => suc.SiteUserId == userId && suc.ClaimType.Type == "Picture").First());
+                }
+                catch (Exception) { }
+            }
+            siteUser.DateOfBirth = model.DateOfBirth;
+            db.SaveChanges();
         }
 
         protected void Dispose(bool disposing)

@@ -1,5 +1,5 @@
 ﻿@model IStudyKindergardens.Models.SiteUser
-@{ 
+@{
 	string phoneNumber = ViewBag.PhoneNumber;
 }
 
@@ -26,7 +26,7 @@
 											<div class="input-group-addon">
 												<i class="glyphicon glyphicon-calendar"></i>
 											</div>
-											@Html.TextBoxFor(m => m.DateOfBirth, new { @placeholder = "Дата народження", @class = "form-control", @data_inputmask = "'alias': 'dd/mm/yyyy'", @data_mask = "" })
+											@Html.TextBoxFor(m => m.DateOfBirth, new { @placeholder = "Дата народження", @class = "form-control", @readonly = "" })
 										</div>
 									</div>
 								</div>
@@ -36,17 +36,17 @@
 										<div class="input-group-addon">
 											<i class="glyphicon glyphicon-envelope"></i>
 										</div>
-										@Html.TextBoxFor(m => m.ApplicationUser.Email, new { @class = "form-control", @placeholder = "Емейл" })
+										@Html.TextBoxFor(m => m.ApplicationUser.Email, new { @class = "form-control", @placeholder = "Емейл", @readonly = "" })
 									</div>
 								</div>
 								<div class="form-group has-feedback col-md-4">
 									<div class="form-group">
-										@Html.LabelFor(m => m.ApplicationUser.PhoneNumber, "Номер телефону")
+										@Html.LabelFor(m => m.ApplicationUser.PhoneNumber, "Номер телефону", new { @readonly = "" })
 										<div class="input-group">
 											<div class="input-group-addon">
 												+38
 											</div>
-											@Html.TextBox("PhoneNumber", phoneNumber, new { @placeholder = "Номер телефону", @class = "form-control", @data_inputmask = "'mask': '(999) 999-9999'", @data_mask = "" })
+											@Html.TextBox("PhoneNumber", phoneNumber, new { @placeholder = "Номер телефону", @class = "form-control", @readonly = "" })
 										</div>
 									</div>
 								</div>

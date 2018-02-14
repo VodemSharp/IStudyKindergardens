@@ -1,17 +1,28 @@
-﻿@model IStudyKindergardens.Models.AddUserViewModel
+﻿@model IStudyKindergardens.Models.EditUserViewModel
+@{
+	string picture;
+	if (Model.PictureName == null)
+	{
+		picture = "/Images/Default/anonym.png";
+	}
+	else
+	{
+		picture = Model.PictureName;
+	}
+}
 
 <section class="content">
 	<div class="row">
 		<div class="col-xs-12">
 			<div class="box box-info">
 				<div class="box-header">
-					<h3 class="box-title">Занесення користувача в базу даних</h3>
+					<h3 class="box-title">Редагування користувача</h3>
 				</div><!-- /.box-header -->
 				<div class="box-body">
 					<div class="row">
 						<div class="form-group has-feedback col-md-3">
 							<div class="img-thumbnail" style="background-color: #3c8dbc; margin-bottom: 5px;">
-								<img id="userPicture" style="width: 100%;" src="~/Images/Default/anonym.png" />
+								<img id="userPicture" style="width: 100%;" src="@picture" />
 							</div>
 							<div style="display: none;" id="loading"><p>Завантаження...</p></div>
 							<div id="uploadFileDiv" class="img-thumbnail" style="width: 100%; margin-bottom: 5px;">
@@ -27,7 +38,7 @@
 							</div>
 						</div>
 						<div class="form-group has-feedback col-md-9">
-							@using (Html.BeginForm("AddUser", "Admin", FormMethod.Post))
+							@using (Html.BeginForm("Edit", "User", FormMethod.Post))
 							{
 								@Html.AntiForgeryToken()
 								@Html.HiddenFor(m => m.PictureName, new { id = "modelPictureName" })
@@ -85,20 +96,8 @@
 									</div>
 								</div>
 								<div class="row">
-									<div class="form-group has-feedback col-md-6">
-										@Html.LabelFor(m => m.Password, "Пароль")
-										@Html.TextBoxFor(m => m.Password, new { @type = "password", @class = "form-control", @placeholder = "Пароль" })
-										@Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
-									</div>
-									<div class="form-group has-feedback col-md-6">
-										@Html.LabelFor(m => m.ConfirmPassword, "Підтвердіть пароль")
-										@Html.TextBoxFor(m => m.ConfirmPassword, new { @type = "password", @class = "form-control", @placeholder = "Підтвердіть пароль" })
-										@Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })
-									</div>
-								</div>
-								<div class="row">
 									<div class="col-md-12">
-										<input type="submit" class="btn btn-primary btn-block btn-flat" value="Добавити">
+										<input type="submit" class="btn btn-primary btn-block btn-flat" value="Зберегти">
 									</div>
 								</div>
 							}
@@ -178,25 +177,3 @@
 		deleteFiles();
 	});
 </script>
-
-@*
-	$('#deleteFile').on('click', function (e) {
-		$.ajax({
-                    type: "POST",
-					url: '@Url.Action("DeletePicture", "Admin")',
-					data: { id: $('#modelPictureName').attr('value') },
-					success: function (result) {
-						if (result) {
-							$('#userPicture').attr('src', '/Images/Default/anonym.png');
-							$('#modelPictureName').attr('value', '');
-						}
-						else {
-							alert('Файл не вдалось видалити!');
-						}
-					},
-                    error: function (xhr, status, p3) {
-                        alert(xhr.responseText);
-					}
-                });
-	});
-*@

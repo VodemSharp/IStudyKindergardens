@@ -87,14 +87,7 @@ namespace IStudyKindergardens.Controllers
                 var result = UserManager.Create(user, model.Password);
                 if (result.Succeeded)
                 {
-                    if (model.PictureName == null)
-                    {
-                        dataRepository.AddSiteUser(model, user.Id);
-                    }
-                    else
-                    {
-                        dataRepository.AddSiteUser(model, user.Id, Server);
-                    }
+                    dataRepository.AddSiteUser(model, user.Id, Server);
                     return RedirectToAction("Users", "Admin");
                 }
 
@@ -144,7 +137,7 @@ namespace IStudyKindergardens.Controllers
                             }
                         }
                     }
-                    catch(Exception) { }
+                    catch (Exception) { }
                     return Json(fileName);
                 }
             }

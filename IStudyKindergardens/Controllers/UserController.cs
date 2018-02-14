@@ -23,7 +23,8 @@ namespace IStudyKindergardens.Controllers
             return View();
         }
 
-        public ActionResult Number(string id)
+        [Route("User/{id}")]
+        public ActionResult UserProfile(string id)
         {
             try
             {
@@ -44,10 +45,50 @@ namespace IStudyKindergardens.Controllers
                 }
                 return View(siteUser);
             }
-            catch
+            catch (Exception)
             {
                 return RedirectToAction("Index", "Home");
             }
+        }
+
+        public ActionResult Edit(string id)
+        {
+            try
+            {
+                SiteUser siteUser = dataRepository.GetSiteUserById(id);
+                string picture;
+                string phoneNumber = siteUser.ApplicationUser.PhoneNumber.Substring(4);
+                try
+                {
+                    string PictureUID = dataRepository.GetPictureUIDById(id);
+                    if (PictureUID == null)
+                    {
+                        throw new Exception();
+                    }
+                    picture = "/Images/Uploaded/Source/" + PictureUID;
+                }
+                catch (Exception)
+                {
+                    picture = null;
+                }
+
+                return View(new EditUserViewModel { PictureName = picture, Surname = siteUser.Surname, Name = siteUser.Name, FathersName = siteUser.FathersName, Email = siteUser.ApplicationUser.Email, PhoneNumber = phoneNumber, DateOfBirth = siteUser.DateOfBirth });
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        [HttpPost]
+        public ActionResult Edit(EditUserViewModel model, string id)
+        {
+            try
+            {
+                dataRepository.EditSiteUser(model, id, Server);
+            }
+            catch (Exception) { }
+            return RedirectToAction("Index", "Home");
         }
     }
 }
