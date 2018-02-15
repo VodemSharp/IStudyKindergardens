@@ -1,0 +1,68 @@
+﻿@model IStudyKindergardens.Models.SendQueryViewModel
+@{
+	Layout = "~/Views/Shared/_AccountLayout.cshtml";
+	ViewBag.Title = "Вхід";
+}
+
+<!--Rendered body-->
+
+<p class="login-box-msg">Вхід</p>
+@using (Html.BeginForm("Login", "Account", FormMethod.Post))
+{
+	@Html.AntiForgeryToken()
+	@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+	<div class="row">
+		<div class="form-group has-feedback col-md-12">
+			@Html.LabelFor(m => m.Name, "Назва навчального закладу")
+			@Html.TextBoxFor(m => m.Name, new { @class = "form-control", @placeholder = "Назва навчального закладу" })
+			@Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="form-group has-feedback col-md-12">
+			@Html.LabelFor(m => m.Email, "Емейл")
+			@Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = "Емейл" })
+			@Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="form-group has-feedback col-md-12">
+			<div class="form-group">
+				@Html.LabelFor(m => m.PhoneNumber, "Номер телефону")
+				<div class="input-group">
+					<div class="input-group-addon">+38</div>
+					@Html.TextBoxFor(m => m.PhoneNumber, new { @placeholder = "Номер телефону", @class = "form-control", @data_inputmask = "'mask': '(999) 999-9999'", @data_mask = "" })
+				</div>
+				@Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "text-danger" })
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="form-group has-feedback col-md-12">
+			<div class="">
+				<input type="submit" class="btn btn-primary btn-block btn-flat" value="Надіслати запит">
+			</div>
+		</div>
+	</div>
+}
+@Html.ActionLink("Перейти на сторінку закладу", "Login", "Administration", null, new { @class = "text-center" })
+
+<!--/Rendered body-->
+
+@Scripts.Render("~/js/inputmask")
+
+<script>
+	$(function () {
+		$('input').iCheck({
+			checkboxClass: 'icheckbox_square-blue',
+			radioClass: 'iradio_square-blue',
+			increaseArea: '0%' // optional
+		});
+	});
+	$(function () {
+		$("[data-mask]").inputmask();
+	});
+</script>

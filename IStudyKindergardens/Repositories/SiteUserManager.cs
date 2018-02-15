@@ -8,10 +8,8 @@ using System.Web;
 
 namespace IStudyKindergardens.Repositories
 {
-    public interface IDataRepository
+    public interface ISiteUserManager
     {
-        void AddTempPicture(string name);
-
         void RegisterSiteUser(SiteUser siteUser);
         void AddSiteUser(AddUserViewModel model, string userId, HttpServerUtilityBase Server);
 
@@ -24,7 +22,7 @@ namespace IStudyKindergardens.Repositories
         string GetPictureUIDById(string id);
     }
 
-    public class DataRepository : IDisposable, IDataRepository
+    public class SiteUserManager : IDisposable, ISiteUserManager
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
@@ -58,12 +56,6 @@ namespace IStudyKindergardens.Repositories
             {
                 AddPictureClaim(siteUser.Id, model.PictureName, server);
             }
-            db.SaveChanges();
-        }
-
-        public void AddTempPicture(string name)
-        {
-            db.TempPictures.Add(new TempPicture { Name = name, Time = DateTime.Now });
             db.SaveChanges();
         }
 
@@ -102,7 +94,11 @@ namespace IStudyKindergardens.Repositories
                 try
                 {
                     siteUserClaim = db.SiteUserClaims.Where(suc => suc.SiteUserId == userId && suc.ClaimType.Type == "Picture").First();
+                    string previosClaimValue = siteUserClaim.ClaimValue;
                     siteUserClaim.ClaimValue = model.PictureName;
+                    System.IO.File.Copy(server.MapPath("~/Images/Uploaded/Temp/" + model.PictureName), server.MapPath("~/Images/Uploaded/Source/" + model.PictureName));
+                    System.IO.File.Delete(server.MapPath("~/Images/Uploaded/Temp/" + model.PictureName));
+                    System.IO.File.Delete(server.MapPath("~/Images/Uploaded/Source/" + previosClaimValue));
                 }
                 catch (Exception)
                 {
@@ -113,7 +109,9 @@ namespace IStudyKindergardens.Repositories
             {
                 try
                 {
-                    db.SiteUserClaims.Remove(db.SiteUserClaims.Where(suc => suc.SiteUserId == userId && suc.ClaimType.Type == "Picture").First());
+                    SiteUserClaim siteUserClaim = db.SiteUserClaims.Where(suc => suc.SiteUserId == userId && suc.ClaimType.Type == "Picture").First();
+                    System.IO.File.Delete(server.MapPath("~/Images/Uploaded/Source/" + siteUserClaim.ClaimValue));
+                    db.SiteUserClaims.Remove(siteUserClaim);
                 }
                 catch (Exception) { }
             }
@@ -128,7 +126,10 @@ namespace IStudyKindergardens.Repositories
                 SiteUserClaim siteUserClaim = db.SiteUserClaims.Where(suc => suc.SiteUserId == userId && suc.ClaimType.Type == "Picture").First();
                 System.IO.File.Delete(server.MapPath("~/Images/Uploaded/Source/" + siteUserClaim.ClaimValue));
                 db.SiteUserClaims.Remove(siteUserClaim);
-                //
+            }
+            catch (Exception) { }
+            try
+            {
                 SiteUser siteUser = db.SiteUsers.Include("ApplicationUser").Where(su => su.Id == userId).First();
                 if (siteUser != null)
                 {
@@ -151,6 +152,7 @@ namespace IStudyKindergardens.Repositories
                 }
             }
         }
+
         public void Dispose()
         {
             Dispose(true);

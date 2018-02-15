@@ -145,7 +145,7 @@
 
                 $.ajax({
                     type: "POST",
-                    url: '@Url.Action("UploadPicture", "Admin")',
+                    url: '@Url.Action("UploadPicture", "Home")',
                     contentType: false,
                     processData: false,
 					data: data,
@@ -173,24 +173,18 @@
 		deleteFiles();
 	});
 	$('#deleteFile').on('click', function (e) {
-		$('#userPicture').attr('src', '/Images/Default/anonym.png');
-		$('#modelPictureName').attr('value', null);
-		deleteFiles();
-	});
-</script>
-
-@*
-	$('#deleteFile').on('click', function (e) {
 		$.ajax({
                     type: "POST",
-					url: '@Url.Action("DeletePicture", "Admin")',
+					url: '@Url.Action("DeletePicture", "Home")',
 					data: { id: $('#modelPictureName').attr('value') },
 					success: function (result) {
 						if (result) {
 							$('#userPicture').attr('src', '/Images/Default/anonym.png');
-							$('#modelPictureName').attr('value', '');
+							$('#modelPictureName').attr('value', null);
+							deleteFiles();
 						}
 						else {
+							deleteFiles();
 							alert('Файл не вдалось видалити!');
 						}
 					},
@@ -199,4 +193,4 @@
 					}
                 });
 	});
-*@
+</script>

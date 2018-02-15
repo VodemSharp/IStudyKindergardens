@@ -19,14 +19,14 @@ namespace IStudyKindergardens.Controllers
         private readonly ApplicationUserManager _userManager;
         private readonly ApplicationSignInManager _signInManager;
         private readonly IAuthenticationManager _authManager;
-        private readonly IDataRepository dataRepository;
+        private readonly ISiteUserManager _siteUserManager;
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IAuthenticationManager authManager, IDataRepository dataRepository)
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IAuthenticationManager authManager, ISiteUserManager siteUserManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _authManager = authManager;
-            this.dataRepository = dataRepository;
+            _siteUserManager = siteUserManager;
         }
 
         [AllowAnonymous]
@@ -110,7 +110,7 @@ namespace IStudyKindergardens.Controllers
                     // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
                     SiteUser siteUser = new SiteUser { Name = model.Name, Surname = model.Surname, FathersName = model.FathersName, DateOfBirth = model.DateOfBirth, Id = user.Id };
-                    dataRepository.RegisterSiteUser(siteUser);
+                    _siteUserManager.RegisterSiteUser(siteUser);
 
                     SignInManager.SignIn(user, isPersistent: false, rememberBrowser: false);
                     return RedirectToAction("Index", "Home");

@@ -31,7 +31,8 @@ namespace IStudyKindergardens
             builder.RegisterControllers(typeof(MvcApplication).Assembly);
 
             // регистрируем споставление типов
-            builder.RegisterType<DataRepository>().As<IDataRepository>();
+            builder.RegisterType<SiteUserManager>().As<ISiteUserManager>();
+            builder.RegisterType<KindergardenManager>().As<IKindergardenManager>();
 
             // создаем новый контейнер с теми зависимостями, которые определены выше
             var container = builder.Build();

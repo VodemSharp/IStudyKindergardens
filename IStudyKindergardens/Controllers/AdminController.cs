@@ -19,13 +19,15 @@ namespace IStudyKindergardens.Controllers
     {
         private readonly ApplicationUserManager _userManager;
         private readonly ApplicationSignInManager _signInManager;
-        private IDataRepository dataRepository;
+        private readonly ISiteUserManager _siteUserManager;
+        private readonly IKindergardenManager _kindergardenManager;
 
-        public AdminController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IDataRepository dataRepository)
+        public AdminController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, ISiteUserManager siteUserManager, IKindergardenManager kindergardenManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            this.dataRepository = dataRepository;
+            _siteUserManager = siteUserManager;
+            _kindergardenManager = kindergardenManager;
         }
 
         public ApplicationSignInManager SignInManager
@@ -44,6 +46,22 @@ namespace IStudyKindergardens.Controllers
             }
         }
 
+        public ISiteUserManager SiteUserManager
+        {
+            get
+            {
+                return _siteUserManager;
+            }
+        }
+
+        public IKindergardenManager KindergardenManager
+        {
+            get
+            {
+                return _kindergardenManager;
+            }
+        }
+
         // GET: Admin
         public ActionResult Index()
         {
@@ -53,7 +71,7 @@ namespace IStudyKindergardens.Controllers
         // GET: Admin/Users
         public ActionResult Users()
         {
-            return View(dataRepository.GetSiteUsers());
+            return View(SiteUserManager.GetSiteUsers());
         }
 
         // GET: Admin/AddUser
@@ -64,7 +82,6 @@ namespace IStudyKindergardens.Controllers
 
         // POST: Admin/AddUser
         [HttpPost]
-        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public ActionResult AddUser(AddUserViewModel model)
         {
@@ -74,7 +91,7 @@ namespace IStudyKindergardens.Controllers
                 var result = UserManager.Create(user, model.Password);
                 if (result.Succeeded)
                 {
-                    dataRepository.AddSiteUser(model, user.Id, Server);
+                    SiteUserManager.AddSiteUser(model, user.Id, Server);
                     return RedirectToAction("Users", "Admin");
                 }
 
@@ -83,72 +100,10 @@ namespace IStudyKindergardens.Controllers
             return View(model);
         }
 
-        [HttpPost]
-        public JsonResult UploadPicture()
-        {
-            foreach (string file in Request.Files)
-            {
-                var upload = Request.Files[file];
-                if (upload != null)
-                {
-                    string expansion = upload.FileName.Split(new char[] { '.' }).Last();
-                    string fileName = Guid.NewGuid().ToString() + '.' + expansion;
-                    dataRepository.AddTempPicture(fileName);
-                    string path = Server.MapPath("~/Images/Uploaded/Temp/" + fileName);
-                    upload.SaveAs(path);
-                    try
-                    {
-                        using (MemoryStream memory = new MemoryStream())
-                        {
-                            using (Image img = Image.FromFile(path))
-                            {
-                                PropertyItem item = img.GetPropertyItem(274);
-                                if (item.Value[0] == 3)
-                                {
-                                    img.RotateFlip(RotateFlipType.Rotate180FlipXY);
-                                }
-                                else if (item.Value[0] == 6)
-                                {
-                                    img.RotateFlip(RotateFlipType.Rotate270FlipXY);
-                                }
-                                else if (item.Value[0] == 8)
-                                {
-                                    img.RotateFlip(RotateFlipType.Rotate90FlipXY);
-                                }
-                                img.Save(memory, ImageFormat.Jpeg);
-                            }
-                            using (FileStream fs = new FileStream(path, FileMode.Create, FileAccess.ReadWrite))
-                            {
-                                byte[] bytes = memory.ToArray();
-                                fs.Write(bytes, 0, bytes.Length);
-                            }
-                        }
-                    }
-                    catch (Exception) { }
-                    return Json(fileName);
-                }
-            }
-            return Json(false);
-        }
-
-        [HttpPost]
-        public JsonResult DeletePicture(string id)
-        {
-            try
-            {
-                System.IO.File.Delete(Server.MapPath("~/Images/Uploaded/Temp/") + id);
-                return Json(true);
-            }
-            catch (Exception)
-            {
-                return Json(false);
-            }
-        }
-
         [HttpGet]
         public ActionResult DeleteUser(string id)
         {
-            SiteUser siteUser = dataRepository.GetSiteUserById(id);
+            SiteUser siteUser = SiteUserManager.GetSiteUserById(id);
             if (siteUser == null)
             {
                 return RedirectToAction("Index", "Home");
@@ -160,18 +115,25 @@ namespace IStudyKindergardens.Controllers
         [HttpPost]
         public ActionResult DeleteUser(DeleteUserViewModel model)
         {
-            dataRepository.DeleteSiteUser(model.Id, Server);
+            SiteUserManager.DeleteSiteUser(model.Id, Server);
             return RedirectToAction("Users", "Admin");
         }
 
         // GET: Admin/Kindergardens
         public ActionResult Kindergardens()
         {
+            return View(KindergardenManager.GetKindergardens());
+        }
+
+        [HttpGet]
+        public ActionResult AddKindergarden()
+        {
             return View();
         }
 
-        // GET: Admin/Comments
-        public ActionResult Comments()
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddKindergarden(AddKindergardenViewModel model)
         {
             return View();
         }

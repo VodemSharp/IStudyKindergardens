@@ -2,6 +2,9 @@
 using IStudyKindergardens.Repositories;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -10,11 +13,19 @@ namespace IStudyKindergardens.Controllers
 {
     public class UserController : Controller
     {
-        private IDataRepository dataRepository;
+        private ISiteUserManager _siteUserManager;
 
-        public UserController(IDataRepository dataRepository)
+        public UserController(ISiteUserManager siteUserManager)
         {
-            this.dataRepository = dataRepository;
+            _siteUserManager = siteUserManager;
+        }
+
+        public ISiteUserManager SiteUserManager
+        {
+            get
+            {
+                return _siteUserManager;
+            }
         }
 
         // GET: User
@@ -28,11 +39,11 @@ namespace IStudyKindergardens.Controllers
         {
             try
             {
-                SiteUser siteUser = dataRepository.GetSiteUserById(id);
+                SiteUser siteUser = SiteUserManager.GetSiteUserById(id);
                 ViewBag.PhoneNumber = siteUser.ApplicationUser.PhoneNumber.Substring(4);
                 try
                 {
-                    string PictureUID = dataRepository.GetPictureUIDById(id);
+                    string PictureUID = SiteUserManager.GetPictureUIDById(id);
                     if (PictureUID == null)
                     {
                         throw new Exception();
@@ -55,12 +66,12 @@ namespace IStudyKindergardens.Controllers
         {
             try
             {
-                SiteUser siteUser = dataRepository.GetSiteUserById(id);
+                SiteUser siteUser = SiteUserManager.GetSiteUserById(id);
                 string picture;
                 string phoneNumber = siteUser.ApplicationUser.PhoneNumber.Substring(4);
                 try
                 {
-                    string PictureUID = dataRepository.GetPictureUIDById(id);
+                    string PictureUID = SiteUserManager.GetPictureUIDById(id);
                     if (PictureUID == null)
                     {
                         throw new Exception();
@@ -85,7 +96,7 @@ namespace IStudyKindergardens.Controllers
         {
             try
             {
-                dataRepository.EditSiteUser(model, id, Server);
+                SiteUserManager.EditSiteUser(model, id, Server);
             }
             catch (Exception) { }
             return RedirectToAction("Index", "Home");

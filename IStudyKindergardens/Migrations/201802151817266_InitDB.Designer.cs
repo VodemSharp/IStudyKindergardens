@@ -7,13 +7,13 @@ namespace IStudyKindergardens.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class LittleChange : IMigrationMetadata
+    public sealed partial class InitDB : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(LittleChange));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(InitDB));
         
         string IMigrationMetadata.Id
         {
-            get { return "201802111358309_LittleChange"; }
+            get { return "201802151817266_InitDB"; }
         }
         
         string IMigrationMetadata.Source
