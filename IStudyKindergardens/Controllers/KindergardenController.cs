@@ -8,7 +8,7 @@ namespace IStudyKindergardens.Controllers
 {
     public class KindergardenController : Controller
     {
-        // GET: Kindergarden
+        [HttpGet]
         public ActionResult Index()
         {
             return View();

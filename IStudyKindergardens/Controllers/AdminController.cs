@@ -30,6 +30,127 @@ namespace IStudyKindergardens.Controllers
             _kindergardenManager = kindergardenManager;
         }
 
+        [HttpGet]
+        public ActionResult Index()
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                return View();
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public ActionResult Users()
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                return View(SiteUserManager.GetSiteUsers());
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public ActionResult AddUser()
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                return View();
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddUser(AddUserViewModel model)
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                if (ModelState.IsValid)
+                {
+                    var user = new ApplicationUser { UserName = model.Email, Email = model.Email, PhoneNumber = "+38 " + model.PhoneNumber };
+                    var result = UserManager.Create(user, model.Password);
+                    if (result.Succeeded)
+                    {
+                        SiteUserManager.AddSiteUser(model, user.Id, Server);
+                        return RedirectToAction("Users", "Admin");
+                    }
+
+                    AddErrors(result);
+                }
+                return View(model);
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public ActionResult DeleteUser(string id)
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                SiteUser siteUser = SiteUserManager.GetSiteUserById(id);
+                if (siteUser == null)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                ViewBag.SNF = String.Format("{0} {1} {2}", siteUser.Surname, siteUser.Name, siteUser.FathersName);
+                return View();
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteUser(DeleteUserViewModel model)
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                if (!ModelState.IsValid)
+                {
+                    return View(model);
+                }
+                SiteUserManager.DeleteSiteUser(model.Id, Server);
+                return RedirectToAction("Users", "Admin");
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public ActionResult Kindergardens()
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                return View(KindergardenManager.GetKindergardens());
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public ActionResult AddKindergarden()
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                return View();
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddKindergarden(AddKindergardenViewModel model)
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                if (!ModelState.IsValid)
+                {
+                    return View(model);
+                }
+                return RedirectToAction("Kindergardens", "Admin");
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        #region Properties
         public ApplicationSignInManager SignInManager
         {
             get
@@ -61,82 +182,7 @@ namespace IStudyKindergardens.Controllers
                 return _kindergardenManager;
             }
         }
-
-        // GET: Admin
-        public ActionResult Index()
-        {
-            return View();
-        }
-
-        // GET: Admin/Users
-        public ActionResult Users()
-        {
-            return View(SiteUserManager.GetSiteUsers());
-        }
-
-        // GET: Admin/AddUser
-        public ActionResult AddUser()
-        {
-            return View();
-        }
-
-        // POST: Admin/AddUser
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult AddUser(AddUserViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, PhoneNumber = "+38 " + model.PhoneNumber };
-                var result = UserManager.Create(user, model.Password);
-                if (result.Succeeded)
-                {
-                    SiteUserManager.AddSiteUser(model, user.Id, Server);
-                    return RedirectToAction("Users", "Admin");
-                }
-
-                AddErrors(result);
-            }
-            return View(model);
-        }
-
-        [HttpGet]
-        public ActionResult DeleteUser(string id)
-        {
-            SiteUser siteUser = SiteUserManager.GetSiteUserById(id);
-            if (siteUser == null)
-            {
-                return RedirectToAction("Index", "Home");
-            }
-            ViewBag.SNF = String.Format("{0} {1} {2}", siteUser.Surname, siteUser.Name, siteUser.FathersName);
-            return View();
-        }
-
-        [HttpPost]
-        public ActionResult DeleteUser(DeleteUserViewModel model)
-        {
-            SiteUserManager.DeleteSiteUser(model.Id, Server);
-            return RedirectToAction("Users", "Admin");
-        }
-
-        // GET: Admin/Kindergardens
-        public ActionResult Kindergardens()
-        {
-            return View(KindergardenManager.GetKindergardens());
-        }
-
-        [HttpGet]
-        public ActionResult AddKindergarden()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult AddKindergarden(AddKindergardenViewModel model)
-        {
-            return View();
-        }
+        #endregion
 
         #region Helpers
         // Used for XSRF protection when adding external logins

@@ -10,25 +10,138 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using IStudyKindergardens.Models;
 using IStudyKindergardens.Repositories;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace IStudyKindergardens.Controllers
 {
-    [Authorize]
     public class AccountController : Controller
     {
         private readonly ApplicationUserManager _userManager;
         private readonly ApplicationSignInManager _signInManager;
         private readonly IAuthenticationManager _authManager;
         private readonly ISiteUserManager _siteUserManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IAuthenticationManager authManager, ISiteUserManager siteUserManager)
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IAuthenticationManager authManager, ISiteUserManager siteUserManager, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _authManager = authManager;
             _siteUserManager = siteUserManager;
+            _roleManager = roleManager;
         }
 
+        [HttpGet]
+        public ActionResult Register()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Register(RegisterViewModel model)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            if (ModelState.IsValid)
+            {
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, PhoneNumber = "+38 " + model.PhoneNumber };
+                var result = UserManager.Create(user, model.Password);
+                if (result.Succeeded)
+                {
+                    SiteUser siteUser = new SiteUser { Name = model.Name, Surname = model.Surname, FathersName = model.FathersName, DateOfBirth = model.DateOfBirth, Id = user.Id };
+                    _siteUserManager.RegisterSiteUser(siteUser);
+                    if (!_roleManager.RoleExists("User"))
+                    {
+                        IdentityRole role = new IdentityRole { Name = "User" };
+                        _roleManager.Create(role);
+                    }
+                    _userManager.AddToRole(user.Id, "User");
+                    SignInManager.SignIn(user, isPersistent: false, rememberBrowser: false);
+                    return RedirectToAction("Index", "Home");
+
+                }
+
+                AddErrors(result);
+            }
+            return View(model);
+        }
+
+        [HttpGet]
+        public ActionResult Login()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, false, shouldLockout: false);
+            switch (result)
+            {
+                case SignInStatus.Success:
+                    return RedirectToLocal(returnUrl);
+                case SignInStatus.LockedOut:
+                    return View("Lockout");
+                case SignInStatus.RequiresVerification:
+                    return RedirectToLocal(returnUrl);
+                case SignInStatus.Failure:
+                default:
+                    ModelState.AddModelError("", "Invalid login attempt.");
+                    return View(model);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult Logout()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        #region Properties
+        public ApplicationSignInManager SignInManager
+        {
+            get
+            {
+                return _signInManager;
+            }
+        }
+
+        public ApplicationUserManager UserManager
+        {
+            get
+            {
+                return _userManager;
+            }
+        }
+        #endregion
+
+        #region CustomHelpers
         [AllowAnonymous]
         public JsonResult CheckDateOfBirth(string DateOfBirth)
         {
@@ -63,115 +176,7 @@ namespace IStudyKindergardens.Controllers
                 return Json(false, JsonRequestBehavior.AllowGet);
             }
         }
-
-        public ApplicationSignInManager SignInManager
-        {
-            get
-            {
-                return _signInManager;
-            }
-        }
-
-        public ApplicationUserManager UserManager
-        {
-            get
-            {
-                return _userManager;
-            }
-        }
-
-        //
-        // GET: /Account/Register
-        [AllowAnonymous]
-        public ActionResult Register()
-        {
-            return View();
-        }
-
-        //
-        // POST: /Account/Register
-        [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public ActionResult Register(RegisterViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, PhoneNumber = "+38 " + model.PhoneNumber };
-                var result = UserManager.Create(user, model.Password);
-                if (result.Succeeded)
-                {
-
-
-                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
-                    // Send an email with this link
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
-
-                    SiteUser siteUser = new SiteUser { Name = model.Name, Surname = model.Surname, FathersName = model.FathersName, DateOfBirth = model.DateOfBirth, Id = user.Id };
-                    _siteUserManager.RegisterSiteUser(siteUser);
-
-                    SignInManager.SignIn(user, isPersistent: false, rememberBrowser: false);
-                    return RedirectToAction("Index", "Home");
-
-                }
-
-                AddErrors(result);
-            }
-
-            // If we got this far, something failed, redisplay form
-            return View(model);
-        }
-
-        //
-        // GET: /Account/Login
-        [AllowAnonymous]
-        public ActionResult Login(string returnUrl)
-        {
-            ViewBag.ReturnUrl = returnUrl;
-            return View();
-        }
-
-        //
-        // POST: /Account/Login
-        [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
-            // This doesn't count login failures towards account lockout
-            // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, false, shouldLockout: false);
-            switch (result)
-            {
-                case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
-                case SignInStatus.LockedOut:
-                    return View("Lockout");
-                case SignInStatus.RequiresVerification:
-                    return RedirectToLocal(returnUrl);
-                //return RedirectToAction("SendCode", new { ReturnUrl = returnUrl });
-                case SignInStatus.Failure:
-                default:
-                    ModelState.AddModelError("", "Invalid login attempt.");
-                    return View(model);
-            }
-        }
-
-        //
-        // Get: /Account/Logout
-        [HttpGet]
-        public ActionResult Logout()
-        {
-            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-            return RedirectToAction("Index", "Home");
-        }
+        #endregion
 
         //
         // GET: /Account/VerifyCode

@@ -6,7 +6,7 @@
 
 <!--Rendered body-->
 
-<p class="login-box-msg">Вхід</p>
+<p class="login-box-msg">Форма заяви</p>
 @using (Html.BeginForm("Login", "Account", FormMethod.Post))
 {
 	@Html.AntiForgeryToken()
@@ -24,19 +24,6 @@
 			@Html.LabelFor(m => m.Email, "Емейл")
 			@Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = "Емейл" })
 			@Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
-		</div>
-	</div>
-
-	<div class="row">
-		<div class="form-group has-feedback col-md-12">
-			<div class="form-group">
-				@Html.LabelFor(m => m.PhoneNumber, "Номер телефону")
-				<div class="input-group">
-					<div class="input-group-addon">+38</div>
-					@Html.TextBoxFor(m => m.PhoneNumber, new { @placeholder = "Номер телефону", @class = "form-control", @data_inputmask = "'mask': '(999) 999-9999'", @data_mask = "" })
-				</div>
-				@Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "text-danger" })
-			</div>
 		</div>
 	</div>
 
