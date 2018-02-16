@@ -20,30 +20,6 @@ namespace IStudyKindergardens.Controllers
         }
 
         [HttpGet]
-        public ActionResult SendQuery()
-        {
-            if (!User.Identity.IsAuthenticated)
-            {
-                return View();
-            }
-            return RedirectToAction("Index", "Home");
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult SendQuery(SendQueryViewModel model)
-        {
-            if (!User.Identity.IsAuthenticated)
-            {
-                if (!ModelState.IsValid)
-                {
-                    return View(model);
-                }
-            }
-            return RedirectToAction("Index", "Home");
-        }
-
-        [HttpGet]
         public ActionResult Login()
         {
             if (!User.Identity.IsAuthenticated)

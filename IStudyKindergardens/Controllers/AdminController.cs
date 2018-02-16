@@ -1,6 +1,7 @@
 ﻿using IStudyKindergardens.Models;
 using IStudyKindergardens.Repositories;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using System;
@@ -21,13 +22,15 @@ namespace IStudyKindergardens.Controllers
         private readonly ApplicationSignInManager _signInManager;
         private readonly ISiteUserManager _siteUserManager;
         private readonly IKindergardenManager _kindergardenManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AdminController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, ISiteUserManager siteUserManager, IKindergardenManager kindergardenManager)
+        public AdminController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, ISiteUserManager siteUserManager, IKindergardenManager kindergardenManager, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _siteUserManager = siteUserManager;
             _kindergardenManager = kindergardenManager;
+            _roleManager = roleManager;
         }
 
         [HttpGet]
@@ -141,11 +144,19 @@ namespace IStudyKindergardens.Controllers
         {
             if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
             {
-                if (!ModelState.IsValid)
+                if (ModelState.IsValid)
                 {
-                    return View(model);
+                    var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                    var result = UserManager.Create(user, model.Password);
+                    if (result.Succeeded)
+                    {
+                        _kindergardenManager.AddKindergarden(model, user.Id, Server);
+                        return RedirectToAction("Kindergardens", "Admin");
+                    }
+
+                    AddErrors(result);
                 }
-                return RedirectToAction("Kindergardens", "Admin");
+                return View(model);
             }
             return RedirectToAction("Index", "Home");
         }

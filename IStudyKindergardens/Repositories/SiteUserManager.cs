@@ -54,7 +54,7 @@ namespace IStudyKindergardens.Repositories
             db.SiteUsers.Add(siteUser);
             if (model.PictureName != null)
             {
-                AddPictureClaim(siteUser.Id, model.PictureName, server);
+                AddPictureClaim(userId, model.PictureName, server);
             }
             db.SaveChanges();
         }

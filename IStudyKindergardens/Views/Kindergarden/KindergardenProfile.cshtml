@@ -1,10 +1,12 @@
-﻿<!-- Main content -->
+﻿@model IStudyKindergardens.Models.Kindergarden
+
+<!-- Main content -->
 <section class="content">
     <div class="row">
         <div class="col-md-8">
             <div class="box box-primary">
                 <div class="box-header">
-                    <h4 style="margin:0;">Дошкільний навчальний заклад №100500</h4>
+                    <h4 style="margin:0;">@Model.Name</h4>
                 </div>
                 <div class="box-body">
                     <div class="description-block-custom">
@@ -40,7 +42,7 @@
                     </div>
                     <div class="description-block-custom">
                         <h4>Адреса</h4>
-                        <p>м. Київ, вул. Академіка Янгеля 20</p>
+                        <p>@Model.Address</p>
                     </div>
                     <div class="description-block-custom">
                         <h4>Сайт</h4>
@@ -52,7 +54,7 @@
         <div class="col-md-4" style="padding-left: 0;">
             <div class="box box-primary">
                 <div class="box-body">
-                    <img class="img-thumbnail description-image-custom" src="https://gs-img.112.ua/original/2016/12/29/277135.jpg" />
+                    <img class="img-thumbnail description-image-custom" src="@ViewBag.Picture" />
 
                         <button class="btn btn-block btn-primary">Подати заяву</button>
                         <button class="btn btn-block btn-primary">Написати повідомлення</button>

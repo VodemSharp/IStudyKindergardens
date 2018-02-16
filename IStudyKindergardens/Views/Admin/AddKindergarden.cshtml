@@ -11,7 +11,7 @@
 					<div class="row">
 						<div class="form-group has-feedback col-md-3">
 							<div class="img-thumbnail" style="background-color: #3c8dbc; margin-bottom: 5px;">
-								<img id="userPicture" style="width: 100%;" src="~/Images/Default/anonym.png" />
+								<img id="userPicture" style="width: 100%;" src="~/Images/Default/anonymKindergarden.jpg" />
 							</div>
 							<div style="display: none;" id="loading"><p>Завантаження...</p></div>
 							<div id="uploadFileDiv" class="img-thumbnail" style="width: 100%; margin-bottom: 5px;">
@@ -152,7 +152,7 @@
 					data: { id: $('#modelPictureName').attr('value') },
 					success: function (result) {
 						if (result) {
-							$('#userPicture').attr('src', '/Images/Default/anonym.png');
+							$('#userPicture').attr('src', '/Images/Default/anonymKindergarden.jpg');
 							$('#modelPictureName').attr('value', null);
 							deleteFiles();
 						}

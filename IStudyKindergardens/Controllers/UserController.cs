@@ -30,6 +30,12 @@ namespace IStudyKindergardens.Controllers
         }
 
         [HttpGet]
+        public ActionResult Index()
+        {
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
         [Route("User/{id}")]
         public ActionResult UserProfile(string id)
         {
@@ -38,6 +44,10 @@ namespace IStudyKindergardens.Controllers
                 try
                 {
                     SiteUser siteUser = SiteUserManager.GetSiteUserById(id);
+                    if(siteUser == null)
+                    {
+                        throw new Exception();
+                    }
                     ViewBag.PhoneNumber = siteUser.ApplicationUser.PhoneNumber.Substring(4);
                     try
                     {

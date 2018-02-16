@@ -28,7 +28,7 @@
 			@if (Request.IsAuthenticated && (User.IsInRole("User") || User.IsInRole("Admin") || User.IsInRole("Moderator")))
 			{
 				<li>
-					<a href="/?lol=kek">
+					<a href="/User/@User.Identity.GetUserId()">
 						<span class="glyphicon glyphicon-user"></span> <span>Профіль</span>
 					</a>
 				</li>
@@ -53,6 +53,14 @@
 					<span class="glyphicon glyphicon-cog"></span> <span>Налаштування</span>
 				</a>
 			</li>
+			@if (Request.IsAuthenticated && (User.IsInRole("Admin")))
+			{
+				<li>
+					<a href="/Admin">
+						<span class="glyphicon glyphicon-user"></span> <span>Панель упраління</span>
+					</a>
+				</li>
+			}
 		</ul>
 	</section>
 	<!-- /.sidebar -->
