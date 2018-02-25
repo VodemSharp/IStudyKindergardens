@@ -104,7 +104,7 @@ namespace IStudyKindergardens.Models
         public string ClaimValue { get; set; }
     }
 
-    public class DescriptionBlock
+    public abstract class DescriptionBlock
     {
         [Key]
         public int Id { get; set; }
@@ -113,8 +113,87 @@ namespace IStudyKindergardens.Models
         public string KindergardenId { get; set; }
         public Kindergarden Kindergarden { get; set; }
 
-        public string Head { get; set; }
+        [NotMapped]
+        public virtual string BlockType { get; }
+        [NotMapped]
+        public virtual List<string> BlockComponents { get; set; }
+    }
+
+    public class DescriptionBlockText : DescriptionBlock
+    {
+        public string Header { get; set; }
         public string Body { get; set; }
+
+        [NotMapped]
+        public override string BlockType
+        {
+            get
+            {
+                return "Text";
+                //return "<div class='description-block-custom'><h4>"+Header+"</h4><p>"+Body+"</p></div>";
+            }
+        }
+
+        [NotMapped]
+        public override List<string> BlockComponents
+        {
+            get
+            {
+                return new List<string> { Header, Body };
+            }
+            set
+            {
+                if (value[0] != null)
+                {
+                    Header = value[0];
+                }
+                if (value[1] != null)
+                {
+                    Body = value[1];
+                }
+            }
+        }
+    }
+
+    public class DescriptionBlockTextImage : DescriptionBlock
+    {
+        public string Image { get; set; }
+        public string Header { get; set; }
+        public string Body { get; set; }
+
+        [NotMapped]
+        public override string BlockType
+        {
+            get
+            {
+                return "TextImage";
+                //return "<div class='description-image-block-custom'><div><img id='preview-image-image' class='img-rounded img-responsive' style='width: 25 %;' src='/Images/Uploaded/Source/"+ Image + "><h4>"+Header+"</h4><h5>"+Body+"</h5></div></div>";
+            }
+        }
+
+        [NotMapped]
+        public override List<string> BlockComponents
+        {
+            get
+            {
+                return new List<string> { Image, Header, Body };
+            }
+            set
+            {
+                if (value[0] != null)
+                {
+                    Image = value[0];
+                }
+                if (value[1] != null)
+                {
+                    Header = value[1];
+                }
+                if (value[2] != null)
+                {
+                    Body = value[2];
+                }
+            }
+        }
     }
 
     public class ClaimType

@@ -10,6 +10,8 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Runtime.InteropServices;
 using System.Web;
 using System.Web.Mvc;
@@ -147,10 +149,23 @@ namespace IStudyKindergardens.Controllers
                 if (ModelState.IsValid)
                 {
                     var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                    var result = UserManager.Create(user, model.Password);
+                    string password = Guid.NewGuid().ToString("N");
+                    var result = UserManager.Create(user, password);
+                    //
+                    MailMessage msg = new MailMessage("istudy.network@gmail.com", model.Email, "IStudy password", GetAnswer(model.Email, password));
+                    msg.IsBodyHtml = true;
+                    SmtpClient sc = new SmtpClient("smtp.gmail.com", 587);
+                    sc.UseDefaultCredentials = false;
+                    NetworkCredential cre = new NetworkCredential("istudy.network@gmail.com", "istudyrepublika");
+                    sc.Credentials = cre;
+                    sc.EnableSsl = true;
+                    sc.Send(msg);
+                    //
+                    
                     if (result.Succeeded)
                     {
                         _kindergardenManager.AddKindergarden(model, user.Id, Server);
+                        _userManager.AddToRole(user.Id, "Administrator");
                         return RedirectToAction("Kindergardens", "Admin");
                     }
 
@@ -159,6 +174,11 @@ namespace IStudyKindergardens.Controllers
                 return View(model);
             }
             return RedirectToAction("Index", "Home");
+        }
+
+        private string GetAnswer(string email, string password)
+        {
+            return "<span style='font-size: 16px; font-weight: bold;'>Your email:</span><br><span style='font-size: 16px;'>"+email+"</span><br><span style='font-size: 16px; font-weight: bold;'>Your password:</span><br><span style='font-size: 16px;'>"+ password + "</span><br>";
         }
 
         #region Properties

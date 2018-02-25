@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
-using System.Web.Mvc;
 
 namespace IStudyKindergardens.Models
 {
-    public class AddKindergardenViewModel
+    public class EditKindergardenViewModel
     {
         [Display(Name = "PictureName")]
         public string PictureName { get; set; }
@@ -26,5 +25,7 @@ namespace IStudyKindergardens.Models
         [Display(Name = "Email")]
         [DataType(DataType.EmailAddress, ErrorMessage = "Не коректно вказаний емейл!")]
         public string Email { get; set; }
+
+        public List<DescriptionBlock> DescriptionBlocks { get; set; }
     }
 }

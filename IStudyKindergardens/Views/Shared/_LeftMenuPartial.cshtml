@@ -48,6 +48,14 @@
 					</a>
 				</li>
 			}
+			@if (Request.IsAuthenticated && (User.IsInRole("Administrator")))
+			{
+				<li>
+					<a href="/Kindergarden/Edit/@User.Identity.GetUserId()">
+						<span class="glyphicon glyphicon-edit"></span> <span>Редагувати</span>
+					</a>
+				</li>
+			}
 			<li>
 				<a href="/?lol=kek">
 					<span class="glyphicon glyphicon-cog"></span> <span>Налаштування</span>

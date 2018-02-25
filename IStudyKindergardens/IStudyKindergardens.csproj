@@ -206,7 +206,6 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
-    <Compile Include="Controllers\AdministrationController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\KindergardenController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -214,14 +213,14 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201802151817266_InitDB.cs" />
-    <Compile Include="Migrations\201802151817266_InitDB.Designer.cs">
-      <DependentUpon>201802151817266_InitDB.cs</DependentUpon>
+    <Compile Include="Migrations\201802241335038_InitDB.cs" />
+    <Compile Include="Migrations\201802241335038_InitDB.Designer.cs">
+      <DependentUpon>201802241335038_InitDB.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\Administration\LoginAdministrationViewModel.cs" />
     <Compile Include="Models\Identity\AccountViewModels.cs" />
     <Compile Include="Models\Kindergardens\AddKindergardenViewModel.cs" />
+    <Compile Include="Models\Kindergardens\EditKindergardenViewModel.cs" />
     <Compile Include="Models\Users\AddUserViewModel.cs" />
     <Compile Include="Models\Users\DeleteUserViewModel.cs" />
     <Compile Include="Models\Users\EditUserViewModel.cs" />
@@ -822,7 +821,7 @@
     <Content Include="Views\Admin\DeleteUser.cshtml" />
     <Content Include="Views\Admin\Kindergardens.cshtml" />
     <Content Include="Views\Admin\AddKindergarden.cshtml" />
-    <Content Include="Views\Administration\Login.cshtml" />
+    <Content Include="Views\Kindergarden\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -843,8 +842,8 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201802151817266_InitDB.resx">
-      <DependentUpon>201802151817266_InitDB.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201802241335038_InitDB.resx">
+      <DependentUpon>201802241335038_InitDB.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

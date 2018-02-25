@@ -13,7 +13,7 @@ namespace IStudyKindergardens.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201802151817266_InitDB"; }
+            get { return "201802241335038_InitDB"; }
         }
         
         string IMigrationMetadata.Source

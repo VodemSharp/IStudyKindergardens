@@ -1,72 +1,126 @@
 ﻿@model IStudyKindergardens.Models.Kindergarden
+<style>
+	.description-block-custom {
+		text-align: left;
+		margin: 5px 0px 5px 0px;
+		padding: 0px 10px 0px 10px;
+		border: 1px solid #ddd;
+		border-radius: 4px;
+		display: inline-block;
+		width: 100%;
+	}
 
+		.description-block-custom h4 {
+			margin: 0px 10px 10px 0px;
+			text-align: justify;
+			word-wrap: break-word;
+		}
+
+		.description-block-custom h5 {
+			margin: 0px 10px 0px 0px;
+			text-align: justify;
+			word-wrap: break-word;
+		}
+
+	.description-image-block-custom {
+		text-align: left;
+		margin: 5px 0px 5px 0px;
+		padding: 0px 10px 0px 10px;
+		/*border: 1px solid #ddd;
+		border-radius: 4px;*/
+		display: inline-block;
+		width: 100%;
+	}
+
+		.description-image-block-custom img {
+			margin: 0px 10px 0px 0px;
+			float: left;
+		}
+
+		.description-image-block-custom * h4 {
+			margin: 0px 10px 10px 0px;
+			text-align: justify;
+			word-wrap: break-word;
+		}
+
+		.description-image-block-custom * h5 {
+			margin: 0px 10px 0px 0px;
+			text-align: justify;
+			word-wrap: break-word;
+		}
+
+	.description-image-custom {
+		margin: 0px 0px 5px 0px;
+		width: 100%;
+	}
+
+	.btn-group-vertical {
+		display: block;
+	}
+
+	.photo-album {
+		border: none;
+	}
+
+	.description-block-custom {
+		border: none;
+	}
+
+		.description-block-custom p {
+			text-align: justify;
+			word-wrap: break-word;
+		}
+</style>
 <!-- Main content -->
 <section class="content">
-    <div class="row">
-        <div class="col-md-8">
-            <div class="box box-primary">
-                <div class="box-header">
-                    <h4 style="margin:0;">@Model.Name</h4>
-                </div>
-                <div class="box-body">
-                    <div class="description-block-custom">
-                        <h4>Опис</h4>
-                        <p>Завдання педагогічного колективу – оточити дитину піклуванням і любов’ю, закладаючи основи різноманітних знань і вмінь; виховувати національно-свідомого Громадянина – патріота своєї Батьківщини, культурну освічену людину, яка гідно представлятиме свою державу у всесвітній спільноті. З метою забезпечення розвитку природних здібностей та задатків дітей, активізації їх творчого потенціалу, своєчасним виявленням обдарованості крім основної базової освіти в дошкільному закладі діє багатогранна система додаткової освіти.</p>
-                    </div>
-                    <div class="description-block-custom">
-                        <h4>Групи</h4>
-                        <div class="description-image-block-custom">
-                            <img class="img-rounded" src="http://dnz132.kiev.ua/wp-content/uploads/2014/02/picturecontent-pid-5d1b3-150x150.jpg" />
-                            <h4>Група №1 «Маківка»</h4>
-                            <br />
-                            <h5>Вік дітей від 2 до 3 років</h5>
-                            <h5>Набір з 01.08.18 до 01.09.18</h5>
-                        </div>
-                        <div class="description-image-block-custom">
-                            <img class="img-rounded" src="http://dnz132.kiev.ua/wp-content/uploads/2014/02/shutterstock_63531217-150x150.jpg" />
-                            <h4>Група №2 «Калинка»</h4>
-                            <br />
-                            <h5>Вік дітей від 1 до 2.5 років</h5>
-                            <h5>Набір з 01.08.18 до 01.09.18</h5>
-                        </div>
-                    </div>
-                    <div class="description-block-custom">
-                        <h4>Колектив</h4>
-                        <div class="description-image-block-custom">
-                            <img class="img-rounded" src="https://n1s1.elle.ru/bf/b3/fc/bfb3fcd05960003c183698f6e662eb15/690x947_1_10c71ef5ef3db719964f1d8d5ffe84c4@499x685_0xd42ee42a_1704796831421503007.jpeg" />
-                            <h4>Адміністратор</h4>
-                            <br />
-                            <h5>Джим Персі Керрі</h5>
-                            <h5>17 січня 1962р</h5>
-                        </div>
-                    </div>
-                    <div class="description-block-custom">
-                        <h4>Адреса</h4>
-                        <p>@Model.Address</p>
-                    </div>
-                    <div class="description-block-custom">
-                        <h4>Сайт</h4>
-                        <p>http://www.google.com</p>
-                    </div>
-                </div><!-- /.box-body -->
-            </div><!-- /.box -->
-        </div><!-- /.col (left) -->
-        <div class="col-md-4" style="padding-left: 0;">
-            <div class="box box-primary">
-                <div class="box-body">
-                    <img class="img-thumbnail description-image-custom" src="@ViewBag.Picture" />
+	<div class="row">
+		<div class="col-md-8">
+			<div class="box box-primary">
+				<div class="box-header">
+					<h4 style="margin:0;">@Model.Name</h4>
+				</div>
+				<div class="box-body">
+					@for (int i = 0; i < ViewBag.Blocks.Count; i++)
+					{
+						if (ViewBag.Blocks[i].BlockType == "Text")
+						{
+							List<string> components = ViewBag.Blocks[i].BlockComponents;
+							<div class='description-block-custom'>
+								<h4>@components[0]</h4>
+								<p>@components[1]</p>
+							</div>
+						}
+						else if (ViewBag.Blocks[i].BlockType == "TextImage")
+						{
+							List<string> components = ViewBag.Blocks[i].BlockComponents;
+							<div class='description-image-block-custom'>
+								<div>
+									<img id='preview-image-image' class='img-rounded img-responsive' style='width: 25%;' src='/Images/Uploaded/Source/@components[0]'>
+									<h4>@components[1]</h4>
+									<h5>@components[2]</h5>
+								</div>
+							</div>
+						}
+					}
+				</div><!-- /.box-body -->
+			</div><!-- /.box -->
+		</div><!-- /.col (left) -->
+		<div class="col-md-4" style="padding-left: 0;">
+			<div class="box box-primary">
+				<div class="box-body">
+					<img class="img-thumbnail description-image-custom" src="@ViewBag.Picture" />
 
-                        <button class="btn btn-block btn-primary">Подати заяву</button>
-                        <button class="btn btn-block btn-primary">Написати повідомлення</button>
-                        <button class="btn btn-block btn-primary">Додати до вибраних садочків</button>
-                </div><!-- /.box-body -->
-            </div>
-            <div class="box box-primary">
-                <div class="description-block-custom photo-album"><h4><span class="glyphicon glyphicon-picture"></span> Фотоальбом</h4></div>
-            </div>
-            <div class="box box-primary">
-                <div class="description-block-custom photo-album"><h4><span class="glyphicon glyphicon-facetime-video"></span> Відеоролики</h4></div>
-            </div>
-        </div><!-- /.col (right) -->
-    </div><!-- /.row -->
+					<button class="btn btn-block btn-primary">Подати заяву</button>
+					<button class="btn btn-block btn-primary">Написати повідомлення</button>
+					<button class="btn btn-block btn-primary">Додати до вибраних садочків</button>
+				</div><!-- /.box-body -->
+			</div>
+			<div class="box box-primary">
+				<div class="description-block-custom photo-album"><h4><span class="glyphicon glyphicon-picture"></span> Фотоальбом</h4></div>
+			</div>
+			<div class="box box-primary">
+				<div class="description-block-custom photo-album"><h4><span class="glyphicon glyphicon-facetime-video"></span> Відеоролики</h4></div>
+			</div>
+		</div><!-- /.col (right) -->
+	</div><!-- /.row -->
 </section><!-- /.content -->

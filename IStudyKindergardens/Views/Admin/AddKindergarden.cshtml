@@ -58,18 +58,6 @@
 									</div>
 								</div>
 								<div class="row">
-									<div class="form-group has-feedback col-md-6">
-										@Html.LabelFor(m => m.Password, "Пароль")
-										@Html.TextBoxFor(m => m.Password, new { @type = "password", @class = "form-control", @placeholder = "Пароль" })
-										@Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
-									</div>
-									<div class="form-group has-feedback col-md-6">
-										@Html.LabelFor(m => m.ConfirmPassword, "Підтвердіть пароль")
-										@Html.TextBoxFor(m => m.ConfirmPassword, new { @type = "password", @class = "form-control", @placeholder = "Підтвердіть пароль" })
-										@Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })
-									</div>
-								</div>
-								<div class="row">
 									<div class="col-md-12">
 										<input type="submit" class="btn btn-primary btn-block btn-flat" value="Добавити">
 									</div>

@@ -137,8 +137,12 @@ namespace IStudyKindergardens.Migrations
                     {
                         Id = c.Int(nullable: false, identity: true),
                         KindergardenId = c.String(maxLength: 128),
-                        Head = c.String(),
+                        Header = c.String(),
                         Body = c.String(),
+                        Image = c.String(),
+                        Header1 = c.String(),
+                        Body1 = c.String(),
+                        Discriminator = c.String(nullable: false, maxLength: 128),
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Kindergardens", t => t.KindergardenId)

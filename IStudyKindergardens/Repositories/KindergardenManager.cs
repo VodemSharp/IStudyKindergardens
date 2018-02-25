@@ -10,8 +10,11 @@ namespace IStudyKindergardens.Repositories
     { 
         void AddKindergarden(AddKindergardenViewModel model, string userId, HttpServerUtilityBase server);
 
+        void ChangeDescriptionBlocks(List<DescriptionBlock> descriptionBlocks, string userId, HttpServerUtilityBase server);
+
         string GetPictureUIDById(string id);
         Kindergarden GetKindergardenById(string id);
+        List<DescriptionBlock> GetDescriptionBlocksById(string id);
         IEnumerable<Kindergarden> GetKindergardens();
     }
 
@@ -33,6 +36,37 @@ namespace IStudyKindergardens.Repositories
             }
             catch (Exception) { }
             return kindergarden;
+        }
+
+        private void MovePicture(string pictureName, HttpServerUtilityBase server)
+        {
+            System.IO.File.Copy(server.MapPath("~/Images/Uploaded/Temp/" + pictureName), server.MapPath("~/Images/Uploaded/Source/" + pictureName));
+            System.IO.File.Delete(server.MapPath("~/Images/Uploaded/Temp/" + pictureName));
+        }
+
+        public void ChangeDescriptionBlocks(List<DescriptionBlock> descriptionBlocks, string userId, HttpServerUtilityBase server)
+        {
+            db.DescriptionBlocks.RemoveRange(db.DescriptionBlocks.Where(db => db.KindergardenId == userId));
+            for(int i = 0; i < descriptionBlocks.Count; i++)
+            {
+                if(descriptionBlocks[i].BlockType == "TextImage")
+                {
+                    string picture = descriptionBlocks[i].BlockComponents[0];
+                    if (picture.Substring(0, 6) == "/Temp/")
+                    {
+                        string temp = picture.Substring(6, picture.Length - 6);
+                        MovePicture(temp, server);
+                        descriptionBlocks[i].BlockComponents = new List<string> { temp, null, null };
+                    }
+                    else if (picture.Substring(0, 8) == "/Source/")
+                    {
+                        string temp = picture.Substring(8, picture.Length - 8);
+                        descriptionBlocks[i].BlockComponents = new List<string> { temp, null, null };
+                    }
+                }
+            }
+            db.DescriptionBlocks.AddRange(descriptionBlocks);
+            db.SaveChanges();
         }
 
         public void AddKindergarden(AddKindergardenViewModel model, string userId, HttpServerUtilityBase server)
@@ -65,6 +99,11 @@ namespace IStudyKindergardens.Repositories
             db.KindergardenClaims.Add(new KindergardenClaim { ClaimTypeId = claimType.Id, KindergardenId = id, ClaimValue = pictureName });
             System.IO.File.Copy(server.MapPath("~/Images/Uploaded/Temp/" + pictureName), server.MapPath("~/Images/Uploaded/Source/" + pictureName));
             System.IO.File.Delete(server.MapPath("~/Images/Uploaded/Temp/" + pictureName));
+        }
+
+        public List<DescriptionBlock> GetDescriptionBlocksById(string id)
+        {
+            return db.DescriptionBlocks.Where(db => db.KindergardenId == id).ToList();
         }
 
         protected void Dispose(bool disposing)
