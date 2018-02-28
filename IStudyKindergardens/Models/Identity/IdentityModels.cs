@@ -221,6 +221,8 @@ namespace IStudyKindergardens.Models
         public DbSet<Kindergarden> Kindergardens { get; set; }
         public DbSet<KindergardenClaim> KindergardenClaims { get; set; }
         public DbSet<DescriptionBlock> DescriptionBlocks { get; set; }
+        public DbSet<DescriptionBlockText> DescriptionBlocksText { get; set; }
+        public DbSet<DescriptionBlockTextImage> DescriptionBlocksTextImage { get; set; }
 
         public DbSet<ClaimType> ClaimTypes { get; set; }
 

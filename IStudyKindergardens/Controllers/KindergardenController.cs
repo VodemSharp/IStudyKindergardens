@@ -116,7 +116,7 @@ namespace IStudyKindergardens.Controllers
                         break;
                 }
             }
-            _kindergardenManager.ChangeDescriptionBlocks(descriptionBlocks, id, Server);
+            _kindergardenManager.EditKindergarden(descriptionBlocks, id, Server, model);
             return RedirectToAction("KindergardenProfile", "Kindergarden", new { id = id });
         }
     }
