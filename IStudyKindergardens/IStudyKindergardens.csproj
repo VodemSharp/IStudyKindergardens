@@ -213,14 +213,18 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="HelpClasses\CustomImage.cs" />
     <Compile Include="Migrations\201802241335038_InitDB.cs" />
     <Compile Include="Migrations\201802241335038_InitDB.Designer.cs">
       <DependentUpon>201802241335038_InitDB.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Home\KindergardenListViewModel.cs" />
     <Compile Include="Models\Identity\AccountViewModels.cs" />
     <Compile Include="Models\Kindergardens\AddKindergardenViewModel.cs" />
+    <Compile Include="Models\Kindergardens\ChangeAddressViewModel.cs" />
     <Compile Include="Models\Kindergardens\EditKindergardenViewModel.cs" />
+    <Compile Include="Models\Kindergardens\EditShortInfoViewModel.cs" />
     <Compile Include="Models\Users\AddUserViewModel.cs" />
     <Compile Include="Models\Users\DeleteUserViewModel.cs" />
     <Compile Include="Models\Users\EditUserViewModel.cs" />
@@ -236,6 +240,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\dist\AdminLTE.css" />
     <Content Include="Content\dist\AdminLTE.min.css" />
+    <Content Include="Content\dist\cropper.css" />
     <Content Include="Content\dist\skins\skin-black.css" />
     <Content Include="Content\dist\skins\skin-black.min.css" />
     <Content Include="Content\dist\skins\skin-blue.css" />
@@ -761,6 +766,7 @@
     <Content Include="Plugins\input-mask\phone-codes\phone-be.json" />
     <Content Include="Plugins\input-mask\phone-codes\phone-codes.json" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\cropper.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
@@ -823,6 +829,8 @@
     <Content Include="Views\Admin\AddKindergarden.cshtml" />
     <Content Include="Views\Kindergarden\Edit.cshtml" />
     <Content Include="Views\Kindergarden\ChangeAddress.cshtml" />
+    <Content Include="Views\Kindergarden\ChangeAvatar.cshtml" />
+    <Content Include="Views\Kindergarden\EditShortInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -8,6 +8,9 @@ namespace IStudyKindergardens.Models
 {
     public class EditKindergardenViewModel
     {
+        [Display(Name="Id")]
+        public string Id { get; set; }
+
         [Display(Name = "PictureName")]
         public string PictureName { get; set; }
 

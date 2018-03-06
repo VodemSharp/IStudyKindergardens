@@ -8,11 +8,17 @@ namespace IStudyKindergardens.Repositories
 {
     public interface IKindergardenManager
     {
+        void AddKindergardenClaim(string id, string type, string value);
+        void AddKindergardenClaimWithDel(string id, string type, string value);
         void AddKindergarden(AddKindergardenViewModel model, string userId, HttpServerUtilityBase server);
+        void AddPreviewPicture(string id, string previewPictureName, HttpServerUtilityBase server);
 
         void EditKindergarden(List<DescriptionBlock> descriptionBlocks, string userId, HttpServerUtilityBase server, EditKindergardenViewModel model);
+        void EditKindergardenAddress(string id, string address);
 
+        string GetKindergardenClaimValue(string id, string type);
         string GetPictureUIDById(string id);
+        string GetPreviewPictureUIDById(string id);
         Kindergarden GetKindergardenById(string id);
         List<DescriptionBlock> GetDescriptionBlocksById(string id);
         IEnumerable<Kindergarden> GetKindergardens();
@@ -25,6 +31,45 @@ namespace IStudyKindergardens.Repositories
         public IEnumerable<Kindergarden> GetKindergardens()
         {
             return db.Kindergardens.ToList<Kindergarden>();
+        }
+
+        public void EditKindergardenAddress(string id, string address)
+        {
+            db.Kindergardens.Where(k => k.Id == id).First().Address = address;
+            db.SaveChanges();
+        }
+
+        public void AddKindergardenClaim(string id, string type, string value)
+        {
+            ClaimType claimType;
+            try
+            {
+                claimType = db.ClaimTypes.Where(c => c.Type == type).First();
+            }
+            catch (Exception)
+            {
+                claimType = db.ClaimTypes.Add(new ClaimType { Type = type });
+            }
+            db.KindergardenClaims.Add(new KindergardenClaim { ClaimTypeId = claimType.Id, KindergardenId = id, ClaimValue = value });
+            db.SaveChanges();
+        }
+
+        public void AddKindergardenClaimWithDel(string id, string type, string value)
+        {
+            db.KindergardenClaims.RemoveRange(db.KindergardenClaims.Where(kc => kc.KindergardenId == id && kc.ClaimType.Type == type));
+            AddKindergardenClaim(id, type, value);
+            db.SaveChanges();
+        }
+
+        public string GetKindergardenClaimValue(string id, string type)
+        {
+            string value = String.Empty;
+            try
+            {
+                value = db.KindergardenClaims.Where(kc => kc.KindergardenId == id && kc.ClaimType.Type == type).First().ClaimValue;
+            }
+            catch (Exception) { }
+            return value;
         }
 
         public Kindergarden GetKindergardenById(string id)
@@ -53,7 +98,7 @@ namespace IStudyKindergardens.Repositories
         {
             Kindergarden kindergarden = db.Kindergardens.Where(k => k.Id == userId).First();
             kindergarden.Name = model.Name;
-            if (model.PictureName != null)
+            if (model.PictureName != null && model.PictureName != "default")
             {
                 KindergardenClaim kindergardenClaim;
                 try
@@ -70,7 +115,7 @@ namespace IStudyKindergardens.Repositories
                     AddPictureClaim(userId, model.PictureName, server);
                 }
             }
-            else
+            else if(model.PictureName == "default")
             {
                 try
                 {
@@ -148,6 +193,11 @@ namespace IStudyKindergardens.Repositories
             return db.KindergardenClaims.Where(kg => kg.KindergardenId == id && kg.ClaimType.Type == "Picture").First().ClaimValue;
         }
 
+        public string GetPreviewPictureUIDById(string id)
+        {
+            return db.KindergardenClaims.Where(kg => kg.KindergardenId == id && kg.ClaimType.Type == "PreviewPicture").First().ClaimValue;
+        }
+
         private void AddPictureClaim(string id, string pictureName, HttpServerUtilityBase server)
         {
             ClaimType claimType;
@@ -161,8 +211,40 @@ namespace IStudyKindergardens.Repositories
             }
             db.KindergardenClaims.Add(new KindergardenClaim { ClaimTypeId = claimType.Id, KindergardenId = id, ClaimValue = pictureName });
             MovePicture(pictureName, server);
+            db.SaveChanges();
             //System.IO.File.Copy(server.MapPath("~/Images/Uploaded/Temp/" + pictureName), server.MapPath("~/Images/Uploaded/Source/" + pictureName));
             //System.IO.File.Delete(server.MapPath("~/Images/Uploaded/Temp/" + pictureName));
+        }
+
+        public void AddPreviewPicture(string id, string previewPictureName, HttpServerUtilityBase server)
+        {
+            try
+            {
+                List<KindergardenClaim> claims = db.KindergardenClaims.Where(kc => kc.KindergardenId == id && kc.ClaimType.Type == "PreviewPicture").ToList();
+                for (int i = 0; i < claims.Count; i++)
+                {
+                    System.IO.File.Delete(server.MapPath("~/Images/Uploaded/Source/" + claims[i].ClaimValue));
+                }
+                db.KindergardenClaims.RemoveRange(claims);
+                AddPreviewPictureClaim(id, previewPictureName);
+                db.SaveChanges();
+            }
+            catch (Exception e)
+            { }
+        }
+
+        private void AddPreviewPictureClaim(string id, string previewPictureName)
+        {
+            ClaimType claimType;
+            try
+            {
+                claimType = db.ClaimTypes.Where(c => c.Type == "PreviewPicture").First();
+            }
+            catch (Exception)
+            {
+                claimType = db.ClaimTypes.Add(new ClaimType { Type = "PreviewPicture" });
+            }
+            db.KindergardenClaims.Add(new KindergardenClaim { ClaimTypeId = claimType.Id, KindergardenId = id, ClaimValue = previewPictureName });
         }
 
         public List<DescriptionBlock> GetDescriptionBlocksById(string id)

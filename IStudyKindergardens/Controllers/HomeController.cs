@@ -13,10 +13,27 @@ namespace IStudyKindergardens.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly IKindergardenManager _kindergardenManager;
+
+        public HomeController(IKindergardenManager kindergardenManager)
+        {
+            _kindergardenManager = kindergardenManager;
+        }
+
         [HttpGet]
         public ActionResult Index()
         {
-            return View();
+            KindergardenListViewModel model = new KindergardenListViewModel { Kindergardens = _kindergardenManager.GetKindergardens().ToList() };
+            model.Addresses = new List<string> { };
+            model.PreviewPictures = new List<string> { };
+            model.ShortInfo = new List<string> { };
+            for (int i = 0; i < model.Kindergardens.Count; i++)
+            {
+                model.Addresses.Add(_kindergardenManager.GetKindergardenClaimValue(model.Kindergardens[i].Id, "AltAddress"));
+                model.PreviewPictures.Add(_kindergardenManager.GetKindergardenClaimValue(model.Kindergardens[i].Id, "PreviewPicture"));
+                model.ShortInfo.Add(_kindergardenManager.GetKindergardenClaimValue(model.Kindergardens[i].Id, "ShortInfo"));
+            }
+            return View(model);
         }
 
         [HttpPost]

@@ -129,7 +129,7 @@
             word-wrap: break-word;
         }
 
-        .description-block-custom h5 {
+        .description-block-custom p {
             margin: 0px 10px 0px 0px;
             text-align: justify;
             word-wrap: break-word;
@@ -156,7 +156,7 @@
             word-wrap: break-word;
         }
 
-        .description-image-block-custom * h5 {
+        .description-image-block-custom * p {
             margin: 0px 10px 0px 0px;
             text-align: justify;
             word-wrap: break-word;
@@ -258,7 +258,7 @@
                                 <div>
                                     <img id="preview-image-image" class="img-rounded img-responsive" style="width: 30%;">
                                     <h4 id="preview-image-header"></h4>
-                                    <h5 id="preview-image-body"></h5>
+                                    <p id="preview-image-body"></p>
                                     <div style="display: none;" id="loading"><p>Завантаження...</p></div>
                                 </div>
                             </div>
@@ -282,7 +282,7 @@
                                     <div class='description-image-block-custom'>
                                         <span class="glyphicon glyphicon-arrow-up"></span><span class="glyphicon glyphicon-arrow-down"></span><span class="glyphicon glyphicon-remove"></span>
                                         <input hidden value="text-image" class="type" />
-                                        <div><img id='preview-image-image' class='img-rounded img-responsive component1' style='width: 25%;' src='/Images/Uploaded/Source/@components[0]'><h4 class="component2">@components[1]</h4><h5 class="component3">@components[2]</h5></div>
+                                        <div><img id='preview-image-image' class='img-rounded img-responsive component1' style='width: 25%;' src='/Images/Uploaded/Source/@components[0]'><h4 class="component2">@components[1]</h4><p class="component3">@components[2]</p></div>
                                     </div>
                                 }
                             }
@@ -304,7 +304,9 @@
                     </form>
                     <a class="btn btn-block btn-primary" id="changeModelPicture">Змінити картинку</a>
                     <a class="btn btn-block btn-primary" id="deleteModelPicture">Видалити картинку</a>
-                    <a class="btn btn-block btn-primary">Змінити адресу закладу</a>
+                    @Html.ActionLink("Змінити картинку в рейтингу", "ChangeAvatar", "Kindergarden", routeValues: new { @id = Model.Id }, htmlAttributes: new { @class = "btn btn-block btn-primary", @id = "deleteModelPicture" })
+                    @Html.ActionLink("Змінити адресу закладу", "ChangeAddress", "Kindergarden", routeValues: new { @id = Model.Id }, htmlAttributes: new { @class = "btn btn-block btn-primary" })
+                    @Html.ActionLink("Редагувати коротку інформацію", "EditShortInfo", "Kindergarden", routeValues: new { @id = Model.Id }, htmlAttributes: new { @class = "btn btn-block btn-primary" })
                 </div><!-- /.box-body -->
             </div>
             <div class="box box-primary">
@@ -396,7 +398,7 @@
         //ДОРОБИТИ ВИДАЛЕННЯ З ПАПКИ ТЕМП
         deleteFilesAvatar();
         $('#avatar').attr('src', '/Images/Default/anonymKindergarden.jpg');
-        $('#modelPictureName').attr('value', null);
+        $('#modelPictureName').attr('value', 'default');
 
     });
 
@@ -489,12 +491,12 @@ var div_inner = $('<div>');
 var img = '<img id="preview-image-image" class="img-rounded img-responsive component1" style="width: 25%;" src="' + $('#preview-image-image').attr("src") + '">';
 var h4 = $('<h4 class="component2">');
 h4.html($('#edit-image-text-header').val());
-var h5 = $('<h5 class="component3">');
-h5.html($('#edit-image-text-body').val());
+var p = $('<p class="component3">');
+p.html($('#edit-image-text-body').val());
 
 div_inner.append(img);
 div_inner.append(h4);
-div_inner.append(h5);
+div_inner.append(p);
 
 div.append(a);
 div.append(hidden_input);
@@ -638,6 +640,4 @@ result += $(element).children("div").children(".component3").html() + ':';
 result = result.substring(0, result.length - 1);
 $('#content-input').attr("value", result);
 });
-
-
 </script>
