@@ -45,10 +45,12 @@ namespace IStudyKindergardens.Models
         public string DateOfBirth { get; set; }
 
         public ICollection<SiteUserClaim> SiteUserClaims { get; set; }
+        public ICollection<Rating> Ratings { get; set; }
 
         public SiteUser()
         {
             SiteUserClaims = new List<SiteUserClaim>();
+            Ratings = new List<Rating>();
         }
     }
 
@@ -78,6 +80,7 @@ namespace IStudyKindergardens.Models
 
         public ICollection<DescriptionBlock> DescriptionBlocks { get; set; }
         public ICollection<KindergardenClaim> KindergardenClaims { get; set; }
+        public ICollection<Rating> Ratings { get; set; }
 
         public virtual ApplicationUser ApplicationUser { get; set; }
 
@@ -85,6 +88,7 @@ namespace IStudyKindergardens.Models
         {
             DescriptionBlocks = new List<DescriptionBlock>();
             KindergardenClaims = new List<KindergardenClaim>();
+            Ratings = new List<Rating>();
         }
     }
 
@@ -213,6 +217,63 @@ namespace IStudyKindergardens.Models
         }
     }
 
+    public class Rating
+    {
+        [Key]
+        public int Id { get; set; }
+
+        [ForeignKey("Kindergarden")]
+        public string KindergardenId { get; set; }
+        public Kindergarden Kindergarden { get; set; }
+
+        [ForeignKey("SiteUser")]
+        public string SiteUserId { get; set; }
+        public SiteUser SiteUser { get; set; }
+
+        public string Comment { get; set; }
+
+        public virtual ICollection<QuestionRating> QuestionRatings { get; set; }
+
+        public Rating()
+        {
+            QuestionRatings = new HashSet<QuestionRating>();
+        }
+    }
+
+    public class QuestionRating
+    {
+        [Key]
+        public int Id { get; set; }
+
+        [ForeignKey("Question")]
+        public int QuestionId { get; set; }
+        public Question Question { get; set; }
+
+        public int Rating { get; set; }
+
+        public virtual ICollection<Rating> Ratings { get; set; }
+
+        public QuestionRating()
+        {
+            Ratings = new HashSet<Rating>();
+        }
+    }
+
+    public class Question
+    {
+        [Key]
+        public int Id { get; set; }
+
+        public string Value { get; set; }
+
+        public ICollection<QuestionRating> QuestionRatings { get; set; }
+
+        public Question()
+        {
+            QuestionRatings = new List<QuestionRating>();
+        }
+    }
+
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public DbSet<SiteUser> SiteUsers { get; set; }
@@ -223,6 +284,10 @@ namespace IStudyKindergardens.Models
         public DbSet<DescriptionBlock> DescriptionBlocks { get; set; }
         public DbSet<DescriptionBlockText> DescriptionBlocksText { get; set; }
         public DbSet<DescriptionBlockTextImage> DescriptionBlocksTextImage { get; set; }
+
+        public DbSet<Rating> Ratings { get; set; }
+        public DbSet<QuestionRating> QuestionRatings { get; set; }
+        public DbSet<Question> Questions { get; set; }
 
         public DbSet<ClaimType> ClaimTypes { get; set; }
 

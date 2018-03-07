@@ -24,15 +24,17 @@ namespace IStudyKindergardens.Controllers
         private readonly ApplicationSignInManager _signInManager;
         private readonly ISiteUserManager _siteUserManager;
         private readonly IKindergardenManager _kindergardenManager;
+        private readonly IRatingManager _ratingManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AdminController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, ISiteUserManager siteUserManager, IKindergardenManager kindergardenManager, RoleManager<IdentityRole> roleManager)
+        public AdminController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, ISiteUserManager siteUserManager, IKindergardenManager kindergardenManager, RoleManager<IdentityRole> roleManager, IRatingManager ratingManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _siteUserManager = siteUserManager;
             _kindergardenManager = kindergardenManager;
             _roleManager = roleManager;
+            _ratingManager = ratingManager;
         }
 
         [HttpGet]
@@ -161,7 +163,7 @@ namespace IStudyKindergardens.Controllers
                     sc.EnableSsl = true;
                     sc.Send(msg);
                     //
-                    
+
                     if (result.Succeeded)
                     {
                         _kindergardenManager.AddKindergarden(model, user.Id, Server);
@@ -178,7 +180,86 @@ namespace IStudyKindergardens.Controllers
 
         private string GetAnswer(string email, string password)
         {
-            return "<span style='font-size: 16px; font-weight: bold;'>Your email:</span><br><span style='font-size: 16px;'>"+email+"</span><br><span style='font-size: 16px; font-weight: bold;'>Your password:</span><br><span style='font-size: 16px;'>"+ password + "</span><br>";
+            return "<span style='font-size: 16px; font-weight: bold;'>Your email:</span><br><span style='font-size: 16px;'>" + email + "</span><br><span style='font-size: 16px; font-weight: bold;'>Your password:</span><br><span style='font-size: 16px;'>" + password + "</span><br>";
+        }
+
+        [HttpGet]
+        public ActionResult Questions()
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                List<Question> questions = RatingManager.GetAllQuestions();
+                return View(questions);
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public ActionResult AddQuestion()
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                return View();
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        public ActionResult AddQuestion(Question question)
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                RatingManager.AddQuestion(question);
+                return RedirectToAction("Questions", "Admin");
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public ActionResult EditQuestion(int id)
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                Question question = RatingManager.GetQuestionById(id);
+                return View(question);
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        public ActionResult EditQuestion(Question question)
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                RatingManager.EditQuestion(question);
+                return RedirectToAction("Questions", "Admin");
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public ActionResult RemoveQuestion(int id)
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                return View(new RemoveQuestionViewModel { Id = id, Value = RatingManager.GetQuestionById(id).Value });
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        public ActionResult RemoveQuestion(RemoveQuestionViewModel model)
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                if (RatingManager.GetQuestionById(model.Id) != null)
+                {
+                    RatingManager.RemoveQuestion(model.Id);
+                    //Видалення всіх відповідей
+                }
+                return RedirectToAction("Questions", "Admin");
+            }
+            return RedirectToAction("Index", "Home");
         }
 
         #region Properties
@@ -211,6 +292,14 @@ namespace IStudyKindergardens.Controllers
             get
             {
                 return _kindergardenManager;
+            }
+        }
+
+        public IRatingManager RatingManager
+        {
+            get
+            {
+                return _ratingManager;
             }
         }
         #endregion

@@ -11,5 +11,6 @@ namespace IStudyKindergardens.Models
         public List<string> Addresses { get; set; }
         public List<string> PreviewPictures { get; set; }
         public List<string> ShortInfo { get; set; }
+        public List<string> Ratings { get; set; }
     }
 }

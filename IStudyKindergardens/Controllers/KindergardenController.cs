@@ -14,10 +14,12 @@ namespace IStudyKindergardens.Controllers
     public class KindergardenController : Controller
     {
         private readonly IKindergardenManager _kindergardenManager;
+        private readonly IRatingManager _ratingManager;
 
-        public KindergardenController(IKindergardenManager kindergardenManager)
+        public KindergardenController(IKindergardenManager kindergardenManager, IRatingManager ratingManager)
         {
             _kindergardenManager = kindergardenManager;
+            _ratingManager = ratingManager;
         }
 
         public ActionResult Index()
@@ -180,7 +182,7 @@ namespace IStudyKindergardens.Controllers
                     return View();
                 }
             }
-            catch (Exception e) { }
+            catch (Exception) { }
             return RedirectToAction("Index", "Home");
         }
 
@@ -225,6 +227,52 @@ namespace IStudyKindergardens.Controllers
             {
                 _kindergardenManager.AddKindergardenClaimWithDel(model.Id, "ShortInfo", model.ShortInfo);
                 return RedirectToAction("KindergardenProfile", "Kindergarden", new { id = model.Id });
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public ActionResult Rate(string id)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                List<QuestionRating> questionRatings = _ratingManager.GetListOfQuestionRatingById(id, User.Identity.GetUserId());
+                List<int> questionRatingValues = new List<int> { };
+                for(int i = 0; i < questionRatings.Count; i++)
+                {
+                    questionRatingValues.Add(questionRatings[i].Rating);
+                }
+                QuestionRatingViewModel model = new QuestionRatingViewModel
+                {
+                    Id = id,
+                    Questions = _ratingManager.GetAllQuestions(),
+                    Ratings = questionRatingValues,
+                    Comment = _ratingManager.GetCommentById(id, User.Identity.GetUserId())
+                };
+                return View(model);
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        public ActionResult Rate(QuestionRatingViewModel model, string jsRatings, string jsQuestions)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                try
+                {
+                    List<string> rating = jsRatings.Split(new char[] { ':' }).ToList();
+                    List<string> questionIds = jsQuestions.Split(new char[] { ':' }).ToList();
+                    List<int> intRating = new List<int> { };
+                    List<int> intQuestionIds = new List<int> { };
+                    for (int i = 0; i < rating.Count; i++)
+                    {
+                        intRating.Add(Convert.ToInt32(rating[i]));
+                        intQuestionIds.Add(Convert.ToInt32(questionIds[i]));
+                    }
+                    _ratingManager.Rate(model.Id, intQuestionIds, intRating, model.Comment, User.Identity.GetUserId());
+                }
+                catch (Exception) { }
             }
             return RedirectToAction("Index", "Home");
         }

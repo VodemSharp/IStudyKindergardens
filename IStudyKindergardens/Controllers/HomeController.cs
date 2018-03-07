@@ -14,10 +14,12 @@ namespace IStudyKindergardens.Controllers
     public class HomeController : Controller
     {
         private readonly IKindergardenManager _kindergardenManager;
+        private readonly IRatingManager _ratingManager;
 
-        public HomeController(IKindergardenManager kindergardenManager)
+        public HomeController(IKindergardenManager kindergardenManager, IRatingManager ratingManager)
         {
             _kindergardenManager = kindergardenManager;
+            _ratingManager = ratingManager;
         }
 
         [HttpGet]
@@ -27,11 +29,13 @@ namespace IStudyKindergardens.Controllers
             model.Addresses = new List<string> { };
             model.PreviewPictures = new List<string> { };
             model.ShortInfo = new List<string> { };
+            model.Ratings = new List<string> { };
             for (int i = 0; i < model.Kindergardens.Count; i++)
             {
                 model.Addresses.Add(_kindergardenManager.GetKindergardenClaimValue(model.Kindergardens[i].Id, "AltAddress"));
                 model.PreviewPictures.Add(_kindergardenManager.GetKindergardenClaimValue(model.Kindergardens[i].Id, "PreviewPicture"));
                 model.ShortInfo.Add(_kindergardenManager.GetKindergardenClaimValue(model.Kindergardens[i].Id, "ShortInfo"));
+                model.Ratings.Add(_ratingManager.CalculateRating(model.Kindergardens[i].Id).ToString());
             }
             return View(model);
         }

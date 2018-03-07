@@ -1,0 +1,97 @@
+﻿@model IStudyKindergardens.Models.QuestionRatingViewModel
+
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-primary">
+                <div class="box-header">
+                    <h3 class="box-title">Оцініть роботу дошкільного навчального закладу по критеріям</h3>
+                </div>
+                <div class="box-body">
+                    <div class="form-group">
+                        <p id="custom-error" style="color: #ff0000; display: none;">Дайте відповідь на усі питання!</p>
+                        @using (Html.BeginForm("Rate", "Kindergarden", FormMethod.Post, htmlAttributes: new { id = "rating-form" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.Hidden("jsRatings", null, htmlAttributes: new { @id = "jsRatings" })
+                            @Html.Hidden("jsQuestions", null, htmlAttributes: new { @id = "jsQuestions" })
+                            for (int i = 0; i < Model.Questions.Count; i++)
+                            {
+                                <div>
+                                    <p style="display: none;" class="questionId">@Model.Questions[i].Id</p>
+                                    <p>@Model.Questions[i].Value</p>
+                                    @for (int j = 1; j < 11; j++)
+                                    {
+                                        if (Model.Ratings[i] == j)
+                                        {
+                                            <a class="btn btn-success mark">@j</a>
+                                        }
+                                        else
+                                        {
+                                            <a class="btn btn-default mark">@j</a>
+                                        }
+                                    }
+                                </div>
+                                <br />
+                            }
+                            @Html.LabelFor(m => m.Comment, "Коментар")
+                            @Html.TextBoxFor(m => m.Comment, new { @class = "form-control", @placeholder = "Коментар" })
+                            <br />
+                            <a class="btn btn-primary btn-block btn-flat" id="link-submit">Оцінити</a>
+                            <input hidden type="submit" id="submit" value="Оцінити">
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    $(".mark").on("click", function () {
+        var selected = this;
+        $(this).parent().children(".mark").each(function (index, element) {
+            if (element == selected) {
+                $(element).removeClass("btn-default");
+                $(element).addClass("btn-success");
+            }
+            else {
+                $(element).removeClass("btn-success");
+                $(element).addClass("btn-default");
+            }
+        });
+    });
+
+    $("#link-submit").on("click", function () {
+        var jsRatings = "";
+        var jsQuestions = "";
+        var temp;
+        var isError = false;
+        $("#rating-form").children("div").each(function (index, element) {
+            temp = $(element).children(".btn-success").html();
+            if (temp == undefined) {
+                $("#custom-error").css("display", "block");
+                isError = true;
+                return;
+            }
+            jsRatings += $(element).children(".btn-success").html() + ':';
+        });
+        $("#rating-form").children("div").each(function (index, element) {
+            temp = $(element).children(".questionId").html();
+            if (temp == undefined) {
+                $("#custom-error").css("display", "block");
+                isError = true;
+                return;
+            }
+            jsQuestions += $(element).children(".questionId").html() + ':';
+        });
+        if (!isError) {
+            $("#custom-error").css("display", "none");
+            jsRatings = jsRatings.substring(0, jsRatings.length - 1);
+            $("#jsRatings").attr("value", jsRatings);
+            jsQuestions = jsQuestions.substring(0, jsQuestions.length - 1);
+            $("#jsQuestions").attr("value", jsQuestions);
+            $("#submit").click();
+        }
+    });
+</script>

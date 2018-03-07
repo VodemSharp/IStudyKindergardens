@@ -115,7 +115,7 @@ namespace IStudyKindergardens.Repositories
                     AddPictureClaim(userId, model.PictureName, server);
                 }
             }
-            else if(model.PictureName == "default")
+            else if (model.PictureName == "default")
             {
                 try
                 {
@@ -229,7 +229,7 @@ namespace IStudyKindergardens.Repositories
                 AddPreviewPictureClaim(id, previewPictureName);
                 db.SaveChanges();
             }
-            catch (Exception e)
+            catch (Exception)
             { }
         }
 

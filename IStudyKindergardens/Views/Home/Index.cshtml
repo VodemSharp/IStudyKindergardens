@@ -30,10 +30,10 @@
                                         <h5 style="text-align: justify; word-wrap: break-word;">@Model.ShortInfo[i]</h5>
                                     </div>
                                     <div class="col-md-3" style="padding-top:15px; padding-right: 20px; padding-left: 0;">
-                                        <h4 style="margin-bottom: 30px;">Рейтинг: <span style="font-weight: bold;">9.8</span></h4>
+                                        <h4 style="margin-bottom: 30px;">Рейтинг: <span style="font-weight: bold;">@Model.Ratings[i]</span></h4>
                                         <div class="btn-group-vertical" style="width:100%;">
-                                            <a class="btn btn-default" style="width:100%;">Оцінити</a>
-                                            @Html.ActionLink("Перейти", "KindergardenProfile", "Kindergarden", routeValues: new { @id = Model.Kindergardens[i].Id }, htmlAttributes: new { @style = "width:100%", @class="btn btn-default" })
+                                            @Html.ActionLink("Оцінити", "Rate", "Kindergarden", routeValues: new { @id = Model.Kindergardens[i].Id }, htmlAttributes: new { @style = "width:100%", @class = "btn btn-default" })
+                                            @Html.ActionLink("Перейти", "KindergardenProfile", "Kindergarden", routeValues: new { @id = Model.Kindergardens[i].Id }, htmlAttributes: new { @style = "width:100%", @class = "btn btn-default" })
                                         </div>
                                     </div>
                                 </div>
@@ -42,7 +42,7 @@
                         </div>
                     </div>
                 </div>
-                            }
+            }
         </div>
     </div>
 </section>
