@@ -22,9 +22,16 @@
                                     <p>@Model.Questions[i].Value</p>
                                     @for (int j = 1; j < 11; j++)
                                     {
-                                        if (Model.Ratings[i] == j)
+                                        if (Model.Ratings.Count > i)
                                         {
-                                            <a class="btn btn-success mark">@j</a>
+                                            if (Model.Ratings[i] == j)
+                                            {
+                                                <a class="btn btn-success mark">@j</a>
+                                            }
+                                            else
+                                            {
+                                                <a class="btn btn-default mark">@j</a>
+                                            }
                                         }
                                         else
                                         {

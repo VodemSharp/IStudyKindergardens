@@ -1,5 +1,6 @@
 ﻿using IStudyKindergardens.Models;
 using IStudyKindergardens.Repositories;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -13,31 +14,30 @@ namespace IStudyKindergardens.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly ISiteUserManager _siteUserManager;
         private readonly IKindergardenManager _kindergardenManager;
         private readonly IRatingManager _ratingManager;
 
-        public HomeController(IKindergardenManager kindergardenManager, IRatingManager ratingManager)
+        public HomeController(IKindergardenManager kindergardenManager, IRatingManager ratingManager, ISiteUserManager siteUserManager)
         {
+            _siteUserManager = siteUserManager;
             _kindergardenManager = kindergardenManager;
             _ratingManager = ratingManager;
         }
 
         [HttpGet]
-        public ActionResult Index()
+        public ActionResult Index(string search)
         {
-            KindergardenListViewModel model = new KindergardenListViewModel { Kindergardens = _kindergardenManager.GetKindergardens().ToList() };
-            model.Addresses = new List<string> { };
-            model.PreviewPictures = new List<string> { };
-            model.ShortInfo = new List<string> { };
-            model.Ratings = new List<string> { };
-            for (int i = 0; i < model.Kindergardens.Count; i++)
-            {
-                model.Addresses.Add(_kindergardenManager.GetKindergardenClaimValue(model.Kindergardens[i].Id, "AltAddress"));
-                model.PreviewPictures.Add(_kindergardenManager.GetKindergardenClaimValue(model.Kindergardens[i].Id, "PreviewPicture"));
-                model.ShortInfo.Add(_kindergardenManager.GetKindergardenClaimValue(model.Kindergardens[i].Id, "ShortInfo"));
-                model.Ratings.Add(_ratingManager.CalculateRating(model.Kindergardens[i].Id).ToString());
-            }
-            return View(model);
+            ViewBag.Type = "MainSearch";
+            return View(_kindergardenManager.GetFormatKindergardenListViewModel(false, User.Identity.GetUserId(), search, null, null, -1, -1));
+        }
+
+        [HttpGet]
+        [Route("AdvancedSearch")]
+        public ActionResult AdvancedSearch(string search, string searchBy, string sortBy)
+        {
+            ViewBag.Type = "AdvancedSearch";
+            return View("Index", _kindergardenManager.GetFormatKindergardenListViewModel(false, User.Identity.GetUserId(), search, searchBy, sortBy, -1, -1));
         }
 
         [HttpPost]
@@ -102,6 +102,31 @@ namespace IStudyKindergardens.Controllers
                 catch (Exception) { }
             }
             return Json(true);
+        }
+
+        [HttpPost]
+        public JsonResult AddKindergardenForUser(string kindergardenId)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                try
+                {
+                    return Json(_siteUserManager.SwitchAddRemoveKindergardenForSiteUser(kindergardenId, User.Identity.GetUserId()));
+                }
+                catch (Exception) { }
+            }
+            return Json("Error");
+        }
+
+        [HttpGet]
+        [Route("MyKindergardens")]
+        public ActionResult MyKindergardens()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return View("Index", _kindergardenManager.GetFormatKindergardenListViewModel(true, User.Identity.GetUserId(), null, null, null, -1, -1));
+            }
+            return RedirectToAction("Index", "Home");
         }
     }
 }

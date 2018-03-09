@@ -1,0 +1,13 @@
+﻿<div class="box box-primary">
+    <div class="box-body">
+        @using (Html.BeginForm("Index", "Home", FormMethod.Get))
+        {
+            <div class="input-group">
+                @Html.TextBox("search", "", htmlAttributes: new { @class = "form-control", @placeholder = "Введіть назву дошкільного навчального закладу..." })
+                <span class="input-group-btn">
+                    <input type="submit" class="btn btn-primary btn-flat" value="Пошук" />
+                </span>
+            </div>
+        }
+    </div>
+</div>

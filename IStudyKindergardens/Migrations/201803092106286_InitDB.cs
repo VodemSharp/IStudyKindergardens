@@ -38,7 +38,7 @@ namespace IStudyKindergardens.Migrations
                         Id = c.String(nullable: false, maxLength: 128),
                         Name = c.String(),
                         Address = c.String(),
-                        Email = c.String(),
+                        ActualRating = c.Double(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.AspNetUsers", t => t.Id)
@@ -117,6 +117,42 @@ namespace IStudyKindergardens.Migrations
                 .Index(t => t.Id);
             
             CreateTable(
+                "dbo.Ratings",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        KindergardenId = c.String(maxLength: 128),
+                        SiteUserId = c.String(maxLength: 128),
+                        Comment = c.String(),
+                    })
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.Kindergardens", t => t.KindergardenId)
+                .ForeignKey("dbo.SiteUsers", t => t.SiteUserId)
+                .Index(t => t.KindergardenId)
+                .Index(t => t.SiteUserId);
+            
+            CreateTable(
+                "dbo.QuestionRatings",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        QuestionId = c.Int(nullable: false),
+                        Rating = c.Int(nullable: false),
+                    })
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.Questions", t => t.QuestionId, cascadeDelete: true)
+                .Index(t => t.QuestionId);
+            
+            CreateTable(
+                "dbo.Questions",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        Value = c.String(),
+                    })
+                .PrimaryKey(t => t.Id);
+            
+            CreateTable(
                 "dbo.SiteUserClaims",
                 c => new
                     {
@@ -130,6 +166,20 @@ namespace IStudyKindergardens.Migrations
                 .ForeignKey("dbo.SiteUsers", t => t.SiteUserId)
                 .Index(t => t.SiteUserId)
                 .Index(t => t.ClaimTypeId);
+            
+            CreateTable(
+                "dbo.SiteUserKindergardens",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        SiteUserId = c.String(maxLength: 128),
+                        KindergardenId = c.String(maxLength: 128),
+                    })
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.Kindergardens", t => t.KindergardenId)
+                .ForeignKey("dbo.SiteUsers", t => t.SiteUserId)
+                .Index(t => t.SiteUserId)
+                .Index(t => t.KindergardenId);
             
             CreateTable(
                 "dbo.DescriptionBlocks",
@@ -158,6 +208,19 @@ namespace IStudyKindergardens.Migrations
                 .PrimaryKey(t => t.Id)
                 .Index(t => t.Name, unique: true, name: "RoleNameIndex");
             
+            CreateTable(
+                "dbo.QuestionRatingRatings",
+                c => new
+                    {
+                        QuestionRating_Id = c.Int(nullable: false),
+                        Rating_Id = c.Int(nullable: false),
+                    })
+                .PrimaryKey(t => new { t.QuestionRating_Id, t.Rating_Id })
+                .ForeignKey("dbo.QuestionRatings", t => t.QuestionRating_Id, cascadeDelete: true)
+                .ForeignKey("dbo.Ratings", t => t.Rating_Id, cascadeDelete: true)
+                .Index(t => t.QuestionRating_Id)
+                .Index(t => t.Rating_Id);
+            
         }
         
         public override void Down()
@@ -166,17 +229,31 @@ namespace IStudyKindergardens.Migrations
             DropForeignKey("dbo.KindergardenClaims", "KindergardenId", "dbo.Kindergardens");
             DropForeignKey("dbo.DescriptionBlocks", "KindergardenId", "dbo.Kindergardens");
             DropForeignKey("dbo.Kindergardens", "Id", "dbo.AspNetUsers");
+            DropForeignKey("dbo.SiteUserKindergardens", "SiteUserId", "dbo.SiteUsers");
+            DropForeignKey("dbo.SiteUserKindergardens", "KindergardenId", "dbo.Kindergardens");
             DropForeignKey("dbo.SiteUserClaims", "SiteUserId", "dbo.SiteUsers");
             DropForeignKey("dbo.SiteUserClaims", "ClaimTypeId", "dbo.ClaimTypes");
+            DropForeignKey("dbo.Ratings", "SiteUserId", "dbo.SiteUsers");
+            DropForeignKey("dbo.QuestionRatingRatings", "Rating_Id", "dbo.Ratings");
+            DropForeignKey("dbo.QuestionRatingRatings", "QuestionRating_Id", "dbo.QuestionRatings");
+            DropForeignKey("dbo.QuestionRatings", "QuestionId", "dbo.Questions");
+            DropForeignKey("dbo.Ratings", "KindergardenId", "dbo.Kindergardens");
             DropForeignKey("dbo.SiteUsers", "Id", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUserRoles", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUserLogins", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUserClaims", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.KindergardenClaims", "ClaimTypeId", "dbo.ClaimTypes");
+            DropIndex("dbo.QuestionRatingRatings", new[] { "Rating_Id" });
+            DropIndex("dbo.QuestionRatingRatings", new[] { "QuestionRating_Id" });
             DropIndex("dbo.AspNetRoles", "RoleNameIndex");
             DropIndex("dbo.DescriptionBlocks", new[] { "KindergardenId" });
+            DropIndex("dbo.SiteUserKindergardens", new[] { "KindergardenId" });
+            DropIndex("dbo.SiteUserKindergardens", new[] { "SiteUserId" });
             DropIndex("dbo.SiteUserClaims", new[] { "ClaimTypeId" });
             DropIndex("dbo.SiteUserClaims", new[] { "SiteUserId" });
+            DropIndex("dbo.QuestionRatings", new[] { "QuestionId" });
+            DropIndex("dbo.Ratings", new[] { "SiteUserId" });
+            DropIndex("dbo.Ratings", new[] { "KindergardenId" });
             DropIndex("dbo.SiteUsers", new[] { "Id" });
             DropIndex("dbo.AspNetUserRoles", new[] { "RoleId" });
             DropIndex("dbo.AspNetUserRoles", new[] { "UserId" });
@@ -186,9 +263,14 @@ namespace IStudyKindergardens.Migrations
             DropIndex("dbo.Kindergardens", new[] { "Id" });
             DropIndex("dbo.KindergardenClaims", new[] { "ClaimTypeId" });
             DropIndex("dbo.KindergardenClaims", new[] { "KindergardenId" });
+            DropTable("dbo.QuestionRatingRatings");
             DropTable("dbo.AspNetRoles");
             DropTable("dbo.DescriptionBlocks");
+            DropTable("dbo.SiteUserKindergardens");
             DropTable("dbo.SiteUserClaims");
+            DropTable("dbo.Questions");
+            DropTable("dbo.QuestionRatings");
+            DropTable("dbo.Ratings");
             DropTable("dbo.SiteUsers");
             DropTable("dbo.AspNetUserRoles");
             DropTable("dbo.AspNetUserLogins");

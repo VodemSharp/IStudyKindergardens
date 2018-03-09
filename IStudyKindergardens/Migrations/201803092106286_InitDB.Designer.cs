@@ -7,13 +7,13 @@ namespace IStudyKindergardens.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class AddRating : IMigrationMetadata
+    public sealed partial class InitDB : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(AddRating));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(InitDB));
         
         string IMigrationMetadata.Id
         {
-            get { return "201803061542482_AddRating"; }
+            get { return "201803092106286_InitDB"; }
         }
         
         string IMigrationMetadata.Source

@@ -16,12 +16,17 @@ namespace IStudyKindergardens.Repositories
         void EditKindergarden(List<DescriptionBlock> descriptionBlocks, string userId, HttpServerUtilityBase server, EditKindergardenViewModel model);
         void EditKindergardenAddress(string id, string address);
 
+        void DeleteKindergarden(string id, HttpServerUtilityBase server);
+
         string GetKindergardenClaimValue(string id, string type);
         string GetPictureUIDById(string id);
         string GetPreviewPictureUIDById(string id);
         Kindergarden GetKindergardenById(string id);
         List<DescriptionBlock> GetDescriptionBlocksById(string id);
         IEnumerable<Kindergarden> GetKindergardens();
+
+        List<Kindergarden> GetKindergardensForSiteUser(string userId);
+        List<KindergardenListItemViewModel> GetFormatKindergardenListViewModel(bool isOnlySelected, string userId, string search = null, string searchBy = null, string sortBy = null, int skip = 0, int take = 0);
     }
 
     public class KindergardenManager : IDisposable, IKindergardenManager
@@ -179,7 +184,7 @@ namespace IStudyKindergardens.Repositories
 
         public void AddKindergarden(AddKindergardenViewModel model, string userId, HttpServerUtilityBase server)
         {
-            Kindergarden kindergarden = new Kindergarden { Name = model.Name, Address = model.Address, Id = userId };
+            Kindergarden kindergarden = new Kindergarden { Name = model.Name, Address = model.Address, Id = userId, ActualRating = -1 };
             db.Kindergardens.Add(kindergarden);
             if (model.PictureName != null)
             {
@@ -250,6 +255,127 @@ namespace IStudyKindergardens.Repositories
         public List<DescriptionBlock> GetDescriptionBlocksById(string id)
         {
             return db.DescriptionBlocks.Where(db => db.KindergardenId == id).ToList();
+        }
+
+        public void DeleteKindergarden(string id, HttpServerUtilityBase server)
+        {
+            try
+            {
+                SiteUserClaim siteUserClaim = db.SiteUserClaims.Where(suc => suc.SiteUserId == id && suc.ClaimType.Type == "Picture").First();
+                System.IO.File.Delete(server.MapPath("~/Images/Uploaded/Source/" + siteUserClaim.ClaimValue));
+                db.SiteUserClaims.Remove(siteUserClaim);
+            }
+            catch (Exception) { }
+            try
+            {
+                SiteUserClaim siteUserClaim = db.SiteUserClaims.Where(suc => suc.SiteUserId == id && suc.ClaimType.Type == "PreviewPicture").First();
+                System.IO.File.Delete(server.MapPath("~/Images/Uploaded/Source/" + siteUserClaim.ClaimValue));
+                db.SiteUserClaims.Remove(siteUserClaim);
+            }
+            catch (Exception) { }
+            db.KindergardenClaims.RemoveRange(db.KindergardenClaims.Where(kc => kc.KindergardenId == id));
+            List<Rating> kindergardenRatings = db.Ratings.Where(r => r.KindergardenId == id).ToList();
+            for (int i = 0; i < kindergardenRatings.Count; i++)
+            {
+                for (int j = 0; j < kindergardenRatings[i].QuestionRatings.Count; j++)
+                {
+                    db.QuestionRatings.Remove(kindergardenRatings[i].QuestionRatings.ToList()[j]);
+                }
+            }
+            db.Ratings.RemoveRange(kindergardenRatings);
+            db.DescriptionBlocks.RemoveRange(db.DescriptionBlocks.Where(db => db.KindergardenId == id));
+            db.SiteUserKindergardens.RemoveRange(db.SiteUserKindergardens.Where(suk => suk.KindergardenId == id));
+
+            Kindergarden kindergarden = db.Kindergardens.Include("ApplicationUser").Where(k => k.Id == id).First();
+            if (kindergarden != null)
+            {
+                db.Users.Remove(kindergarden.ApplicationUser);
+                db.Kindergardens.Remove(kindergarden);
+                db.SaveChanges();
+            }
+        }
+
+        public List<Kindergarden> GetKindergardensForSiteUser(string userId)
+        {
+            List<Kindergarden> kindergardens = new List<Kindergarden> { };
+            List<SiteUserKindergarden> siteUserKindergardens = db.SiteUserKindergardens.Where(suk => suk.SiteUserId == userId).ToList();
+            string tempId;
+            for (int i = 0; i < siteUserKindergardens.Count; i++)
+            {
+                tempId = siteUserKindergardens[i].KindergardenId;
+                kindergardens.Add(db.Kindergardens.Where(k => k.Id == tempId).First());
+            }
+            return kindergardens;
+        }
+
+        private bool CheckAltAddress(string kindergardenId, string search)
+        {
+            return GetKindergardenClaimValue(kindergardenId, "AltAddress").Contains(search);
+        }
+
+        private bool IsKindergardenSelected(string userId, string kindergardenId)
+        {
+            return db.SiteUserKindergardens.Any(suk => suk.KindergardenId == kindergardenId && suk.SiteUserId == userId);
+        }
+
+        public List<KindergardenListItemViewModel> GetFormatKindergardenListViewModel(bool isOnlySelected, string userId, string search = null, string searchBy = null, string sortBy = null, int skip = 0, int take = 0)
+        {
+            List<KindergardenListItemViewModel> model = new List<KindergardenListItemViewModel> { };
+            List<Kindergarden> kindergardens;
+
+            search = search ?? "";
+            searchBy = searchBy ?? "Name";
+            sortBy = sortBy ?? "Desc";
+            if (isOnlySelected)
+            {
+                kindergardens = GetKindergardensForSiteUser(userId);
+            }
+            else
+            {
+                kindergardens = db.Kindergardens.ToList();
+            }
+            if (searchBy == "Address")
+            {
+                kindergardens = kindergardens.Where(k => k.Address.Contains(search) || CheckAltAddress(k.Id, search)).ToList();
+            }
+            else
+            {
+                kindergardens = kindergardens.Where(k => k.Name.Contains(search)).ToList();
+            }
+            if (sortBy == "Asc")
+            {
+                kindergardens = kindergardens.OrderBy(k => k.ActualRating).ThenBy(k => k.Name).ToList();
+            }
+            else
+            {
+                kindergardens = kindergardens.OrderByDescending(k => k.ActualRating).ThenBy(k => k.Name).ToList();
+            }
+            if (skip != -1 || take != -1)
+            {
+                kindergardens = kindergardens.Skip(skip).Take(take).ToList();
+            }
+            string tempRating;
+            for (int i = 0; i < kindergardens.Count; i++)
+            {
+                tempRating = kindergardens[i].ActualRating.ToString();
+                model.Add(new KindergardenListItemViewModel
+                {
+                    Kindergarden = kindergardens[i],
+                    Address = GetKindergardenClaimValue(kindergardens[i].Id, "AltAddress"),
+                    PreviewPicture = GetKindergardenClaimValue(kindergardens[i].Id, "PreviewPicture"),
+                    ShortInfo = GetKindergardenClaimValue(kindergardens[i].Id, "ShortInfo"),
+                    Rating = (tempRating == "-1") ? "-" : tempRating,
+                });
+                if (isOnlySelected)
+                {
+                    model[model.Count - 1].IsSelected = true;
+                }
+                else
+                {
+                    model[model.Count - 1].IsSelected = IsKindergardenSelected(userId, kindergardens[i].Id);
+                }
+            }
+            return model;
         }
 
         protected void Dispose(bool disposing)

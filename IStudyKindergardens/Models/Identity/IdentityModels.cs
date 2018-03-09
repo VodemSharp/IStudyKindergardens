@@ -45,11 +45,13 @@ namespace IStudyKindergardens.Models
         public string DateOfBirth { get; set; }
 
         public ICollection<SiteUserClaim> SiteUserClaims { get; set; }
+        public ICollection<SiteUserKindergarden> SiteUserKindergardens { get; set; }
         public ICollection<Rating> Ratings { get; set; }
 
         public SiteUser()
         {
             SiteUserClaims = new List<SiteUserClaim>();
+            SiteUserKindergardens = new List<SiteUserKindergarden>();
             Ratings = new List<Rating>();
         }
     }
@@ -70,16 +72,31 @@ namespace IStudyKindergardens.Models
         public string ClaimValue { get; set; }
     }
 
+    public class SiteUserKindergarden
+    {
+        [Key]
+        public int Id { get; set; }
+
+        [ForeignKey("SiteUser")]
+        public string SiteUserId { get; set; }
+        public SiteUser SiteUser { get; set; }
+
+        [ForeignKey("Kindergarden")]
+        public string KindergardenId { get; set; }
+        public Kindergarden Kindergarden { get; set; }
+    }
+
     public class Kindergarden
     {
         [Key, ForeignKey("ApplicationUser")]
         public string Id { get; set; }
         public string Name { get; set; }
         public string Address { get; set; }
-        public string Email { get; set; }
+        public double ActualRating { get; set; }
 
         public ICollection<DescriptionBlock> DescriptionBlocks { get; set; }
         public ICollection<KindergardenClaim> KindergardenClaims { get; set; }
+        public ICollection<SiteUserKindergarden> SiteUserKindergardens { get; set; }
         public ICollection<Rating> Ratings { get; set; }
 
         public virtual ApplicationUser ApplicationUser { get; set; }
@@ -88,6 +105,7 @@ namespace IStudyKindergardens.Models
         {
             DescriptionBlocks = new List<DescriptionBlock>();
             KindergardenClaims = new List<KindergardenClaim>();
+            SiteUserKindergardens = new List<SiteUserKindergarden>();
             Ratings = new List<Rating>();
         }
     }
@@ -278,6 +296,7 @@ namespace IStudyKindergardens.Models
     {
         public DbSet<SiteUser> SiteUsers { get; set; }
         public DbSet<SiteUserClaim> SiteUserClaims { get; set; }
+        public DbSet<SiteUserKindergarden> SiteUserKindergardens { get; set; }
 
         public DbSet<Kindergarden> Kindergardens { get; set; }
         public DbSet<KindergardenClaim> KindergardenClaims { get; set; }

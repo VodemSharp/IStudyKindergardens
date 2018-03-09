@@ -13,6 +13,8 @@ namespace IStudyKindergardens.Repositories
         void RegisterSiteUser(SiteUser siteUser);
         void AddSiteUser(AddUserViewModel model, string userId, HttpServerUtilityBase Server);
 
+        bool SwitchAddRemoveKindergardenForSiteUser(string kindergardenId, string userId);
+
         void EditSiteUser(EditUserViewModel model, string userId, HttpServerUtilityBase Server);
 
         void DeleteSiteUser(string userId, HttpServerUtilityBase server);
@@ -30,6 +32,22 @@ namespace IStudyKindergardens.Repositories
         {
             db.SiteUsers.Add(siteUser);
             db.SaveChanges();
+        }
+
+        public bool SwitchAddRemoveKindergardenForSiteUser(string kindergardenId, string userId)
+        {
+            if (db.SiteUserKindergardens.Any(suk => suk.KindergardenId == kindergardenId && suk.SiteUserId == userId))
+            {
+                db.SiteUserKindergardens.Remove(db.SiteUserKindergardens.Where(suk => suk.KindergardenId == kindergardenId && suk.SiteUserId == userId).First());
+                db.SaveChanges();
+                return false;
+            }
+            else
+            {
+                db.SiteUserKindergardens.Add(new SiteUserKindergarden { SiteUserId = userId, KindergardenId = kindergardenId });
+                db.SaveChanges();
+                return true;
+            }
         }
 
         private void AddPictureClaim(string id, string pictureName, HttpServerUtilityBase server)
@@ -131,6 +149,17 @@ namespace IStudyKindergardens.Repositories
             try
             {
                 SiteUser siteUser = db.SiteUsers.Include("ApplicationUser").Where(su => su.Id == userId).First();
+                db.SiteUserClaims.RemoveRange(db.SiteUserClaims.Where(suc => suc.SiteUserId == userId));
+                db.SiteUserKindergardens.RemoveRange(db.SiteUserKindergardens.Where(suk => suk.SiteUserId == userId));
+                List<Rating> userRatings = db.Ratings.Where(r => r.SiteUserId == userId).ToList();
+                for (int i = 0; i < userRatings.Count; i++)
+                {
+                    for (int j = 0; j < userRatings[i].QuestionRatings.Count; j++)
+                    {
+                        db.QuestionRatings.Remove(userRatings[i].QuestionRatings.ToList()[j]);
+                    }
+                }
+                db.Ratings.RemoveRange(userRatings);
                 if (siteUser != null)
                 {
                     db.Users.Remove(siteUser.ApplicationUser);

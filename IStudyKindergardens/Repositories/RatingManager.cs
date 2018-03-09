@@ -15,7 +15,8 @@ namespace IStudyKindergardens.Repositories
         void RemoveQuestion(int id);
 
         void Rate(string kindergardenId, List<int> questionIds, List<int> rating, string comment, string userId);
-        string CalculateRating(string kindergardenId);
+        void RefreshRating(string kindergardenId);
+        double GetActualRating(string kindergardenId);
         List<QuestionRating> GetListOfQuestionRatingById(string kindergardenId, string userId);
         string GetCommentById(string kindergardenId, string userId);
     }
@@ -61,9 +62,19 @@ namespace IStudyKindergardens.Repositories
             db.SaveChanges();
         }
 
+        public void RefreshRating(string kindergardenId)
+        {
+            db.Kindergardens.Where(k => k.Id == kindergardenId).First().ActualRating = CalculateRatingDouble(kindergardenId);
+        }
+
+        public double GetActualRating(string kindergardenId)
+        {
+            return db.Kindergardens.Where(k => k.Id == kindergardenId).First().ActualRating;
+        }
+
         public void Rate(string kindergardenId, List<int> questionIds, List<int> rating, string comment, string userId)
         {
-            if (!db.Ratings.Any(r => r.SiteUserId == userId))
+            if (!db.Ratings.Any(r => r.SiteUserId == userId && r.KindergardenId == kindergardenId))
             {
                 List<QuestionRating> questionRatings = new List<QuestionRating> { };
                 if (questionIds.Count == rating.Count)
@@ -75,6 +86,7 @@ namespace IStudyKindergardens.Repositories
                 }
                 db.QuestionRatings.AddRange(questionRatings);
                 db.Ratings.Add(new Rating { KindergardenId = kindergardenId, SiteUserId = userId, Comment = comment, QuestionRatings = questionRatings });
+                db.SaveChanges();
             }
             else
             {
@@ -118,17 +130,18 @@ namespace IStudyKindergardens.Repositories
                 editedRating.Comment = comment;
                 editedRating.QuestionRatings = questionRating;
             }
+            RefreshRating(kindergardenId);
             db.SaveChanges();
         }
 
-        public string CalculateRating(string kindergardenId)
+        private double CalculateRatingDouble(string kindergardenId)
         {
             double result = 0;
             int count = 0;
             List<Rating> ratings = db.Ratings.Where(r => r.KindergardenId == kindergardenId).ToList();
             if (ratings.Count == 0)
             {
-                return "-";
+                return -1;
             }
             for (int i = 0; i < ratings.Count; i++)
             {
@@ -138,17 +151,44 @@ namespace IStudyKindergardens.Repositories
                     count++;
                 }
             }
-            return Math.Round(result / count, 1).ToString();
+            return Math.Round(result / count, 1);
+        }
+
+        private string CalculateRating(string kindergardenId)
+        {
+            double rating = CalculateRatingDouble(kindergardenId);
+            if (rating == -1)
+            {
+                return "-";
+            }
+            else
+            {
+                return rating.ToString();
+            }
         }
 
         public List<QuestionRating> GetListOfQuestionRatingById(string kindergardenId, string userId)
         {
-            return db.Ratings.Where(r => r.KindergardenId == kindergardenId && r.SiteUserId == userId).First().QuestionRatings.ToList();
+            try
+            {
+                return db.Ratings.Where(r => r.KindergardenId == kindergardenId && r.SiteUserId == userId).First().QuestionRatings.ToList();
+            }
+            catch (Exception)
+            {
+                return new List<QuestionRating>();
+            }
         }
 
         public string GetCommentById(string kindergardenId, string userId)
         {
-            return db.Ratings.Where(r => r.KindergardenId == kindergardenId && r.SiteUserId == userId).First().Comment;
+            try
+            {
+                return db.Ratings.Where(r => r.KindergardenId == kindergardenId && r.SiteUserId == userId).First().Comment;
+            }
+            catch (Exception)
+            {
+                return String.Empty;
+            }
         }
 
         protected void Dispose(bool disposing)

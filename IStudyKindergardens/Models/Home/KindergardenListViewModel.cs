@@ -5,12 +5,13 @@ using System.Web;
 
 namespace IStudyKindergardens.Models
 {
-    public class KindergardenListViewModel
+    public class KindergardenListItemViewModel
     {
-        public List<Kindergarden> Kindergardens { get; set; }
-        public List<string> Addresses { get; set; }
-        public List<string> PreviewPictures { get; set; }
-        public List<string> ShortInfo { get; set; }
-        public List<string> Ratings { get; set; }
+        public Kindergarden Kindergarden { get; set; }
+        public string Address { get; set; }
+        public string PreviewPicture { get; set; }
+        public string ShortInfo { get; set; }
+        public string Rating { get; set; }
+        public bool IsSelected { get; set; }
     }
 }

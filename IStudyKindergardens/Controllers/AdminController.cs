@@ -133,6 +133,37 @@ namespace IStudyKindergardens.Controllers
         }
 
         [HttpGet]
+        public ActionResult DeleteKindergarden(string id)
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                Kindergarden kindergarden = KindergardenManager.GetKindergardenById(id);
+                if (kindergarden == null)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                return View(new DeleteKindergardenViewModel { Id = kindergarden.Id, Name = kindergarden.Name });
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteKindergarden(DeleteKindergardenViewModel model)
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                if (!ModelState.IsValid)
+                {
+                    return View(model);
+                }
+                KindergardenManager.DeleteKindergarden(model.Id, Server);
+                return RedirectToAction("Kindergardens", "Admin");
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
         public ActionResult AddKindergarden()
         {
             if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
@@ -154,14 +185,25 @@ namespace IStudyKindergardens.Controllers
                     string password = Guid.NewGuid().ToString("N");
                     var result = UserManager.Create(user, password);
                     //
-                    MailMessage msg = new MailMessage("istudy.network@gmail.com", model.Email, "IStudy password", GetAnswer(model.Email, password));
-                    msg.IsBodyHtml = true;
-                    SmtpClient sc = new SmtpClient("smtp.gmail.com", 587);
-                    sc.UseDefaultCredentials = false;
-                    NetworkCredential cre = new NetworkCredential("istudy.network@gmail.com", "istudyrepublika");
-                    sc.Credentials = cre;
-                    sc.EnableSsl = true;
-                    sc.Send(msg);
+                    try
+                    {
+                        MailMessage msg = new MailMessage("istudy.network@gmail.com", model.Email, "IStudy password", GetAnswer(model.Email, password))
+                        {
+                            IsBodyHtml = true
+                        };
+                        SmtpClient sc = new SmtpClient("smtp.gmail.com", 587)
+                        {
+                            UseDefaultCredentials = false
+                        };
+                        NetworkCredential cre = new NetworkCredential("istudy.network@gmail.com", "istudyrepublika");
+                        sc.Credentials = cre;
+                        sc.EnableSsl = true;
+                        sc.Send(msg);
+                    }
+                    catch (Exception)
+                    {
+
+                    }
                     //
 
                     if (result.Succeeded)

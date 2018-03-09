@@ -90,7 +90,7 @@ namespace IStudyKindergardens.Controllers
                         ViewBag.Picture = "/Images/Default/anonymKindergarden.jpg";
                     }
                     List<DescriptionBlock> descriptionBlocks = _kindergardenManager.GetDescriptionBlocksById(id);
-                    EditKindergardenViewModel model = new EditKindergardenViewModel { Id = id, Name = kindergarden.Name, Address = kindergarden.Address, Email = kindergarden.Email, DescriptionBlocks = descriptionBlocks };
+                    EditKindergardenViewModel model = new EditKindergardenViewModel { Id = id, Name = kindergarden.Name, Address = kindergarden.Address, Email = kindergarden.ApplicationUser.Email, DescriptionBlocks = descriptionBlocks };
                     return View(model);
                 }
                 catch (Exception)
@@ -238,7 +238,7 @@ namespace IStudyKindergardens.Controllers
             {
                 List<QuestionRating> questionRatings = _ratingManager.GetListOfQuestionRatingById(id, User.Identity.GetUserId());
                 List<int> questionRatingValues = new List<int> { };
-                for(int i = 0; i < questionRatings.Count; i++)
+                for (int i = 0; i < questionRatings.Count; i++)
                 {
                     questionRatingValues.Add(questionRatings[i].Rating);
                 }
@@ -259,20 +259,17 @@ namespace IStudyKindergardens.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                try
+                List<string> rating = jsRatings.Split(new char[] { ':' }).ToList();
+                List<string> questionIds = jsQuestions.Split(new char[] { ':' }).ToList();
+                List<int> intRating = new List<int> { };
+                List<int> intQuestionIds = new List<int> { };
+                for (int i = 0; i < rating.Count; i++)
                 {
-                    List<string> rating = jsRatings.Split(new char[] { ':' }).ToList();
-                    List<string> questionIds = jsQuestions.Split(new char[] { ':' }).ToList();
-                    List<int> intRating = new List<int> { };
-                    List<int> intQuestionIds = new List<int> { };
-                    for (int i = 0; i < rating.Count; i++)
-                    {
-                        intRating.Add(Convert.ToInt32(rating[i]));
-                        intQuestionIds.Add(Convert.ToInt32(questionIds[i]));
-                    }
-                    _ratingManager.Rate(model.Id, intQuestionIds, intRating, model.Comment, User.Identity.GetUserId());
+                    intRating.Add(Convert.ToInt32(rating[i]));
+                    intQuestionIds.Add(Convert.ToInt32(questionIds[i]));
                 }
-                catch (Exception) { }
+                model.Comment = model.Comment ?? "";
+                _ratingManager.Rate(model.Id, intQuestionIds, intRating, model.Comment, User.Identity.GetUserId());
             }
             return RedirectToAction("Index", "Home");
         }
