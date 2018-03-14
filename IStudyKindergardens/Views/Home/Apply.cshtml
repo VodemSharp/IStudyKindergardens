@@ -1,0 +1,175 @@
+﻿@model IStudyKindergardens.Models.AddStatementViewModel
+
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-info">
+                <div class="box-header">
+                    <h3 class="box-title">Реєстрація на чергу в дошкільний навчальний заклад</h3>
+                </div><!-- /.box-header -->
+                <div class="box-body">
+                    <div class="row">
+                        <div class="form-group has-feedback col-md-12">
+                            @using (Html.BeginForm("Apply", "Home", FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+                                <div class="row">
+                                    <div class="form-group has-feedback col-md-6">
+                                        @Html.LabelFor(m => m.SNF, "ПІБ одного з батьків")
+                                        @Html.TextBoxFor(m => m.SNF, new { @class = "form-control", @placeholder = "Введіть ПІБ одного з батьків..." })
+                                    </div>
+                                    <div class="form-group has-feedback col-md-6">
+                                        @Html.LabelFor(m => m.ChildSNF, "ПІБ дитини")
+                                        @Html.TextBoxFor(m => m.ChildSNF, new { @class = "form-control", @placeholder = "Введіть ПІБ дитини..." })
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group has-feedback col-md-6">
+                                        @Html.LabelFor(m => m.SeriesNumberPassport, "Серія і номер паспорта одного з батьків")
+                                        @Html.TextBoxFor(m => m.SeriesNumberPassport, new { @class = "form-control", @placeholder = "Введіть серію і номер паспорта..." })
+                                    </div>
+                                    <div class="form-group has-feedback col-md-6">
+                                        @Html.LabelFor(m => m.ChildBirthCertificate, "Серія і номер свідоцтва про народження дитини")
+                                        @Html.TextBoxFor(m => m.ChildBirthCertificate, new { @class = "form-control", @placeholder = "Введіть cерію і номер свідоцтва..." })
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group has-feedback col-md-6">
+                                        @Html.LabelFor(m => m.Address, "Адреса проживання")
+                                        @Html.TextBoxFor(m => m.Address, new { @class = "form-control", @placeholder = "Введіть адресу проживання..." })
+                                    </div>
+                                    <div class="form-group has-feedback col-md-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(m => m.ChildDateOfBirth, "Дата народження дитини")
+                                            <div class="input-group">
+                                                <div class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                </div>
+                                                @Html.TextBoxFor(m => m.ChildDateOfBirth, new { @placeholder = "Дата народження дитини", @class = "form-control", @data_inputmask = "'alias': 'dd/mm/yyyy'", @data_mask = "" })
+                                            </div>
+                                            @Html.ValidationMessageFor(m => m.ChildDateOfBirth, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group has-feedback col-md-4">
+                                        @Html.LabelFor(m => m.Email, "Email")
+                                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = "Введіть свій email..." })
+                                    </div>
+                                    <div class="form-group has-feedback col-md-4">
+                                        @Html.LabelFor(m => m.PhoneNumber, "Контактний телефон")
+                                        <div class="input-group">
+                                            <div class="input-group-addon">+38</div>
+                                            @Html.TextBoxFor(m => m.PhoneNumber, new { @placeholder = "Введіть телефон...", @class = "form-control", @data_inputmask = "'mask': '(999) 999-9999'", @data_mask = "" })
+                                        </div>
+                                        @Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group has-feedback col-md-4">
+                                        @Html.LabelFor(m => m.AdditionalPhoneNumber, "Контактний телефон")
+                                        <div class="input-group">
+                                            <div class="input-group-addon">+38</div>
+                                            @Html.TextBoxFor(m => m.AdditionalPhoneNumber, new { @placeholder = "Введіть допоміжний телефон...", @class = "form-control", @data_inputmask = "'mask': '(999) 999-9999'", @data_mask = "" })
+                                        </div>
+                                        @Html.ValidationMessageFor(m => m.AdditionalPhoneNumber, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group has-feedback col-md-12">
+                                        @Html.LabelFor(m => m.SelectedKindergardenId, "Дошкільний навчальний заклад")
+                                        <div>
+                                            @Html.DropDownListFor(m => m.SelectedKindergardenId, Model.Kindergardens)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label>Вибір групи</label>
+                                    </div>
+                                </div>
+                                for (int i = 0; i < Model.Groups.Count; i++)
+                                {
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label>
+                                                    @Html.RadioButtonFor(m => m.SelectedGroup, Model.Groups[i])
+                                                </label>
+                                                @Html.HiddenFor(m => m.Groups[i])
+                                                <span>&nbsp;@Model.Groups[i]</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label>Наявні пільги</label>
+                                    </div>
+                                </div>
+                                for (int i = 0; i < Model.Privileges.Count; i++)
+                                {
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label>
+                                                    @Html.CheckBoxFor(m => m.Privileges[i].Value)
+                                                </label>
+                                                @Html.HiddenFor(m => m.Privileges[i].Key)
+                                                <span>&nbsp;@Model.Privileges[i].Key</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        @Html.LabelFor(m => m.Captcha, "Код перевірки")
+                                        @Html.ValidationMessageFor(model => model.Captcha)
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-12">
+                                        <img src='@Url.Action("Captcha", "Home")' alt='captcha' />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-12">
+                                        @Html.TextBoxFor(m => m.Captcha, new { @placeholder = "Введіть код перевірки...", @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>
+                                                @Html.CheckBoxFor(m => m.Consent)
+                                            </label>
+                                            <span>&nbsp;Згода на використання персональних даних!</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <input type="submit" class="btn btn-primary btn-block btn-flat" value="Добавити">
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div><!-- /.box-body -->
+            </div>
+        </div>
+    </div>
+</section>
+
+@Scripts.Render("~/js/inputmask")
+
+<script>
+    $(function () {
+        $('input').iCheck({
+            checkboxClass: 'icheckbox_square-blue',
+            radioClass: 'iradio_square-blue',
+            increaseArea: '0%' // optional
+        });
+    });
+    $(function () {
+        $("[data-mask]").inputmask();
+    });
+</script>

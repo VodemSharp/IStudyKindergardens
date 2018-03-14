@@ -47,12 +47,14 @@ namespace IStudyKindergardens.Models
         public ICollection<SiteUserClaim> SiteUserClaims { get; set; }
         public ICollection<SiteUserKindergarden> SiteUserKindergardens { get; set; }
         public ICollection<Rating> Ratings { get; set; }
+        public ICollection<Statement> Statements { get; set; }
 
         public SiteUser()
         {
             SiteUserClaims = new List<SiteUserClaim>();
             SiteUserKindergardens = new List<SiteUserKindergarden>();
             Ratings = new List<Rating>();
+            Statements = new List<Statement>();
         }
     }
 
@@ -98,6 +100,7 @@ namespace IStudyKindergardens.Models
         public ICollection<KindergardenClaim> KindergardenClaims { get; set; }
         public ICollection<SiteUserKindergarden> SiteUserKindergardens { get; set; }
         public ICollection<Rating> Ratings { get; set; }
+        public ICollection<Statement> Statements { get; set; }
 
         public virtual ApplicationUser ApplicationUser { get; set; }
 
@@ -107,6 +110,7 @@ namespace IStudyKindergardens.Models
             KindergardenClaims = new List<KindergardenClaim>();
             SiteUserKindergardens = new List<SiteUserKindergarden>();
             Ratings = new List<Rating>();
+            Statements = new List<Statement>();
         }
     }
 
@@ -292,6 +296,98 @@ namespace IStudyKindergardens.Models
         }
     }
 
+    public class Statement
+    {
+        [Key]
+        public int Id { get; set; }
+
+        [ForeignKey("Kindergarden")]
+        public string KindergardenId { get; set; }
+        public Kindergarden Kindergarden { get; set; }
+
+        [ForeignKey("SiteUser")]
+        public string SiteUserId { get; set; }
+        public SiteUser SiteUser { get; set; }
+
+        public string SNF { get; set; }
+        public string SeriesNumberPassport { get; set; }
+        public string ChildSNF { get; set; }
+        public string ChildDateOfBirth { get; set; }
+        public string ChildBirthCertificate { get; set; }
+        public string Group { get; set; }
+        public string Address { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
+        public string AdditionalPhoneNumber { get; set; }
+        public string Status { get; set; }
+        public bool IsRemoved { get; set; }
+        public bool IsSelected { get; set; }
+        public DateTime DateTime { get; set; }
+
+        public ICollection<UserPrivilegeStatement> UserPrivilegeStatements { get; set; }
+
+        public Statement()
+        {
+            UserPrivilegeStatements = new List<UserPrivilegeStatement>();
+        }
+    }
+
+    public class KindergardenStatement
+    {
+        [Key]
+        public int Id { get; set; }
+
+        [ForeignKey("Kindergarden")]
+        public string KindergardenId { get; set; }
+        public Kindergarden Kindergarden { get; set; }
+
+        [ForeignKey("SiteUser")]
+        public string SiteUserId { get; set; }
+        public SiteUser SiteUser { get; set; }
+    }
+
+    public class UserPrivilegeStatement
+    {
+        [Key]
+        public int Id { get; set; }
+
+        [ForeignKey("UserPrivilege")]
+        public int UserPrivilegeId { get; set; }
+        public UserPrivilege UserPrivilege { get; set; }
+
+        [ForeignKey("Statement")]
+        public int StatementId { get; set; }
+        public Statement Statement { get; set; }
+    }
+
+    public class UserPrivilege
+    {
+        [Key]
+        public int Id { get; set; }
+        public string Value { get; set; }
+
+        public ICollection<UserPrivilegeStatement> UserPrivilegeStatements { get; set; }
+
+        public UserPrivilege()
+        {
+            UserPrivilegeStatements = new List<UserPrivilegeStatement>();
+        }
+    }
+
+    public class Group
+    {
+        [Key]
+        public int Id { get; set; }
+        public string Value { get; set; }
+    }
+
+    public class Privilege
+    {
+        [Key]
+        public int Id { get; set; }
+        public string Value { get; set; }
+    }
+
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public DbSet<SiteUser> SiteUsers { get; set; }
@@ -303,6 +399,13 @@ namespace IStudyKindergardens.Models
         public DbSet<DescriptionBlock> DescriptionBlocks { get; set; }
         public DbSet<DescriptionBlockText> DescriptionBlocksText { get; set; }
         public DbSet<DescriptionBlockTextImage> DescriptionBlocksTextImage { get; set; }
+        public DbSet<KindergardenStatement> KindergardenStatements { get; set; }
+
+        public DbSet<Statement> Statements { get; set; }
+        public DbSet<Privilege> Privileges { get; set; }
+        public DbSet<Group> Groups { get; set; }
+        public DbSet<UserPrivilege> UserPrivileges { get; set; }
+        public DbSet<UserPrivilegeStatement> UserPrivilegeStatements { get; set; }
 
         public DbSet<Rating> Ratings { get; set; }
         public DbSet<QuestionRating> QuestionRatings { get; set; }

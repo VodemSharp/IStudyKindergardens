@@ -36,7 +36,6 @@ namespace IStudyKindergardens.Models
 
         [Required(ErrorMessage = "Вкажіть свій номер телефону!")]
         [Display(Name = "PhoneNumber")]
-        [Remote("CheckPhoneNumber", "Account", ErrorMessage = "Не коректно вказаний номер телефону!")]
         public string PhoneNumber { get; set; }
 
         [Required(ErrorMessage = "Вкажіть свій електронний адрес!")]
@@ -46,7 +45,6 @@ namespace IStudyKindergardens.Models
 
         [Required(ErrorMessage = "Вкажіть свою дату народження!")]
         [Display(Name = "DateOfBirth")]
-        [Remote("CheckDateOfBirth", "Account", ErrorMessage = "Не коректна дата народження!")]
         public string DateOfBirth { get; set; }
 
         [Required(ErrorMessage = "Вкажіть пароль!")]

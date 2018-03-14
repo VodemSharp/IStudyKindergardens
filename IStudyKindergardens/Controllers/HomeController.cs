@@ -1,4 +1,5 @@
-﻿using IStudyKindergardens.Models;
+﻿using IStudyKindergardens.HelpClasses;
+using IStudyKindergardens.Models;
 using IStudyKindergardens.Repositories;
 using Microsoft.AspNet.Identity;
 using System;
@@ -17,12 +18,14 @@ namespace IStudyKindergardens.Controllers
         private readonly ISiteUserManager _siteUserManager;
         private readonly IKindergardenManager _kindergardenManager;
         private readonly IRatingManager _ratingManager;
+        private readonly IStatementManager _statementManager;
 
-        public HomeController(IKindergardenManager kindergardenManager, IRatingManager ratingManager, ISiteUserManager siteUserManager)
+        public HomeController(IKindergardenManager kindergardenManager, IRatingManager ratingManager, ISiteUserManager siteUserManager, IStatementManager statementManager)
         {
             _siteUserManager = siteUserManager;
             _kindergardenManager = kindergardenManager;
             _ratingManager = ratingManager;
+            _statementManager = statementManager;
         }
 
         [HttpGet]
@@ -127,6 +130,170 @@ namespace IStudyKindergardens.Controllers
                 return View("Index", _kindergardenManager.GetFormatKindergardenListViewModel(true, User.Identity.GetUserId(), null, null, null, -1, -1));
             }
             return RedirectToAction("Index", "Home");
+        }
+
+        public ActionResult Captcha()
+        {
+            string code = new Random(DateTime.Now.Millisecond).Next(1111, 9999).ToString();
+            Session["code"] = code;
+            CaptchaImage captcha = new CaptchaImage(code, 110, 50);
+
+            Response.Clear();
+            Response.ContentType = "image/jpeg";
+
+            captcha.Image.Save(Response.OutputStream, ImageFormat.Jpeg);
+
+            captcha.Dispose();
+            return null;
+        }
+
+        [HttpGet]
+        [Route("Apply/{id=}")]
+        public ActionResult Apply(string id)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                List<Privilege> privileges = _statementManager.GetAllPrivileges();
+                List<Group> groups = _statementManager.GetAllGroups();
+                List<Kindergarden> kindergardens = _kindergardenManager.GetKindergardens().ToList();
+                AddStatementViewModel model = new AddStatementViewModel { };
+                model.Privileges = new List<PrivilegesInnerViewModel> { };
+                model.Groups = new List<string> { };
+                for (int i = 0; i < privileges.Count; i++)
+                {
+                    model.Privileges.Add(new PrivilegesInnerViewModel { Key = privileges[i].Value, Value = false });
+                }
+                for (int i = 0; i < groups.Count; i++)
+                {
+                    model.Groups.Add(groups[i].Value);
+                }
+
+                model.Kindergardens = new SelectList(kindergardens, "Id", "Name");
+
+                return View(model);
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        [Route("Apply/{id=}")]
+        public ActionResult Apply(AddStatementViewModel model)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                if (model.Captcha != Session["code"].ToString())
+                {
+                    ModelState.AddModelError("Captcha", "Неправильно введений код перевірки!");
+                }
+                if (model.Consent == false)
+                {
+                    ModelState.AddModelError("Consent", "Потрібне підтвердження!");
+                }
+                if (ModelState.IsValid)
+                {
+                    _statementManager.ApplyStatement(model, User.Identity.GetUserId());
+                    return RedirectToAction("Index", "Home");
+                }
+                List<Kindergarden> kindergardens = _kindergardenManager.GetKindergardens().ToList();
+                model.Kindergardens = new SelectList(kindergardens, "Id", "Name");
+                return View(model);
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        [Route("MyStatements")]
+        public ActionResult MyStatements()
+        {
+            if (User.Identity.IsAuthenticated && (User.IsInRole("Admin") || User.IsInRole("User")))
+            {
+                return View(_statementManager.GetFormatStatementListViewModel(User.Identity.GetUserId(), false, "none", true));
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        private JsonResult SwitchIsRemoved(string statementId, bool isRemoved)
+        {
+            int intStatementId = Convert.ToInt32(statementId);
+            Statement statement = _statementManager.GetStatementById(intStatementId);
+            if (User.Identity.IsAuthenticated && User.Identity.GetUserId() == statement.KindergardenId)
+            {
+                try
+                {
+                    _statementManager.SwitchIsRemoved(intStatementId, isRemoved);
+                    return Json(true);
+                }
+                catch (Exception) { }
+            }
+            return Json("Error");
+        }
+
+        private JsonResult SwitchStatus(string statementId, string status)
+        {
+            int intStatementId = Convert.ToInt32(statementId);
+            Statement statement = _statementManager.GetStatementById(intStatementId);
+            if (User.Identity.IsAuthenticated && User.Identity.GetUserId() == statement.KindergardenId)
+            {
+                try
+                {
+                    _statementManager.SwitchStatus(intStatementId, status);
+                    return Json(true);
+                }
+                catch (Exception) { }
+            }
+            return Json("Error");
+        }
+
+        private JsonResult SwitchIsSelected(string statementId, bool isSelected)
+        {
+            int intStatementId = Convert.ToInt32(statementId);
+            Statement statement = _statementManager.GetStatementById(intStatementId);
+            if (User.Identity.IsAuthenticated && User.Identity.GetUserId() == statement.KindergardenId)
+            {
+                try
+                {
+                    _statementManager.SwitchIsSelected(intStatementId, isSelected);
+                    return Json(true);
+                }
+                catch (Exception) { }
+            }
+            return Json("Error");
+        }
+
+        [HttpPost]
+        public JsonResult FromRecycleBin(string statementId)
+        {
+            return SwitchIsRemoved(statementId, false);
+        }
+
+        [HttpPost]
+        public JsonResult RejectStatement(string statementId)
+        {
+            return SwitchStatus(statementId, "Rejected");
+        }
+
+        [HttpPost]
+        public JsonResult ApproveStatement(string statementId)
+        {
+            return SwitchStatus(statementId, "Approved");
+        }
+
+        [HttpPost]
+        public JsonResult FromSelected(string statementId)
+        {
+            return SwitchIsSelected(statementId, false);
+        }
+
+        [HttpPost]
+        public JsonResult ToSelected(string statementId)
+        {
+            return SwitchIsSelected(statementId, true);
+        }
+
+        [HttpPost]
+        public JsonResult ToRecycleBin(string statementId)
+        {
+            return SwitchIsRemoved(statementId, true);
         }
     }
 }

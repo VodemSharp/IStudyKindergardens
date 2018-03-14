@@ -25,9 +25,10 @@ namespace IStudyKindergardens.Controllers
         private readonly ISiteUserManager _siteUserManager;
         private readonly IKindergardenManager _kindergardenManager;
         private readonly IRatingManager _ratingManager;
+        private readonly IStatementManager _statementManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AdminController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, ISiteUserManager siteUserManager, IKindergardenManager kindergardenManager, RoleManager<IdentityRole> roleManager, IRatingManager ratingManager)
+        public AdminController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, ISiteUserManager siteUserManager, IKindergardenManager kindergardenManager, RoleManager<IdentityRole> roleManager, IRatingManager ratingManager, IStatementManager statementManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -35,6 +36,7 @@ namespace IStudyKindergardens.Controllers
             _kindergardenManager = kindergardenManager;
             _roleManager = roleManager;
             _ratingManager = ratingManager;
+            _statementManager = statementManager;
         }
 
         [HttpGet]
@@ -226,6 +228,18 @@ namespace IStudyKindergardens.Controllers
         }
 
         [HttpGet]
+        public ActionResult Statements()
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                return View(_statementManager.GetFormatStatementListViewModel());
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        #region Questions
+
+        [HttpGet]
         public ActionResult Questions()
         {
             if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
@@ -303,6 +317,172 @@ namespace IStudyKindergardens.Controllers
             }
             return RedirectToAction("Index", "Home");
         }
+
+        #endregion
+
+        #region Privileges
+
+        [HttpGet]
+        public ActionResult Privileges()
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                List<Privilege> privileges = _statementManager.GetAllPrivileges();
+                return View(privileges);
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public ActionResult AddPrivilege()
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                return View();
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        public ActionResult AddPrivilege(Privilege privilege)
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                _statementManager.AddPrivilege(privilege);
+                return RedirectToAction("Privileges", "Admin");
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public ActionResult EditPrivilege(int id)
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                Privilege privilege = _statementManager.GetPrivilegeById(id);
+                return View(privilege);
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        public ActionResult EditPrivilege(Privilege privilege)
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                _statementManager.EditPrivilege(privilege);
+                return RedirectToAction("Privileges", "Admin");
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public ActionResult RemovePrivilege(int id)
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                return View(new RemovePrivilegeViewModel { Id = id, Value = _statementManager.GetPrivilegeById(id).Value });
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        public ActionResult RemovePrivilege(RemovePrivilegeViewModel model)
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                if (_statementManager.GetPrivilegeById(model.Id) != null)
+                {
+                    _statementManager.RemovePrivilege(model.Id);
+                }
+                return RedirectToAction("Privileges", "Admin");
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        #endregion
+
+        #region Groups
+
+        [HttpGet]
+        public ActionResult Groups()
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                List<Group> groups = _statementManager.GetAllGroups();
+                return View(groups);
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public ActionResult AddGroup()
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                return View();
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        public ActionResult AddGroup(Group group)
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                _statementManager.AddGroup(group);
+                return RedirectToAction("Groups", "Admin");
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public ActionResult EditGroup(int id)
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                Group group = _statementManager.GetGroupById(id);
+                return View(group);
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        public ActionResult EditGroup(Group group)
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                _statementManager.EditGroup(group);
+                return RedirectToAction("Groups", "Admin");
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public ActionResult RemoveGroup(int id)
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                return View(new RemoveGroupViewModel { Id = id, Value = _statementManager.GetGroupById(id).Value });
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        public ActionResult RemoveGroup(RemoveGroupViewModel model)
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                if (_statementManager.GetGroupById(model.Id) != null)
+                {
+                    _statementManager.RemoveGroup(model.Id);
+                }
+                return RedirectToAction("Groups", "Admin");
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        #endregion
 
         #region Properties
         public ApplicationSignInManager SignInManager

@@ -49,6 +49,45 @@ namespace IStudyKindergardens.Migrations
                 context.SiteUsers.Add(siteUser);
                 context.SaveChanges();
             }
+
+            List<string> privileges = new List<string> {
+                "Діти сироти, діти позбавлені батьківського піклування, які перебувають під опікою і виховуються в сім'ях",
+                "Діти-інваліди (які не мають протипоказань щодо відвідування дошкільних навчальних закладів загального розвитку)",
+                "Діти, в яких обоє батьків інваліди І або ІІ групи, або один з батьків інвалід І чи ІІ групи (неповна сім'я)",
+                "Діти, які потерпіли від наслідків аварії на ЧАЕС",
+                "Діти працівників органів внутрішніх справ, які загинули під час виконання службових обов'язків",
+                "Багатодітна сім'я (троє і більше дітей) з них двоє і більше дітей дошкільного віку",
+                "Діти, батьки яких мають статус відповідно до пункту 19 статті 6 Закону України (про статус ветеранів війни, гарантії їх соціального захисту)"
+            };
+
+            string tempPrivilege;
+            for (int i = 0; i < privileges.Count; i++)
+            {
+                tempPrivilege = privileges[i];
+                if (!context.Privileges.Any(p => p.Value == tempPrivilege))
+                {
+                    context.Privileges.Add(new Privilege { Value = tempPrivilege });
+                }
+                if (!context.UserPrivileges.Any(p => p.Value == tempPrivilege))
+                {
+                    context.UserPrivileges.Add(new UserPrivilege { Value = tempPrivilege });
+                }
+            }
+
+            List<string> groups = new List<string> {
+                "За роком народження",
+                "На рік молодша"
+            };
+
+            string tempGroup;
+            for (int i = 0; i < groups.Count; i++)
+            {
+                tempGroup = groups[i];
+                if (!context.Groups.Any(p => p.Value == tempGroup))
+                {
+                    context.Groups.Add(new Group { Value = tempGroup });
+                }
+            }
         }
     }
 }

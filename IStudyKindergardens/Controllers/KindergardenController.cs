@@ -15,11 +15,13 @@ namespace IStudyKindergardens.Controllers
     {
         private readonly IKindergardenManager _kindergardenManager;
         private readonly IRatingManager _ratingManager;
+        private readonly IStatementManager _statementManager;
 
-        public KindergardenController(IKindergardenManager kindergardenManager, IRatingManager ratingManager)
+        public KindergardenController(IKindergardenManager kindergardenManager, IRatingManager ratingManager, IStatementManager statementManager)
         {
             _kindergardenManager = kindergardenManager;
             _ratingManager = ratingManager;
+            _statementManager = statementManager;
         }
 
         public ActionResult Index()
@@ -179,7 +181,7 @@ namespace IStudyKindergardens.Controllers
                     {
                         throw new Exception();
                     }
-                    return View();
+                    return RedirectToAction("KindergardenProfile", "Kindergarden", id);
                 }
             }
             catch (Exception) { }
@@ -273,5 +275,67 @@ namespace IStudyKindergardens.Controllers
             }
             return RedirectToAction("Index", "Home");
         }
+
+        [HttpGet]
+        public ActionResult Statements(string id)
+        {
+            if (User.Identity.IsAuthenticated && (User.IsInRole("Admin") || (User.IsInRole("Administrator") && User.Identity.GetUserId() == id)))
+            {
+                return View(_statementManager.GetFormatStatementListViewModel(User.Identity.GetUserId(), true));
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public ActionResult SelectedStatements(string id)
+        {
+            if (User.Identity.IsAuthenticated && (User.IsInRole("Admin") || (User.IsInRole("Administrator") && User.Identity.GetUserId() == id)))
+            {
+                return View(_statementManager.GetFormatStatementListViewModel(User.Identity.GetUserId(), true, "Selected"));
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public ActionResult RemovedStatements(string id)
+        {
+            if (User.Identity.IsAuthenticated && (User.IsInRole("Admin") || (User.IsInRole("Administrator") && User.Identity.GetUserId() == id)))
+            {
+                return View(_statementManager.GetFormatStatementListViewModel(User.Identity.GetUserId(), true, "Removed"));
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public ActionResult ApprovedStatements(string id)
+        {
+            if (User.Identity.IsAuthenticated && (User.IsInRole("Admin") || (User.IsInRole("Administrator") && User.Identity.GetUserId() == id)))
+            {
+                return View(_statementManager.GetFormatStatementListViewModel(User.Identity.GetUserId(), true, "Approved"));
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public ActionResult RejectedStatements(string id)
+        {
+            if (User.Identity.IsAuthenticated && (User.IsInRole("Admin") || (User.IsInRole("Administrator") && User.Identity.GetUserId() == id)))
+            {
+                return View(_statementManager.GetFormatStatementListViewModel(User.Identity.GetUserId(), true, "Rejected"));
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public ActionResult NotConsideredStatements(string id)
+        {
+            if (User.Identity.IsAuthenticated && (User.IsInRole("Admin") || (User.IsInRole("Administrator") && User.Identity.GetUserId() == id)))
+            {
+                return View(_statementManager.GetFormatStatementListViewModel(User.Identity.GetUserId(), true, "NotConsidered"));
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        
     }
 }

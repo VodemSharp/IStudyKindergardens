@@ -1,17 +1,17 @@
-﻿@model List<IStudyKindergardens.Models.Question>
+﻿@model List<IStudyKindergardens.Models.Privilege>
 
 <section class="content">
     <div class="row">
         <div class="col-xs-12">
             <div class="box">
                 <div class="box-header">
-                    <h3 class="box-title">Список питань</h3>
+                    <h3 class="box-title">Список пільг</h3>
                 </div><!-- /.box-header -->
                 <div class="box-body table-responsive no-padding">
                     <table class="table table-hover">
                         <tbody>
                             <tr>
-                                <th>Питання</th>
+                                <th>Пільги</th>
                                 <th></th>
                                 <th></th>
                             </tr>
@@ -19,14 +19,14 @@
                             {
                                 <tr>
                                     <td>@item.Value</td>
-                                    <td><a href="/Admin/EditQuestion/@item.Id"><span class="glyphicon glyphicon-edit"></span></a></td>
-                                    <td><a href="/Admin/RemoveQuestion/@item.Id"><span class="glyphicon glyphicon-remove"></span></a></td>
+                                    <td><a href="/Admin/EditPrivilege/@item.Id"><span class="glyphicon glyphicon-edit"></span></a></td>
+                                    <td><a href="/Admin/RemovePrivilege/@item.Id"><span class="glyphicon glyphicon-remove"></span></a></td>
                                 </tr>
                             }
                         </tbody>
                     </table>
                     <div style="padding: 5px;">
-                        @Html.ActionLink("Додати нове питання", "AddQuestion", "Admin")
+                        @Html.ActionLink("Додати нову пільгу", "AddPrivilege", "Admin")
                     </div>
                 </div><!-- /.box-body -->
             </div>

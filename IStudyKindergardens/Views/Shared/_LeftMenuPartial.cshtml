@@ -2,74 +2,93 @@
 
 <!-- Left side column. contains the logo and sidebar -->
 <aside class="main-sidebar">
-	<!-- sidebar: style can be found in sidebar.less -->
-	<section class="sidebar">
-		<!-- sidebar menu: : style can be found in sidebar.less -->
-		<form action="#" method="get" class="sidebar-form">
-			<div class="input-group">
-				<input type="text" name="q" class="form-control" placeholder="Search...">
-				<span class="input-group-btn">
-					<button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
-				</span>
-			</div>
-		</form>
-		<ul class="sidebar-menu">
-			<li class="header">МЕНЮ</li>
-			<li>
-				<a href="/">
-					<span class="glyphicon glyphicon-stats"></span> <span>Головна</span>
-				</a>
-			</li>
-			<li>
-				<a href="/AdvancedSearch">
-					<span class="glyphicon glyphicon-search"></span> <span>Розширений пошук</span>
-				</a>
-			</li>
-			@if (Request.IsAuthenticated && (User.IsInRole("User") || User.IsInRole("Admin") || User.IsInRole("Moderator")))
-			{
-				<li>
-					<a href="/User/@User.Identity.GetUserId()">
-						<span class="glyphicon glyphicon-user"></span> <span>Профіль</span>
-					</a>
-				</li>
-				<li>
-					<a href="/MyKindergardens">
-						<span class="glyphicon glyphicon-home"></span> <span>Мої садочки</span>
-					</a>
-				</li>
-				<li>
-					<a href="/?lol=kek">
-						<span class="glyphicon glyphicon-envelope"></span> <span>Повідомлення</span>
-					</a>
-				</li>
-				<li>
-					<a href="/?lol=kek">
-						<span class="glyphicon glyphicon-list-alt"></span> <span>Контакти</span>
-					</a>
-				</li>
-			}
-			@if (Request.IsAuthenticated && (User.IsInRole("Administrator")))
-			{
-				<li>
-					<a href="/Kindergarden/Edit/@User.Identity.GetUserId()">
-						<span class="glyphicon glyphicon-edit"></span> <span>Редагувати</span>
-					</a>
-				</li>
-			}
-			<li>
-				<a href="/?lol=kek">
-					<span class="glyphicon glyphicon-cog"></span> <span>Налаштування</span>
-				</a>
-			</li>
-			@if (Request.IsAuthenticated && (User.IsInRole("Admin")))
-			{
-				<li>
-					<a href="/Admin">
-						<span class="glyphicon glyphicon-user"></span> <span>Панель упраління</span>
-					</a>
-				</li>
-			}
-		</ul>
-	</section>
-	<!-- /.sidebar -->
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+        <!-- sidebar menu: : style can be found in sidebar.less -->
+        <form action="#" method="get" class="sidebar-form">
+            <div class="input-group">
+                <input type="text" name="q" class="form-control" placeholder="Search...">
+                <span class="input-group-btn">
+                    <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
+                </span>
+            </div>
+        </form>
+        <ul class="sidebar-menu">
+            <li class="header">МЕНЮ</li>
+            <li>
+                <a href="/">
+                    <span class="glyphicon glyphicon-stats"></span> <span>Головна</span>
+                </a>
+            </li>
+            <li>
+                <a href="/AdvancedSearch">
+                    <span class="glyphicon glyphicon-search"></span> <span>Розширений пошук</span>
+                </a>
+            </li>
+            @if (Request.IsAuthenticated && (User.IsInRole("User") || User.IsInRole("Admin") || User.IsInRole("Moderator")))
+            {
+                <li>
+                    <a href="/Apply">
+                        <span class="glyphicon glyphicon-send"></span> <span>Подати заяву</span>
+                    </a>
+                </li>
+            }
+            @if (Request.IsAuthenticated && (User.IsInRole("User") || User.IsInRole("Admin") || User.IsInRole("Moderator")))
+            {
+                <li>
+                    <a href="/MyStatements">
+                        <span class="glyphicon glyphicon-folder-open"></span> <span>Подані заяви</span>
+                    </a>
+                </li>
+            }
+            @if (Request.IsAuthenticated && (User.IsInRole("Administrator")))
+            {
+                <li>
+                    <a href="/Kindergarden/Statements/@User.Identity.GetUserId()">
+                        <span class="glyphicon glyphicon-folder-open"></span> <span>Подані заяви</span>
+                    </a>
+                </li>
+            }
+            @if (Request.IsAuthenticated && (User.IsInRole("User") || User.IsInRole("Admin") || User.IsInRole("Moderator")))
+            {
+                <li>
+                    <a href="/User/@User.Identity.GetUserId()">
+                        <span class="glyphicon glyphicon-user"></span> <span>Профіль</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/MyKindergardens">
+                        <span class="glyphicon glyphicon-home"></span> <span>Мої садочки</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Messages">
+                        <span class="glyphicon glyphicon-envelope"></span> <span>Повідомлення</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Contacts">
+                        <span class="glyphicon glyphicon-list-alt"></span> <span>Контакти</span>
+                    </a>
+                </li>
+            }
+            @if (Request.IsAuthenticated && (User.IsInRole("Administrator")))
+            {
+                <li>
+                    <a href="/Kindergarden/Edit/@User.Identity.GetUserId()">
+                        <span class="glyphicon glyphicon-edit"></span> <span>Редагувати</span>
+                    </a>
+                </li>
+            }
+            @if (Request.IsAuthenticated && (User.IsInRole("Admin")))
+            {
+                <li>
+                    <a href="/Admin">
+                        <span class="glyphicon glyphicon-user"></span> <span>Панель упраління</span>
+                    </a>
+                </li>
+            }
+        </ul>
+    </section>
+    <!-- /.sidebar -->
 </aside>

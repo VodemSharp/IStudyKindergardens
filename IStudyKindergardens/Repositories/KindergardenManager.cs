@@ -285,6 +285,7 @@ namespace IStudyKindergardens.Repositories
             db.Ratings.RemoveRange(kindergardenRatings);
             db.DescriptionBlocks.RemoveRange(db.DescriptionBlocks.Where(db => db.KindergardenId == id));
             db.SiteUserKindergardens.RemoveRange(db.SiteUserKindergardens.Where(suk => suk.KindergardenId == id));
+            db.Statements.RemoveRange(db.Statements.Where(s => s.KindergardenId == id));
 
             Kindergarden kindergarden = db.Kindergardens.Include("ApplicationUser").Where(k => k.Id == id).First();
             if (kindergarden != null)

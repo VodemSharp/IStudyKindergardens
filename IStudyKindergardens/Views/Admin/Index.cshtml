@@ -1,18 +1,21 @@
 ﻿    <!-- Main content -->
-    <section class="content">
-        <div class="row">
-            <div class="col-md-12">
-                <!-- Block buttons -->
-                <div class="box box-primary">
-                    <div class="box-header">
-                        <h3 class="box-title">Панель управління</h3>
-                    </div>
-                    <div class="box-body">
-                        @Html.ActionLink("Усі користувачі", "Users", "Admin", null, new { @class = "btn btn-block btn-default" })
-                        @Html.ActionLink("Усі аккаунти управління дошкільних закладів", "Kindergardens", "Admin", null, new { @class = "btn btn-block btn-default" })
-                        @Html.ActionLink("Усі питання для рейтингу", "Questions", "Admin", null, new { @class = "btn btn-block btn-default" })
-                    </div>
-                </div><!-- /.box -->
-            </div><!-- /.col -->
-        </div><!-- /. row -->
-    </section><!-- /.content -->
+<section class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <!-- Block buttons -->
+            <div class="box box-primary">
+                <div class="box-header">
+                    <h3 class="box-title">Панель управління</h3>
+                </div>
+                <div class="box-body">
+                    @Html.ActionLink("Усі користувачі", "Users", "Admin", null, new { @class = "btn btn-block btn-default" })
+                    @Html.ActionLink("Усі аккаунти управління дошкільних закладів", "Kindergardens", "Admin", null, new { @class = "btn btn-block btn-default" })
+                    @Html.ActionLink("Усі питання для рейтингу", "Questions", "Admin", null, new { @class = "btn btn-block btn-default" })
+                    @Html.ActionLink("Усі пільги для подачі заяв", "Privileges", "Admin", null, new { @class = "btn btn-block btn-default" })
+                    @Html.ActionLink("Усі типи груп для подачі заяв", "Groups", "Admin", null, new { @class = "btn btn-block btn-default" })
+                    @Html.ActionLink("Усі заявки на реєстрацію в черзі", "Statements", "Admin", null, new { @class = "btn btn-block btn-default" })
+                </div>
+            </div><!-- /.box -->
+        </div><!-- /.col -->
+    </div><!-- /. row -->
+</section><!-- /.content -->

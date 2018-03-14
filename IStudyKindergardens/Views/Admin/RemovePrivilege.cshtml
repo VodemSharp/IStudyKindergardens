@@ -1,0 +1,29 @@
+﻿@model IStudyKindergardens.Models.RemovePrivilegeViewModel
+
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-info">
+                <div class="box-header">
+                    <h3 class="box-title">Ви дійсно хочете видалити дану пільгу?</h3>
+                </div><!-- /.box-header -->
+                <div class="box-body">
+                    @using (Html.BeginForm("RemovePrivilege", "Admin", FormMethod.Post))
+                    {
+                        @Html.HiddenFor(m => m.Id)
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p>@Model.Value</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group has-feedback col-md-12">
+                                <input type="submit" class="btn btn-primary btn-block btn-flat" value="Видалити пільгу">
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

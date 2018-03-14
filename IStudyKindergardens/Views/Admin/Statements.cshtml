@@ -1,0 +1,119 @@
+﻿@model IEnumerable<IStudyKindergardens.Models.StatementListItemViewModel>
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            @foreach (var item in Model)
+            {
+                <div class="box box-primary">
+                    <div class="box-header">
+                        <h3 class="box-title">Для: <a href="/Kindergarden/@item.Statement.KindergardenId">@item.KindergardenName</a></h3>
+                        <br />
+                        <h3 class="box-title">Від: <a href="/User/@item.Statement.SiteUserId">@item.UserName</a></h3>
+                        <br /> <br />
+                        <h3 class="box-title">Статус: @item.Statement.Status</h3>
+                        <br />
+                        <h3 class="box-title">Дата та час: @item.Statement.DateTime.ToLongTimeString() @item.Statement.DateTime.ToLongDateString()</h3>
+
+                        <div class="box-tools pull-right">
+                            <a class="btn btn-box-tool btn-hide" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><span class="glyphicon glyphicon-plus hide-box"></span></a>
+                        </div>
+                    </div><!-- /.box-header -->
+                    <div class="box-body" style="display: none;">
+                        <div class="row">
+                            <div class="form-group has-feedback col-md-4">
+                                <label>ПІБ одного з батьків</label>
+                                <p>@item.Statement.SNF</p>
+                            </div>
+                            <div class="form-group has-feedback col-md-4">
+                                <label>ПІБ дитини</label>
+                                <p>@item.Statement.ChildSNF</p>
+                            </div>
+                            <div class="form-group has-feedback col-md-4">
+                                <label>Адреса проживання</label>
+                                <p>@item.Statement.Address</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group has-feedback col-md-4">
+                                <label>Серія і номер паспорта одного з батьків</label>
+                                <p>@item.Statement.SeriesNumberPassport</p>
+                            </div>
+                            <div class="form-group has-feedback col-md-4">
+                                <label>Серія і номер свідоцтва про народження дитини</label>
+                                <p>@item.Statement.ChildBirthCertificate</p>
+                            </div>
+                            <div class="form-group has-feedback col-md-4">
+                                <label>Дата народження дитини</label>
+                                <p>@item.Statement.ChildDateOfBirth</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group has-feedback col-md-4">
+                                <label>Email</label>
+                                <p>@item.Statement.Email</p>
+                            </div>
+                            <div class="form-group has-feedback col-md-4">
+                                <label>Контактний телефон</label>
+                                <p>@item.Statement.PhoneNumber</p>
+                            </div>
+                            <div class="form-group has-feedback col-md-4">
+                                <label>Додатковий контактний телефон</label>
+                                <p>@item.Statement.AdditionalPhoneNumber</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group has-feedback col-md-12">
+                                <label>Вибраний тип групи</label>
+                                <p>@item.Statement.Group</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group has-feedback col-md-12">
+                                <label>Вибрані пільги</label>
+                                @for (int i = 0; i < item.UserPrivileges.Count; i++)
+                                {
+                                    <p>@item.UserPrivileges[i]</p>
+                                }
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group has-feedback col-md-6">
+                                <a href="/Kindergarden/SendToEmail/@item.Statement.Id" style="width: 100%;" class="btn btn-primary btn-flat">Надіслати заявку на пошту</a>
+                            </div>
+                            <div class="form-group has-feedback col-md-6">
+                                <a href="/Kindergarden/ToSelected/@item.Statement.Id" style="width: 100%;" class="btn btn-primary btn-flat">Добавити заявку у вибрані</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group has-feedback col-md-4">
+                                <a href="/Kindergarden/ApproveStatement/@item.Statement.Id" style="width: 100%;" class="btn btn-primary btn-flat">Одобрити заявку</a>
+                            </div>
+                            <div class="form-group has-feedback col-md-4">
+                                <a href="/Kindergarden/RejectStatement/@item.Statement.Id" style="width: 100%;" class="btn btn-primary btn-flat">Відхилити заявку</a>
+                            </div>
+                            <div class="form-group has-feedback col-md-4">
+                                <a href="/Kindergarden/ToRecycleBin/@item.Statement.Id" style="width: 100%;" class="btn btn-primary btn-flat">Відправити заявку в корзину</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<script>
+    $(".hide-box").on("click", function () {
+        var current = this;
+        if ($(current).parent().parent().parent().parent().children(".box-body").css("display") == "block") {
+            $(current).removeClass("glyphicon-minus");
+            $(current).addClass("glyphicon-plus");
+            $(current).parent().parent().parent().parent().children(".box-body").css("display", "none");
+        }
+        else {
+            $(current).addClass("glyphicon-minus");
+            $(current).removeClass("glyphicon-plus");
+            $(current).parent().parent().parent().parent().children(".box-body").css("display", "block");
+        }
+    });
+</script>

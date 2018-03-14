@@ -20,6 +20,9 @@ namespace IStudyKindergardens
                         "~/Content/dist/AdminLTE.min.css",
                         "~/Content/site.css"));
 
+            bundles.Add(new StyleBundle("~/css/iCheck").Include(
+                        "~/Plugins/iCheck/all.css"));
+
             bundles.Add(new StyleBundle("~/css/icheckSquareBlue").Include(
                         "~/Plugins/iCheck/square/blue.css"));
 

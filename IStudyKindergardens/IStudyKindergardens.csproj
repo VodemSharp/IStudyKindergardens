@@ -213,10 +213,31 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="HelpClasses\CaptchaImage.cs" />
     <Compile Include="HelpClasses\CustomImage.cs" />
-    <Compile Include="Migrations\201803092106286_InitDB.cs" />
-    <Compile Include="Migrations\201803092106286_InitDB.Designer.cs">
-      <DependentUpon>201803092106286_InitDB.cs</DependentUpon>
+    <Compile Include="Migrations\201803121126213_InitDB.cs" />
+    <Compile Include="Migrations\201803121126213_InitDB.Designer.cs">
+      <DependentUpon>201803121126213_InitDB.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803131724026_LittleChange.cs" />
+    <Compile Include="Migrations\201803131724026_LittleChange.Designer.cs">
+      <DependentUpon>201803131724026_LittleChange.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803131726156_LittleChange2.cs" />
+    <Compile Include="Migrations\201803131726156_LittleChange2.Designer.cs">
+      <DependentUpon>201803131726156_LittleChange2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803132043175_LittleChange3.cs" />
+    <Compile Include="Migrations\201803132043175_LittleChange3.Designer.cs">
+      <DependentUpon>201803132043175_LittleChange3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803132208398_LittleChange4.cs" />
+    <Compile Include="Migrations\201803132208398_LittleChange4.Designer.cs">
+      <DependentUpon>201803132208398_LittleChange4.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803141005122_LittleChange5.cs" />
+    <Compile Include="Migrations\201803141005122_LittleChange5.Designer.cs">
+      <DependentUpon>201803141005122_LittleChange5.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Home\KindergardenListViewModel.cs" />
@@ -226,6 +247,11 @@
     <Compile Include="Models\Kindergardens\DeleteKindergardenViewModel.cs" />
     <Compile Include="Models\Kindergardens\EditKindergardenViewModel.cs" />
     <Compile Include="Models\Kindergardens\EditShortInfoViewModel.cs" />
+    <Compile Include="Models\Kindergardens\AddStatementViewModel.cs" />
+    <Compile Include="Models\Kindergardens\PrivilegesInnerViewModel.cs" />
+    <Compile Include="Models\Kindergardens\RemoveGroupViewModel.cs" />
+    <Compile Include="Models\Kindergardens\RemovePrivilegeViewModel.cs" />
+    <Compile Include="Models\Kindergardens\StatementListItemViewModel.cs" />
     <Compile Include="Models\Rating\QuestionRatingViewModel.cs" />
     <Compile Include="Models\Rating\RemoveQuestionViewModel.cs" />
     <Compile Include="Models\Users\AddUserViewModel.cs" />
@@ -237,6 +263,7 @@
     <Compile Include="Repositories\KindergardenManager.cs" />
     <Compile Include="Repositories\RatingManager.cs" />
     <Compile Include="Repositories\SiteUserManager.cs" />
+    <Compile Include="Repositories\StatementManager.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -264,6 +291,8 @@
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Images\Default\anonym.png" />
+    <Content Include="Images\Uploaded\Source\e4bb98a5-fcb8-473e-afd5-6dfe4239a835.jpg" />
+    <Content Include="Images\Uploaded\Temp\e4bb98a5-fcb8-473e-afd5-6dfe4239a835.jpg" />
     <Content Include="Plugins\bootstrap-slider\bootstrap-slider.js" />
     <Content Include="Plugins\bootstrap-slider\slider.css" />
     <Content Include="Plugins\bootstrap-wysihtml5\bootstrap3-wysihtml5.all.min.js" />
@@ -769,6 +798,7 @@
     <Content Include="Plugins\ckeditor\skins\moono\readme.md" />
     <Content Include="Plugins\input-mask\phone-codes\phone-be.json" />
     <Content Include="Plugins\input-mask\phone-codes\phone-codes.json" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\cropper.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
@@ -843,11 +873,26 @@
     <Content Include="Views\Shared\_MainSearchPartial.cshtml" />
     <Content Include="Views\Shared\_AdvancedSearchPartial.cshtml" />
     <Content Include="Views\Admin\DeleteKindergarden.cshtml" />
+    <Content Include="Views\Home\Apply.cshtml" />
+    <Content Include="Views\Admin\AddPrivilege.cshtml" />
+    <Content Include="Views\Admin\EditPrivilege.cshtml" />
+    <Content Include="Views\Admin\RemovePrivilege.cshtml" />
+    <Content Include="Views\Admin\Privileges.cshtml" />
+    <Content Include="Views\Admin\AddGroup.cshtml" />
+    <Content Include="Views\Admin\EditGroup.cshtml" />
+    <Content Include="Views\Admin\RemoveGroup.cshtml" />
+    <Content Include="Views\Admin\Groups.cshtml" />
+    <Content Include="Views\Admin\Statements.cshtml" />
+    <Content Include="Views\Home\MyStatements.cshtml" />
+    <Content Include="Views\Kindergarden\Statements.cshtml" />
+    <Content Include="Views\Kindergarden\SelectedStatements.cshtml" />
+    <Content Include="Views\Kindergarden\RemovedStatements.cshtml" />
+    <Content Include="Views\Kindergarden\ApprovedStatements.cshtml" />
+    <Content Include="Views\Kindergarden\RejectedStatements.cshtml" />
+    <Content Include="Views\Kindergarden\NotConsideredStatements.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Images\Uploaded\Source\" />
-    <Folder Include="Images\Uploaded\Temp\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -863,8 +908,23 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201803092106286_InitDB.resx">
-      <DependentUpon>201803092106286_InitDB.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201803121126213_InitDB.resx">
+      <DependentUpon>201803121126213_InitDB.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803131724026_LittleChange.resx">
+      <DependentUpon>201803131724026_LittleChange.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803131726156_LittleChange2.resx">
+      <DependentUpon>201803131726156_LittleChange2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803132043175_LittleChange3.resx">
+      <DependentUpon>201803132043175_LittleChange3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803132208398_LittleChange4.resx">
+      <DependentUpon>201803132208398_LittleChange4.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803141005122_LittleChange5.resx">
+      <DependentUpon>201803141005122_LittleChange5.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
