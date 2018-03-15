@@ -22,13 +22,15 @@ namespace IStudyKindergardens.Repositories
 
         List<Statement> GetAllStatements();
         Statement GetStatementById(int id);
-        void AddStatement(Statement statement);
+        void RemoveStatement(int id);
 
         void SwitchStatus(int statementId, string status);
         void SwitchIsSelected(int statementId, bool isSelected);
         void SwitchIsRemoved(int statementId, bool isRemoved);
 
         void ApplyStatement(AddStatementViewModel model, string userId);
+
+        List<string> GetUserPrivilegesByStatementId(int id);
 
         List<StatementListItemViewModel> GetFormatStatementListViewModel(string userId = "none", bool isKindergarden = false, string status = "none", bool isAll = false);
     }
@@ -253,6 +255,19 @@ namespace IStudyKindergardens.Repositories
             return model;
         }
 
+        public List<string> GetUserPrivilegesByStatementId(int id)
+        {
+            List<UserPrivilegeStatement> userPrivilegeStatements = db.UserPrivilegeStatements.Where(ups => ups.StatementId == id).ToList();
+            List<string> userPrivileges = new List<string>();
+            int tempId;
+            for (int j = 0; j < userPrivilegeStatements.Count; j++)
+            {
+                tempId = userPrivilegeStatements[j].UserPrivilegeId;
+                userPrivileges.Add(db.UserPrivileges.Where(up => up.Id == tempId).First().Value);
+            }
+            return userPrivileges;
+        }
+
         public void SwitchStatus(int statementId, string status)
         {
             db.Statements.Where(s => s.Id == statementId).First().Status = status;
@@ -271,9 +286,9 @@ namespace IStudyKindergardens.Repositories
             db.SaveChanges();
         }
 
-        public void AddStatement(Statement statement)
+        public void RemoveStatement(int id)
         {
-            db.Statements.Add(statement);
+            db.Statements.Remove(db.Statements.Where(s => s.Id == id).First());
             db.SaveChanges();
         }
 

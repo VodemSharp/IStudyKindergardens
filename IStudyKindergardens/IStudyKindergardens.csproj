@@ -890,6 +890,7 @@
     <Content Include="Views\Kindergarden\ApprovedStatements.cshtml" />
     <Content Include="Views\Kindergarden\RejectedStatements.cshtml" />
     <Content Include="Views\Kindergarden\NotConsideredStatements.cshtml" />
+    <Content Include="Views\Home\RemoveStatement.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

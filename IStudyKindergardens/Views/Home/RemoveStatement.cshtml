@@ -1,0 +1,105 @@
+﻿@model IStudyKindergardens.Models.StatementListItemViewModel
+
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-info">
+                <div class="box-header">
+                    <h3 class="box-title">Ви дійсно хочете видалити дану заявку? Вона зникне і в базі даних ДНЗ. <b>Не рекомендовано для одобрених заявок.</b></h3>
+                </div><!-- /.box-header -->
+                <div class="box-body">
+                </div>
+            </div>
+            @using (Html.BeginForm("RemoveStatement", "Home", FormMethod.Post))
+            {
+                @Html.HiddenFor(m => m.Statement.Id)
+                <div class="box box-primary">
+                    <div class="box-header">
+                        <h3 class="box-title">Для: <a href="/Kindergarden/@Model.Statement.KindergardenId">@Model.KindergardenName</a></h3>
+                        <br />
+                        <h3 class="box-title">Від: <a href="/User/@Model.Statement.SiteUserId">@Model.UserName</a></h3>
+                        <br /> <br />
+                        @if (Model.Statement.Status == "NotConsidered")
+                        {
+                            <h3 class="box-title status">Статус: Не розглянуто</h3>
+                        }
+                        else if (Model.Statement.Status == "Approved")
+                        {
+                            <h3 class="box-title status">Статус: Одобрено</h3>
+                        }
+                        else if (Model.Statement.Status == "Rejected")
+                        {
+                            <h3 class="box-title status">Статус: Відхилено</h3>
+                        }
+                        <br />
+                        <h3 class="box-title">Дата та час: @Model.Statement.DateTime.ToLongTimeString() @Model.Statement.DateTime.ToLongDateString()</h3>
+                    </div><!-- /.box-header -->
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="form-group has-feedback col-md-4">
+                                <label>ПІБ одного з батьків</label>
+                                <p>@Model.Statement.SNF</p>
+                            </div>
+                            <div class="form-group has-feedback col-md-4">
+                                <label>ПІБ дитини</label>
+                                <p>@Model.Statement.ChildSNF</p>
+                            </div>
+                            <div class="form-group has-feedback col-md-4">
+                                <label>Адреса проживання</label>
+                                <p>@Model.Statement.Address</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group has-feedback col-md-4">
+                                <label>Серія і номер паспорта одного з батьків</label>
+                                <p>@Model.Statement.SeriesNumberPassport</p>
+                            </div>
+                            <div class="form-group has-feedback col-md-4">
+                                <label>Серія і номер свідоцтва про народження дитини</label>
+                                <p>@Model.Statement.ChildBirthCertificate</p>
+                            </div>
+                            <div class="form-group has-feedback col-md-4">
+                                <label>Дата народження дитини</label>
+                                <p>@Model.Statement.ChildDateOfBirth</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group has-feedback col-md-4">
+                                <label>Email</label>
+                                <p>@Model.Statement.Email</p>
+                            </div>
+                            <div class="form-group has-feedback col-md-4">
+                                <label>Контактний телефон</label>
+                                <p>@Model.Statement.PhoneNumber</p>
+                            </div>
+                            <div class="form-group has-feedback col-md-4">
+                                <label>Додатковий контактний телефон</label>
+                                <p>@Model.Statement.AdditionalPhoneNumber</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group has-feedback col-md-12">
+                                <label>Вибраний тип групи</label>
+                                <p>@Model.Statement.Group</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group has-feedback col-md-12">
+                                <label>Вибрані пільги</label>
+                                @for (int i = 0; i < Model.UserPrivileges.Count; i++)
+                                {
+                                    <p>@Model.UserPrivileges[i]</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group has-feedback col-md-12">
+                        <input type="submit" class="btn btn-primary btn-block btn-flat" value="Видалити заявку">
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>

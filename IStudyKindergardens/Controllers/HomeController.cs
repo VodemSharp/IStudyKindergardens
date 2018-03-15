@@ -295,5 +295,36 @@ namespace IStudyKindergardens.Controllers
         {
             return SwitchIsRemoved(statementId, true);
         }
+
+        [HttpGet]
+        [Route("RemoveStatement/{id}")]
+        public ActionResult RemoveStatement(int id)
+        {
+            Statement statement = _statementManager.GetStatementById(id);
+            if (User.Identity.IsAuthenticated &&
+                ((User.IsInRole("User") && statement.SiteUserId == User.Identity.GetUserId())
+                || (User.IsInRole("Admin") && statement.SiteUserId == User.Identity.GetUserId())))
+            {
+                Kindergarden kindergarden = _kindergardenManager.GetKindergardenById(statement.KindergardenId);
+                SiteUser siteUser = _siteUserManager.GetSiteUserById(statement.SiteUserId);
+                StatementListItemViewModel model = new StatementListItemViewModel
+                {
+                    Statement = statement,
+                    UserPrivileges = _statementManager.GetUserPrivilegesByStatementId(id),
+                    KindergardenName = kindergarden.Name,
+                    UserName = String.Format("{0} {1} {2}", siteUser.Surname, siteUser.Name, siteUser.FathersName)
+                };
+                return View(model);
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        [Route("RemoveStatement")]
+        public ActionResult RemoveStatement(StatementListItemViewModel model)
+        {
+            _statementManager.RemoveStatement(model.Statement.Id);
+            return RedirectToAction("MyStatements", "Home");
+        }
     }
 }
