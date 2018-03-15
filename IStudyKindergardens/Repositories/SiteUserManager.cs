@@ -22,6 +22,11 @@ namespace IStudyKindergardens.Repositories
         IEnumerable<SiteUser> GetSiteUsers();
         SiteUser GetSiteUserById(string id);
         string GetPictureUIDById(string id);
+
+        IEnumerable<SiteUser> GetContactUsers(string id);
+        void AddContactUser(string id, string contactUserId);
+        void RemoveContactUser(string id, string contactUserId);
+        List<AddContactListItemViewModel> GetAddContactListViewModel(string id);
     }
 
     public class SiteUserManager : IDisposable, ISiteUserManager
@@ -79,7 +84,7 @@ namespace IStudyKindergardens.Repositories
 
         public IEnumerable<SiteUser> GetSiteUsers()
         {
-            return db.SiteUsers.ToList<SiteUser>();
+            return db.SiteUsers.ToList();
         }
 
         public SiteUser GetSiteUserById(string id)
@@ -168,6 +173,69 @@ namespace IStudyKindergardens.Repositories
                 }
             }
             catch (Exception) { }
+        }
+
+        public IEnumerable<SiteUser> GetContactUsers(string id)
+        {
+            List<SiteUser> siteUsers = new List<SiteUser>();
+            List<SiteUserContact> siteUserContacts = db.SiteUserContacts.Where(suc => suc.SiteUserId == id).ToList();
+            Contact tempContact;
+            SiteUserContact tempSiteUserContact;
+            for (int i = 0; i < siteUserContacts.Count; i++)
+            {
+                tempSiteUserContact = siteUserContacts[i];
+                tempContact = db.Contacts.Where(c => c.Id == tempSiteUserContact.ContactId).First();
+                siteUsers.Add(db.SiteUsers.Where(su => su.Id == tempContact.SiteUserId).First());
+            }
+            return siteUsers;
+        }
+
+        public void AddContactUser(string id, string contactUserId)
+        {
+            Contact contact = db.Contacts.Add(new Contact { SiteUserId = contactUserId });
+            db.SiteUserContacts.Add(new SiteUserContact { ContactId = contact.Id, SiteUserId = id });
+            db.SaveChanges();
+        }
+
+        public void RemoveContactUser(string id, string contactUserId)
+        {
+            List<SiteUserContact> siteUserContacts = db.SiteUserContacts.Where(suc => suc.SiteUserId == id).ToList();
+            Contact contact;
+            int tempId;
+            for (int i = 0; i < siteUserContacts.Count; i++)
+            {
+                tempId = siteUserContacts[i].ContactId;
+                contact = db.Contacts.Where(c => c.Id == tempId).First();
+                if (contact.SiteUserId == contactUserId)
+                {
+                    db.SiteUserContacts.Remove(db.SiteUserContacts.Where(suc => suc.ContactId == tempId).First());
+                    db.Contacts.Remove(contact);
+                    db.SaveChanges();
+                    return;
+                }
+            }
+        }
+
+        public List<AddContactListItemViewModel> GetAddContactListViewModel(string id)
+        {
+            List<AddContactListItemViewModel> model = new List<AddContactListItemViewModel>();
+            List<SiteUser> allSiteUsers = GetSiteUsers().ToList();
+            List<SiteUser> addedSiteUsers = GetContactUsers(id).ToList();
+            bool isAdded;
+            for (int i = 0; i < allSiteUsers.Count; i++)
+            {
+                isAdded = false;
+                for (int j = 0; j < addedSiteUsers.Count; j++)
+                {
+                    if (allSiteUsers[i] == addedSiteUsers[j])
+                    {
+                        isAdded = true;
+                        break;
+                    }
+                }
+                model.Add(new AddContactListItemViewModel { SiteUser = allSiteUsers[i], isAdded = isAdded });
+            }
+            return model;
         }
 
         protected void Dispose(bool disposing)

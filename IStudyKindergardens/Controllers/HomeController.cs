@@ -326,5 +326,19 @@ namespace IStudyKindergardens.Controllers
             _statementManager.RemoveStatement(model.Statement.Id);
             return RedirectToAction("MyStatements", "Home");
         }
+
+        [HttpPost]
+        public JsonResult AddContactAjax(string addContactUserId)
+        {
+            _siteUserManager.AddContactUser(User.Identity.GetUserId(), addContactUserId);
+            return Json(true);
+        }
+
+        [HttpPost]
+        public JsonResult RemoveContactAjax(string removeContactUserId)
+        {
+            _siteUserManager.RemoveContactUser(User.Identity.GetUserId(), removeContactUserId);
+            return Json(true);
+        }
     }
 }

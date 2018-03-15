@@ -239,6 +239,18 @@
     <Compile Include="Migrations\201803141005122_LittleChange5.Designer.cs">
       <DependentUpon>201803141005122_LittleChange5.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201803151036159_LCH1.cs" />
+    <Compile Include="Migrations\201803151036159_LCH1.Designer.cs">
+      <DependentUpon>201803151036159_LCH1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803151118240_AddMessages.cs" />
+    <Compile Include="Migrations\201803151118240_AddMessages.Designer.cs">
+      <DependentUpon>201803151118240_AddMessages.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803151149021_LCH2.cs" />
+    <Compile Include="Migrations\201803151149021_LCH2.Designer.cs">
+      <DependentUpon>201803151149021_LCH2.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Home\KindergardenListViewModel.cs" />
     <Compile Include="Models\Identity\AccountViewModels.cs" />
@@ -254,6 +266,7 @@
     <Compile Include="Models\Kindergardens\StatementListItemViewModel.cs" />
     <Compile Include="Models\Rating\QuestionRatingViewModel.cs" />
     <Compile Include="Models\Rating\RemoveQuestionViewModel.cs" />
+    <Compile Include="Models\Users\AddContactListItemViewModel.cs" />
     <Compile Include="Models\Users\AddUserViewModel.cs" />
     <Compile Include="Models\Users\DeleteUserViewModel.cs" />
     <Compile Include="Models\Users\EditUserViewModel.cs" />
@@ -891,6 +904,8 @@
     <Content Include="Views\Kindergarden\RejectedStatements.cshtml" />
     <Content Include="Views\Kindergarden\NotConsideredStatements.cshtml" />
     <Content Include="Views\Home\RemoveStatement.cshtml" />
+    <Content Include="Views\User\Contacts.cshtml" />
+    <Content Include="Views\User\AddContact.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -926,6 +941,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201803141005122_LittleChange5.resx">
       <DependentUpon>201803141005122_LittleChange5.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803151036159_LCH1.resx">
+      <DependentUpon>201803151036159_LCH1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803151118240_AddMessages.resx">
+      <DependentUpon>201803151118240_AddMessages.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803151149021_LCH2.resx">
+      <DependentUpon>201803151149021_LCH2.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

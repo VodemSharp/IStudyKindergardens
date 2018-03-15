@@ -44,7 +44,7 @@ namespace IStudyKindergardens.Controllers
                 try
                 {
                     SiteUser siteUser = SiteUserManager.GetSiteUserById(id);
-                    if(siteUser == null)
+                    if (siteUser == null)
                     {
                         throw new Exception();
                     }
@@ -124,6 +124,20 @@ namespace IStudyKindergardens.Controllers
                 return RedirectToAction("UserProfile", "User", new { id = id });
             }
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        [Route("Contacts")]
+        public ActionResult Contacts()
+        {
+            return View(_siteUserManager.GetContactUsers(User.Identity.GetUserId()));
+        }
+
+        [HttpGet]
+        [Route("AddContact")]
+        public ActionResult AddContact()
+        {
+            return View(_siteUserManager.GetAddContactListViewModel(User.Identity.GetUserId()));
         }
     }
 }

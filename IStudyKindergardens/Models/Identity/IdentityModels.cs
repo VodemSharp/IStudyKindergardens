@@ -18,9 +18,14 @@ namespace IStudyKindergardens.Models
         public virtual SiteUser SiteUser { get; set; }
         public virtual Kindergarden Kindergarden { get; set; }
 
+        public ICollection<Message> Messages { get; set; }
+        public ICollection<ApplicationUserMessage> ApplicationUserMessages { get; set; }
+
         public ApplicationUser()
         {
             IdentityUser u = new IdentityUser();
+            Messages = new List<Message>();
+            ApplicationUserMessages = new List<ApplicationUserMessage>();
         }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
@@ -48,6 +53,8 @@ namespace IStudyKindergardens.Models
         public ICollection<SiteUserKindergarden> SiteUserKindergardens { get; set; }
         public ICollection<Rating> Ratings { get; set; }
         public ICollection<Statement> Statements { get; set; }
+        public ICollection<Contact> Contacts { get; set; }
+        public ICollection<SiteUserContact> SiteUserContact { get; set; }
 
         public SiteUser()
         {
@@ -72,6 +79,71 @@ namespace IStudyKindergardens.Models
         public ClaimType ClaimType { get; set; }
 
         public string ClaimValue { get; set; }
+    }
+
+    public class SiteUserContact
+    {
+        [Key]
+        public int Id { get; set; }
+
+        [ForeignKey("SiteUser")]
+        public string SiteUserId { get; set; }
+        public SiteUser SiteUser { get; set; }
+
+        [ForeignKey("Contact")]
+        public int ContactId { get; set; }
+        public Contact Contact { get; set; }
+    }
+
+    public class Contact
+    {
+        [Key]
+        public int Id { get; set; }
+
+        [ForeignKey("SiteUser")]
+        public string SiteUserId { get; set; }
+        public SiteUser SiteUser { get; set; }
+
+        public ICollection<SiteUserContact> SiteUserContact { get; set; }
+
+        public Contact()
+        {
+            SiteUserContact = new List<SiteUserContact>();
+        }
+    }
+
+    public class ApplicationUserMessage
+    {
+        [Key]
+        public int Id { get; set; }
+
+        [ForeignKey("ApplicationUser")]
+        public string ApplicationUserId { get; set; }
+        public ApplicationUser ApplicationUser { get; set; }
+
+        [ForeignKey("Message")]
+        public int MessageId { get; set; }
+        public Message Message { get; set; }
+    }
+
+    public class Message
+    {
+        [Key]
+        public int Id { get; set; }
+
+        [ForeignKey("ApplicationUser")]
+        public string ApplicationUserId { get; set; }
+        public ApplicationUser ApplicationUser { get; set; }
+
+        string Theme { get; set; }
+        string Text { get; set; }
+
+        public ICollection<ApplicationUserMessage> GetApplicationUserMessages { get; set; }
+
+        public Message()
+        {
+            GetApplicationUserMessages = new List<ApplicationUserMessage>();
+        }
     }
 
     public class SiteUserKindergarden
@@ -393,6 +465,12 @@ namespace IStudyKindergardens.Models
         public DbSet<SiteUser> SiteUsers { get; set; }
         public DbSet<SiteUserClaim> SiteUserClaims { get; set; }
         public DbSet<SiteUserKindergarden> SiteUserKindergardens { get; set; }
+
+        public DbSet<Contact> Contacts { get; set; }
+        public DbSet<SiteUserContact> SiteUserContacts { get; set; }
+
+        public DbSet<Message> Messages { get; set; }
+        public DbSet<ApplicationUserMessage> ApplicationUserMessages { get; set; }
 
         public DbSet<Kindergarden> Kindergardens { get; set; }
         public DbSet<KindergardenClaim> KindergardenClaims { get; set; }
