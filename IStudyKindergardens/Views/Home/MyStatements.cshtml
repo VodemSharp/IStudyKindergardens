@@ -33,8 +33,8 @@
                         <h3 class="box-title">Дата та час: @item.Statement.DateTime.ToLongTimeString() @item.Statement.DateTime.ToLongDateString()</h3>
 
                         <div class="box-tools pull-right">
-                            <a class="btn btn-box-tool btn-hide" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><span class="glyphicon glyphicon-plus hide-box"></span></a>
-                            <a href="/RemoveStatement/@item.Statement.Id" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><span class="glyphicon glyphicon-remove"></span></a>
+                            <a class="btn btn-box-tool btn-hide" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><span class="glyphicon glyphicon-plus"></span></a>
+                            <a href="/RemoveStatement/@item.Statement.Id" class="btn btn-box-tool" data-toggle="tooltip" title=""><span class="glyphicon glyphicon-remove"></span></a>
                         </div>
                     </div><!-- /.box-header -->
                     <div class="box-body" style="display: none;">
@@ -101,19 +101,3 @@
         </div>
     </div>
 </section>
-
-<script>
-    $(".hide-box").on("click", function () {
-        var current = this;
-        if ($(current).parent().parent().parent().parent().children(".box-body").css("display") == "block") {
-            $(current).removeClass("glyphicon-minus");
-            $(current).addClass("glyphicon-plus");
-            $(current).parent().parent().parent().parent().children(".box-body").css("display", "none");
-        }
-        else {
-            $(current).addClass("glyphicon-minus");
-            $(current).removeClass("glyphicon-plus");
-            $(current).parent().parent().parent().parent().children(".box-body").css("display", "block");
-        }
-    });
-</script>

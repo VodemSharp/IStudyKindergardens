@@ -10,7 +10,25 @@
                         <br />
                         <h3 class="box-title">Від: <a href="/User/@item.Statement.SiteUserId">@item.UserName</a></h3>
                         <br /> <br />
-                        <h3 class="box-title">Статус: @item.Statement.Status</h3>
+                        @if (item.Statement.IsRemoved)
+                        {
+                            <h3 class="box-title status">Статус: Вашу заявку було видалено адміністрацією ДНЗ</h3>
+                        }
+                        else
+                        {
+                            if (item.Statement.Status == "NotConsidered")
+                            {
+                                <h3 class="box-title status">Статус: Не розглянуто</h3>
+                            }
+                            else if (item.Statement.Status == "Approved")
+                            {
+                                <h3 class="box-title status">Статус: Одобрено</h3>
+                            }
+                            else if (item.Statement.Status == "Rejected")
+                            {
+                                <h3 class="box-title status">Статус: Відхилено</h3>
+                            }
+                        }
                         <br />
                         <h3 class="box-title">Дата та час: @item.Statement.DateTime.ToLongTimeString() @item.Statement.DateTime.ToLongDateString()</h3>
 
@@ -101,19 +119,3 @@
         </div>
     </div>
 </section>
-
-<script>
-    $(".hide-box").on("click", function () {
-        var current = this;
-        if ($(current).parent().parent().parent().parent().children(".box-body").css("display") == "block") {
-            $(current).removeClass("glyphicon-minus");
-            $(current).addClass("glyphicon-plus");
-            $(current).parent().parent().parent().parent().children(".box-body").css("display", "none");
-        }
-        else {
-            $(current).addClass("glyphicon-minus");
-            $(current).removeClass("glyphicon-plus");
-            $(current).parent().parent().parent().parent().children(".box-body").css("display", "block");
-        }
-    });
-</script>

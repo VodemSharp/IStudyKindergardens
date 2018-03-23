@@ -7,10 +7,13 @@
         <!-- sidebar menu: : style can be found in sidebar.less -->
         <form action="#" method="get" class="sidebar-form">
             <div class="input-group">
-                <input type="text" name="q" class="form-control" placeholder="Search...">
-                <span class="input-group-btn">
-                    <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
-                </span>
+                @using (Html.BeginForm("Index", "Home", FormMethod.Get))
+                {
+                    <input type="text" name="search" class="form-control" placeholder="Search...">
+                    <span class="input-group-btn">
+                        <button type="submit" name="search" id="search-btn" class="btn btn-flat"><span class="glyphicon glyphicon-search"></span></button>
+                    </span>
+                }
             </div>
         </form>
         <ul class="sidebar-menu">
@@ -62,7 +65,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="/Messages">
+                    <a href="/MyMessages">
                         <span class="glyphicon glyphicon-envelope"></span> <span>Повідомлення</span>
                     </a>
                 </li>

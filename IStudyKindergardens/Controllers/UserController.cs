@@ -121,7 +121,7 @@ namespace IStudyKindergardens.Controllers
                     SiteUserManager.EditSiteUser(model, id, Server);
                 }
                 catch (Exception) { }
-                return RedirectToAction("UserProfile", "User", new { id = id });
+                return RedirectToAction("UserProfile", "User", new { id });
             }
             return RedirectToAction("Index", "Home");
         }
@@ -138,6 +138,100 @@ namespace IStudyKindergardens.Controllers
         public ActionResult AddContact()
         {
             return View(_siteUserManager.GetAddContactListViewModel(User.Identity.GetUserId()));
+        }
+
+        [HttpGet]
+        [Route("WriteMessage")]
+        public ActionResult WriteMessage()
+        {
+            if (User.Identity.IsAuthenticated && (User.IsInRole("User") || User.IsInRole("Admin") || User.IsInRole("Administator")))
+            {
+                List<SiteUser> siteUsers = _siteUserManager.GetContactUsers(User.Identity.GetUserId()).ToList();
+                siteUsers.Insert(0, new SiteUser { Id = "-1", Surname = "Виберіть користувача..." });
+                SendMessageViewModel model = new SendMessageViewModel
+                {
+                    UserContacts = new SelectList(siteUsers, "Id", "FullName")
+                };
+                return View(model);
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        [Route("WriteMessage")]
+        public ActionResult WriteMessage(SendMessageViewModel model)
+        {
+            if (User.Identity.IsAuthenticated && (User.IsInRole("User") || User.IsInRole("Admin") || User.IsInRole("Administator")))
+            {
+                _siteUserManager.WriteMessage(User.Identity.GetUserId(), model);
+                return RedirectToAction("SentMessages", "User");
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        [Route("MyMessages")]
+        public ActionResult MyMessages()
+        {
+            if (User.Identity.IsAuthenticated && (User.IsInRole("User") || User.IsInRole("Admin") || User.IsInRole("Administator")))
+            {
+                List<MessageUserListItemModel> model = _siteUserManager.GetAllMessages(User.Identity.GetUserId());
+                ViewBag.IsSent = false;
+                return View(model);
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        [Route("SentMessages")]
+        public ActionResult SentMessages()
+        {
+            if (User.Identity.IsAuthenticated && (User.IsInRole("User") || User.IsInRole("Admin") || User.IsInRole("Administator")))
+            {
+                List<MessageUserListItemModel> model = _siteUserManager.GetAllSentMessages(User.Identity.GetUserId());
+                ViewBag.IsSent = true;
+                return View("MyMessages", model);
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        [Route("MyMessages/{id}")]
+        public ActionResult MyMessages(int id)
+        {
+            if (User.Identity.IsAuthenticated && (User.IsInRole("User") || User.IsInRole("Admin") || User.IsInRole("Administator")))
+            {
+                int messageId = -1;
+                try
+                {
+                    messageId = Convert.ToInt32(id);
+                }
+                catch
+                {
+                    return RedirectToAction("MyMessages", "User");
+                }
+                _siteUserManager.ReadMessage(messageId, User.Identity.GetUserId());
+                ReMessageList model = _siteUserManager.GetReMessageList(User.Identity.GetUserId(), messageId);
+                if (model != null)
+                {
+                    return View("ReWriteMessage", model);
+                }
+                return RedirectToAction("MyMessages", "User");
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        [Route("MyMessages")]
+        public ActionResult MyMessages(ReMessageList model)
+        {
+            if (User.Identity.IsAuthenticated && (User.IsInRole("User") || User.IsInRole("Admin") || User.IsInRole("Administator")))
+            {
+                SendMessageViewModel modelToWrite = new SendMessageViewModel { ToUserId = model.ReceiverId, Text = model.NewText, Theme = model.Theme };
+                _siteUserManager.WriteMessage(User.Identity.GetUserId(), modelToWrite, model.ReMessageId);
+                return RedirectToAction("MyMessages", "User");
+            }
+            return RedirectToAction("Index", "Home");
         }
     }
 }

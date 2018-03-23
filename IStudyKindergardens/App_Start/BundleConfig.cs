@@ -8,6 +8,8 @@ namespace IStudyKindergardens
         // For more information on bundling, visit https://go.microsoft.com/fwlink/?LinkId=301862
         public static void RegisterBundles(BundleCollection bundles)
         {
+            ConfigureIgnoreList(bundles.IgnoreList);
+
             //Styles
 
             bundles.Add(new StyleBundle("~/css/bootstrap").Include(
@@ -55,6 +57,21 @@ namespace IStudyKindergardens
                         "~/Plugins/input-mask/jquery.inputmask.date.extensions.js",
                         "~/Plugins/input-mask/jquery.inputmask.extensions.js"
                 ));
+
+            BundleTable.EnableOptimizations = false;
+        }
+
+        public static void ConfigureIgnoreList(IgnoreList ignoreList)
+        {
+            if (ignoreList == null) throw new System.Exception("ignoreList");
+
+            ignoreList.Clear(); // Clear the list, then add the new patterns.
+
+            ignoreList.Ignore("*.intellisense.js");
+            ignoreList.Ignore("*-vsdoc.js");
+            ignoreList.Ignore("*.debug.js", OptimizationMode.WhenEnabled);
+            //ignoreList.Ignore("*.min.js", OptimizationMode.WhenDisabled);
+            //ignoreList.Ignore("*.min.css", OptimizationMode.WhenDisabled);
         }
     }
 }

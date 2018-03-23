@@ -251,6 +251,38 @@
     <Compile Include="Migrations\201803151149021_LCH2.Designer.cs">
       <DependentUpon>201803151149021_LCH2.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201803191822538_LCH3.cs" />
+    <Compile Include="Migrations\201803191822538_LCH3.Designer.cs">
+      <DependentUpon>201803191822538_LCH3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803201030591_LCH4.cs" />
+    <Compile Include="Migrations\201803201030591_LCH4.Designer.cs">
+      <DependentUpon>201803201030591_LCH4.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803231441220_AddReMessage.cs" />
+    <Compile Include="Migrations\201803231441220_AddReMessage.Designer.cs">
+      <DependentUpon>201803231441220_AddReMessage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803231541121_LiiitleChange.cs" />
+    <Compile Include="Migrations\201803231541121_LiiitleChange.Designer.cs">
+      <DependentUpon>201803231541121_LiiitleChange.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803231608087_LiiitleChange2.cs" />
+    <Compile Include="Migrations\201803231608087_LiiitleChange2.Designer.cs">
+      <DependentUpon>201803231608087_LiiitleChange2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803231610180_LiiitleChange3.cs" />
+    <Compile Include="Migrations\201803231610180_LiiitleChange3.Designer.cs">
+      <DependentUpon>201803231610180_LiiitleChange3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803231615115_LiiitleChange4.cs" />
+    <Compile Include="Migrations\201803231615115_LiiitleChange4.Designer.cs">
+      <DependentUpon>201803231615115_LiiitleChange4.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803231707412_LiiitleChange5.cs" />
+    <Compile Include="Migrations\201803231707412_LiiitleChange5.Designer.cs">
+      <DependentUpon>201803231707412_LiiitleChange5.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Home\KindergardenListViewModel.cs" />
     <Compile Include="Models\Identity\AccountViewModels.cs" />
@@ -272,6 +304,11 @@
     <Compile Include="Models\Users\EditUserViewModel.cs" />
     <Compile Include="Models\Identity\IdentityModels.cs" />
     <Compile Include="Models\Identity\ManageViewModels.cs" />
+    <Compile Include="Models\Users\MessageListItemModel.cs" />
+    <Compile Include="Models\Users\MessageUserIdPair.cs" />
+    <Compile Include="Models\Users\ReMessageItem.cs" />
+    <Compile Include="Models\Users\ReMessageList.cs" />
+    <Compile Include="Models\Users\SendMessageViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\KindergardenManager.cs" />
     <Compile Include="Repositories\RatingManager.cs" />
@@ -284,6 +321,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\dist\AdminLTE.css" />
     <Content Include="Content\dist\AdminLTE.min.css" />
+    <Content Include="Content\dist\app.min.js" />
     <Content Include="Content\dist\cropper.css" />
     <Content Include="Content\dist\skins\skin-black.css" />
     <Content Include="Content\dist\skins\skin-black.min.css" />
@@ -304,6 +342,8 @@
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Images\Default\anonym.png" />
+    <Content Include="Images\Default\anonymKindergarden.jpg" />
+    <Content Include="Images\Default\anonymKindergardenRectangle.jpg" />
     <Content Include="Images\Uploaded\Source\e4bb98a5-fcb8-473e-afd5-6dfe4239a835.jpg" />
     <Content Include="Images\Uploaded\Temp\e4bb98a5-fcb8-473e-afd5-6dfe4239a835.jpg" />
     <Content Include="Plugins\bootstrap-slider\bootstrap-slider.js" />
@@ -906,6 +946,9 @@
     <Content Include="Views\Home\RemoveStatement.cshtml" />
     <Content Include="Views\User\Contacts.cshtml" />
     <Content Include="Views\User\AddContact.cshtml" />
+    <Content Include="Views\User\WriteMessage.cshtml" />
+    <Content Include="Views\User\MyMessages.cshtml" />
+    <Content Include="Views\User\ReWriteMessage.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -950,6 +993,30 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201803151149021_LCH2.resx">
       <DependentUpon>201803151149021_LCH2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803191822538_LCH3.resx">
+      <DependentUpon>201803191822538_LCH3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803201030591_LCH4.resx">
+      <DependentUpon>201803201030591_LCH4.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803231441220_AddReMessage.resx">
+      <DependentUpon>201803231441220_AddReMessage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803231541121_LiiitleChange.resx">
+      <DependentUpon>201803231541121_LiiitleChange.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803231608087_LiiitleChange2.resx">
+      <DependentUpon>201803231608087_LiiitleChange2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803231610180_LiiitleChange3.resx">
+      <DependentUpon>201803231610180_LiiitleChange3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803231615115_LiiitleChange4.resx">
+      <DependentUpon>201803231615115_LiiitleChange4.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803231707412_LiiitleChange5.resx">
+      <DependentUpon>201803231707412_LiiitleChange5.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

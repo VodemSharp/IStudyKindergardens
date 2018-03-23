@@ -37,17 +37,16 @@
                             {
                                 <img style="width: 200px; height: 200px; float: left;" class="img-thumbnail" src="~/Images/Uploaded/Source/@item.PreviewPicture" />
                             }
-                            <div style="display:inline-block; margin-left: 15px;" class="info">
-                                <div class="row">
-                                    <div class="col-md-9">
-                                        <h3 style="margin-top: 15px;">@item.Kindergarden.Name</h3>
-                                        <a target="_blank" href="https://www.google.com.ua/maps/place/@item.Kindergarden.Address"><span><span class="glyphicon glyphicon-globe"></span> Показати на карті [@item.Address]</span></a>
-                                        <h5 style="text-align: justify; word-wrap: break-word;">@item.ShortInfo</h5>
-                                    </div>
-                                    <div class="col-md-3" style="padding-top:15px; padding-right: 20px; padding-left: 0;">
-                                        <h4 style="margin-bottom: 30px;">Рейтинг: <span style="font-weight: bold;">@item.Rating</span></h4>
-                                        <div class="btn-group-vertical" style="width:100%;">
-                                            @Html.ActionLink("Оцінити", "Rate", "Kindergarden", routeValues: new { @id = item.Kindergarden.Id }, htmlAttributes: new { @style = "width:100%", @class = "btn btn-primary border-radius-null" })
+                            <div style="margin-left: 215px;" class="">
+                                    <div class="row">
+                                        <div class="col-md-9">
+                                            <h3 style="margin-top: 15px;">@item.Kindergarden.Name</h3>
+                                            <a target="_blank" href="https://www.google.com.ua/maps/place/@item.Kindergarden.Address"><span><span class="glyphicon glyphicon-globe"></span> Показати на карті [@item.Address]</span></a>
+                                            <h5 style="text-align: justify; word-wrap: break-word;">@item.ShortInfo</h5>
+                                        </div>
+                                        <div class="col-md-3" style="">
+                                            <h4 style="margin-bottom: 30px;">Рейтинг: <span style="font-weight: bold;">@item.Rating</span></h4>
+                                            @Html.ActionLink("Оцінити", "Rate", "Kindergarden", routeValues: new { @id = item.Kindergarden.Id }, htmlAttributes: new { @style = "width:100%", @class = "btn btn-default btn-flat" })
                                             @using (Ajax.BeginForm("AddKindergardenForUser", "Home", new AjaxOptions
                                             {
                                             }))
@@ -55,16 +54,15 @@
                                                 @Html.Hidden("kindergardenId", item.Kindergarden.Id)
                                                 if (item.IsSelected)
                                                 {
-                                                    <input type="submit" value="Відмінити" style="width:100%" class="btn btn-tumblr border-radius-null switchSelected" />
+                                                    <input type="submit" value="Відмінити" style="width:100%" class="btn btn-tumblr btn-flat switchSelected" />
                                                 }
                                                 else
                                                 {
-                                                    <input type="submit" value="До вибраних" style="width:100%" class="btn btn-primary border-radius-null switchSelected" />
+                                                    <input type="submit" value="До вибраних" style="width:100%" class="btn btn-default btn-flat switchSelected" />
                                                 }
                                             }
-                                            @Html.ActionLink("Перейти", "KindergardenProfile", "Kindergarden", routeValues: new { @id = item.Kindergarden.Id }, htmlAttributes: new { @style = "width:100%", @class = "btn btn-primary border-radius-null" })
+                                            @Html.ActionLink("Перейти", "KindergardenProfile", "Kindergarden", routeValues: new { @id = item.Kindergarden.Id }, htmlAttributes: new { @style = "width:100%", @class = "btn btn-default btn-flat" })
                                         </div>
-                                    </div>
                                 </div>
                             </div>
                             <div class="clearfix"></div>
@@ -79,28 +77,14 @@
 @Scripts.Render("~/js/ajax")
 
 <script>
-    $(document).ready(function () {
-        $('.info').css("width", "100%");
-        var width = $('.info').css("width");
-        var value = (width.substring(0, width.length - 2) - 200);
-        $('.info').css("width", value - 15 + "px");
-    });
-
-    $(window).resize(function () {
-        $('.info').css("width", "100%");
-        var width = $('.info').css("width");
-        var value = (width.substring(0, width.length - 2) - 200);
-        $('.info').css("width", value - 15 + "px");
-    });
-
     $(".switchSelected").on("click", function () {
         if ($(this).hasClass("btn-tumblr")) {
             $(this).removeClass("btn-tumblr");
-            $(this).addClass("btn-primary");
+            $(this).addClass("btn-default");
             $(this).attr("value", "До вибраних");
         }
-        else if ($(this).hasClass("btn-primary")) {
-            $(this).removeClass("btn-primary");
+        else if ($(this).hasClass("btn-default")) {
+            $(this).removeClass("btn-default");
             $(this).addClass("btn-tumblr");
             $(this).attr("value", "Відмінити");
         }

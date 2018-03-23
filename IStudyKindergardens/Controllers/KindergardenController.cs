@@ -259,7 +259,7 @@ namespace IStudyKindergardens.Controllers
         [HttpPost]
         public ActionResult Rate(QuestionRatingViewModel model, string jsRatings, string jsQuestions)
         {
-            if (User.Identity.IsAuthenticated)
+            if (User.Identity.IsAuthenticated && jsRatings != "" && jsQuestions != "")
             {
                 List<string> rating = jsRatings.Split(new char[] { ':' }).ToList();
                 List<string> questionIds = jsQuestions.Split(new char[] { ':' }).ToList();
@@ -336,6 +336,6 @@ namespace IStudyKindergardens.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        
+
     }
 }

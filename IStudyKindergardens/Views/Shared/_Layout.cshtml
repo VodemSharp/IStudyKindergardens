@@ -1,30 +1,32 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-	<title>@ViewBag.Title</title>
+    <title>@ViewBag.Title</title>
 
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-	@Styles.Render("~/css/bootstrap")
-	@Styles.Render("~/css/theme")
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="~/Plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css" rel="stylesheet" type="text/css">
+    @Styles.Render("~/css/bootstrap")
+    @Styles.Render("~/css/theme")
     @Styles.Render("~/css/iCheck")
-	@Styles.Render("~/css/icheckFlatBlue")
-	@Styles.Render("~/css/allskins")
+    @Styles.Render("~/css/icheckFlatBlue")
+    @Styles.Render("~/css/allskins")
 
-	@Scripts.Render("~/js/modernizr")
-	@Scripts.Render("~/js/jquery")
-	@Scripts.Render("~/js/bootstrap")
-	@Scripts.Render("~/js/jqueryval")
-	@Scripts.Render("~/js/icheck")
-
-	<style>
-		html {
-			overflow-y: visible;
-		}
-	</style>
+    @Scripts.Render("~/js/jquery")
+    @Scripts.Render("~/js/modernizr")
+    @Scripts.Render("~/js/bootstrap")
+    @Scripts.Render("~/js/jqueryval")
+    @Scripts.Render("~/js/icheck")
+    <style>
+        html {
+            overflow: auto;
+        }
+        .btn-tumblr:hover{
+            color: #fff;
+        }
+    </style>
 </head>
-<body class="skin-blue" style="background-color: #ECF0F5">
+<body class="skin-blue wysihtml5-supported" style="background-color: #ECF0F5;">
     <div class="wrapper">
         @Html.Partial("_HeaderPartial")
         @Html.Partial("_LeftMenuPartial")
@@ -32,6 +34,6 @@
             @RenderBody()
         </div>
     </div>
-    <script src="~/Content/dist/js/app.min.js" type="text/javascript"></script>
+    <script src="~/Content/dist/app.min.js" type="text/javascript"></script>
 </body>
 </html>

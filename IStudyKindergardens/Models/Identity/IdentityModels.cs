@@ -10,8 +10,6 @@ using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace IStudyKindergardens.Models
 {
-    //Time standard: '00:00:00 dd/mm/yyyy'
-
     // You can add profile data for the user by adding more properties to your ApplicationUser class, please visit http://go.microsoft.com/fwlink/?LinkID=317594 to learn more.
     public class ApplicationUser : IdentityUser
     {
@@ -48,6 +46,15 @@ namespace IStudyKindergardens.Models
         public string Name { get; set; }
         public string FathersName { get; set; }
         public string DateOfBirth { get; set; }
+
+        [NotMapped]
+        public string FullName
+        {
+            get
+            {
+                return String.Format("{0} {1} {2}", Surname, Name, FathersName);
+            }
+        }
 
         public ICollection<SiteUserClaim> SiteUserClaims { get; set; }
         public ICollection<SiteUserKindergarden> SiteUserKindergardens { get; set; }
@@ -135,15 +142,43 @@ namespace IStudyKindergardens.Models
         public string ApplicationUserId { get; set; }
         public ApplicationUser ApplicationUser { get; set; }
 
-        string Theme { get; set; }
-        string Text { get; set; }
+        public bool IsRead { get; set; }
+        public string Theme { get; set; }
+        public string Text { get; set; }
+        public DateTime DateTime { get; set; }
 
-        public ICollection<ApplicationUserMessage> GetApplicationUserMessages { get; set; }
+        public virtual ReMessage ReMessage { get; set; }
+
+        public ICollection<MessageReMessage> MessageReMessages { get; set; }
+        public ICollection<ApplicationUserMessage> ApplicationUserMessages { get; set; }
 
         public Message()
         {
-            GetApplicationUserMessages = new List<ApplicationUserMessage>();
+            ApplicationUserMessages = new List<ApplicationUserMessage>();
         }
+    }
+
+    public class MessageReMessage
+    {
+        [Key]
+        public int Id { get; set; }
+
+        [ForeignKey("Message")]
+        public int MessageId { get; set; }
+        public Message Message { get; set; }
+
+        [ForeignKey("ReMessage")]
+        public int ReMessageId { get; set; }
+        public ReMessage ReMessage { get; set; }
+    }
+
+    public class ReMessage
+    {
+        [Key, ForeignKey("Message")]
+        public int Id { get; set; }
+
+        public virtual Message Message { get; set; }
+        public ICollection<MessageReMessage> MessageReMessages { get; set; }
     }
 
     public class SiteUserKindergarden
@@ -471,6 +506,8 @@ namespace IStudyKindergardens.Models
 
         public DbSet<Message> Messages { get; set; }
         public DbSet<ApplicationUserMessage> ApplicationUserMessages { get; set; }
+        public DbSet<ReMessage> ReMessages { get; set; }
+        public DbSet<MessageReMessage> MessageReMessages { get; set; }
 
         public DbSet<Kindergarden> Kindergardens { get; set; }
         public DbSet<KindergardenClaim> KindergardenClaims { get; set; }

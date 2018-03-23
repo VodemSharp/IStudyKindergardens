@@ -45,7 +45,7 @@
                                                 <div class="input-group-addon">
                                                     <span class="glyphicon glyphicon-calendar"></span>
                                                 </div>
-                                                @Html.TextBoxFor(m => m.ChildDateOfBirth, new { @placeholder = "Дата народження дитини", @class = "form-control", @data_inputmask = "'alias': 'dd/mm/yyyy'", @data_mask = "" })
+                                                @Html.TextBoxFor(m => m.ChildDateOfBirth, new { @placeholder = "Введіть дату народження дитини", @class = "form-control", @data_inputmask = "'alias': 'dd/mm/yyyy'", @data_mask = "" })
                                             </div>
                                             @Html.ValidationMessageFor(m => m.ChildDateOfBirth, "", new { @class = "text-danger" })
                                         </div>
@@ -77,7 +77,8 @@
                                     <div class="form-group has-feedback col-md-12">
                                         @Html.LabelFor(m => m.SelectedKindergardenId, "Дошкільний навчальний заклад")
                                         <div>
-                                            @Html.DropDownListFor(m => m.SelectedKindergardenId, Model.Kindergardens)
+                                            @Html.DropDownListFor(m => m.SelectedKindergardenId, Model.Kindergardens, htmlAttributes: new { @class = "form-control", @style = "width: 100%;" })
+
                                         </div>
                                     </div>
                                 </div>
@@ -141,7 +142,7 @@
                                             <label>
                                                 @Html.CheckBoxFor(m => m.Consent)
                                             </label>
-                                            <span>&nbsp;Згода на використання персональних даних!</span>
+                                            <span>&nbsp;Згода на використання персональних даних</span>
                                         </div>
                                     </div>
                                 </div>
