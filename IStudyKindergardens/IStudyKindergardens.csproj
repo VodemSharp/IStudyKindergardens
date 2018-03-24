@@ -283,6 +283,10 @@
     <Compile Include="Migrations\201803231707412_LiiitleChange5.Designer.cs">
       <DependentUpon>201803231707412_LiiitleChange5.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201803232355304_LiiitleChange6.cs" />
+    <Compile Include="Migrations\201803232355304_LiiitleChange6.Designer.cs">
+      <DependentUpon>201803232355304_LiiitleChange6.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Home\KindergardenListViewModel.cs" />
     <Compile Include="Models\Identity\AccountViewModels.cs" />
@@ -1017,6 +1021,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201803231707412_LiiitleChange5.resx">
       <DependentUpon>201803231707412_LiiitleChange5.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803232355304_LiiitleChange6.resx">
+      <DependentUpon>201803232355304_LiiitleChange6.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

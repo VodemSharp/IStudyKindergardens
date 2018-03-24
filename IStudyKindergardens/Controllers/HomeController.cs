@@ -340,5 +340,29 @@ namespace IStudyKindergardens.Controllers
             _siteUserManager.RemoveContactUser(User.Identity.GetUserId(), removeContactUserId);
             return Json(true);
         }
+
+        [HttpPost]
+        public JsonResult HideMessage(string messageIds)
+        {
+            try
+            {
+                if (messageIds.Length != 0)
+                {
+                    List<string> Ids = messageIds.Split(':').ToList();
+                    if (Ids.Count != 0)
+                    {
+                        List<int> intIds = new List<int> { };
+                        for (int i = 0; i < Ids.Count; i++)
+                        {
+                            intIds.Add(Convert.ToInt32(Ids[i]));
+                        }
+                        _siteUserManager.HideMessages(intIds, User.Identity.GetUserId());
+                        return Json(true);
+                    }
+                }
+            }
+            catch { }
+            return Json(false);
+        }
     }
 }

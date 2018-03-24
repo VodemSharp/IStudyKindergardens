@@ -63,12 +63,22 @@
                         <div class="box-header">
                             @if (ViewBag.IsSent)
                             {
-                                <h3 class="box-title">Вихідні повідомлення</h3>
+                                <h3 class="box-title" style="vertical-align: middle;">Вихідні повідомлення</h3>
                             }
                             else
                             {
-                                <h3 class="box-title">Вхідні повідомлення</h3>
+                                <h3 class="box-title" style="vertical-align: middle;">Вхідні повідомлення</h3>
                             }
+                            <div class="pull-right">
+                                @using (Ajax.BeginForm("HideMessage", "Home", new AjaxOptions
+                                {
+                                }))
+                                {
+                                    <a class="btn btn-primary trash-link"><span class="glyphicon glyphicon-trash"></span></a>
+                                    @Html.Hidden("messageIds", "", htmlAttributes: new { @class = "messageIds" })
+                                    <input style="display: none;" type="submit" id="trash-submit" />
+                                }
+                            </div>
                         </div><!-- /.box-header -->
                         <div class="box-body table-responsive no-padding">
                             <table class="table table-hover" style="table-layout: fixed">
@@ -76,7 +86,10 @@
                                     @foreach (var item in Model)
                                     {
                                         <tr>
-                                            <td style="width: 30px;"><input class="checkbox icheckbox_minimal-blue" type="checkbox" style="margin: 0px;" /></td>
+                                            <td style="width: 30px;">
+                                                <input class="checkbox icheckbox_minimal-blue" type="checkbox" style="margin: 0px;" />
+                                                @Html.Hidden("messageId", item.MessageId, htmlAttributes: new { @class = "messageId" })
+                                            </td>
                                             @if (!item.IsRead)
                                             {
                                                 if (item.IsFromUser)
@@ -119,3 +132,22 @@
         </div>
     </div>
 </section>
+
+@Scripts.Render("~/js/ajax")
+
+<script>
+    $('.trash-link').on('click', function () {
+        var messageIds = '';
+        $('.checkbox').each(function (index, element) {
+            if ($(element).prop('checked')) {
+                messageIds += $(element).parent().children('.messageId').attr('value') + ':';
+                $(element).parent().parent().hide();
+            }
+        });
+        if (messageIds.length != 0) {
+            messageIds = messageIds.substring(0, messageIds.length - 1);
+        }
+        $('.messageIds').attr('value', messageIds);
+        $('#trash-submit').click();
+    });
+</script>

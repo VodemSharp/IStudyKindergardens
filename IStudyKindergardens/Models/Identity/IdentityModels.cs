@@ -143,6 +143,8 @@ namespace IStudyKindergardens.Models
         public ApplicationUser ApplicationUser { get; set; }
 
         public bool IsRead { get; set; }
+        public bool IsHiddenForReciver { get; set; }
+        public bool IsHiddenForSender { get; set; }
         public string Theme { get; set; }
         public string Text { get; set; }
         public DateTime DateTime { get; set; }

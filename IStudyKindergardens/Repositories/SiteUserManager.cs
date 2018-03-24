@@ -33,6 +33,7 @@ namespace IStudyKindergardens.Repositories
         List<MessageUserListItemModel> GetAllSentMessages(string id);
         List<MessageUserListItemModel> GetAllMessages(string id);
         void ReadMessage(int messageId, string userId);
+        void HideMessages(List<int> messageId, string userId);
     }
 
     public class SiteUserManager : IDisposable, ISiteUserManager
@@ -274,29 +275,32 @@ namespace IStudyKindergardens.Repositories
             int tempId;
             for (int i = messages.Count - 1; i >= 0; i--)
             {
-                model.Add(new MessageUserListItemModel
+                if (!messages[i].IsHiddenForReciver)
                 {
-                    Theme = messages[i].Theme,
-                    Text = messages[i].Text,
-                    MessageId = messages[i].Id,
-                    IsRead = messages[i].IsRead,
-                    DateTime = messages[i].DateTime
-                });
-                tempId = messages[i].Id;
-                tempApplicationUserMessage = db.ApplicationUserMessages.Where(aum => aum.MessageId == tempId).First();
-                if (db.Kindergardens.Any(k => k.Id == tempApplicationUserMessage.ApplicationUserId))
-                {
-                    tempKindergarden = db.Kindergardens.Where(su => su.Id == tempApplicationUserMessage.ApplicationUserId).First();
-                    model[model.Count - 1].FromId = tempKindergarden.Id;
-                    model[model.Count - 1].From = tempKindergarden.Name;
-                    model[model.Count - 1].IsFromUser = false;
-                }
-                if (db.SiteUsers.Any(su => su.Id == tempApplicationUserMessage.ApplicationUserId))
-                {
-                    tempSiteUser = db.SiteUsers.Where(su => su.Id == tempApplicationUserMessage.ApplicationUserId).First();
-                    model[model.Count - 1].FromId = tempSiteUser.Id;
-                    model[model.Count - 1].From = tempSiteUser.FullName;
-                    model[model.Count - 1].IsFromUser = true;
+                    model.Add(new MessageUserListItemModel
+                    {
+                        Theme = messages[i].Theme,
+                        Text = messages[i].Text,
+                        MessageId = messages[i].Id,
+                        IsRead = messages[i].IsRead,
+                        DateTime = messages[i].DateTime
+                    });
+                    tempId = messages[i].Id;
+                    tempApplicationUserMessage = db.ApplicationUserMessages.Where(aum => aum.MessageId == tempId).First();
+                    if (db.Kindergardens.Any(k => k.Id == tempApplicationUserMessage.ApplicationUserId))
+                    {
+                        tempKindergarden = db.Kindergardens.Where(su => su.Id == tempApplicationUserMessage.ApplicationUserId).First();
+                        model[model.Count - 1].FromId = tempKindergarden.Id;
+                        model[model.Count - 1].From = tempKindergarden.Name;
+                        model[model.Count - 1].IsFromUser = false;
+                    }
+                    if (db.SiteUsers.Any(su => su.Id == tempApplicationUserMessage.ApplicationUserId))
+                    {
+                        tempSiteUser = db.SiteUsers.Where(su => su.Id == tempApplicationUserMessage.ApplicationUserId).First();
+                        model[model.Count - 1].FromId = tempSiteUser.Id;
+                        model[model.Count - 1].From = tempSiteUser.FullName;
+                        model[model.Count - 1].IsFromUser = true;
+                    }
                 }
             }
             return model;
@@ -316,30 +320,33 @@ namespace IStudyKindergardens.Repositories
             {
                 tempId = applicationUserMessages[i].MessageId;
                 tempMessage = db.Messages.Where(m => m.Id == tempId).First();
+                if (!tempMessage.IsHiddenForSender)
+                {
 
-                model.Add(new MessageUserListItemModel
-                {
-                    Theme = tempMessage.Theme,
-                    Text = tempMessage.Text,
-                    MessageId = tempMessage.Id,
-                    IsRead = tempMessage.IsRead,
-                    DateTime = tempMessage.DateTime
-                });
+                    model.Add(new MessageUserListItemModel
+                    {
+                        Theme = tempMessage.Theme,
+                        Text = tempMessage.Text,
+                        MessageId = tempMessage.Id,
+                        IsRead = tempMessage.IsRead,
+                        DateTime = tempMessage.DateTime
+                    });
 
-                stringTempId = tempMessage.ApplicationUserId;
-                if (db.Kindergardens.Any(k => k.Id == stringTempId))
-                {
-                    tempKindergarden = db.Kindergardens.Where(su => su.Id == stringTempId).First();
-                    model[model.Count - 1].FromId = tempKindergarden.Id;
-                    model[model.Count - 1].From = tempKindergarden.Name;
-                    model[model.Count - 1].IsFromUser = false;
-                }
-                if (db.SiteUsers.Any(su => su.Id == stringTempId))
-                {
-                    tempSiteUser = db.SiteUsers.Where(su => su.Id == stringTempId).First();
-                    model[model.Count - 1].FromId = tempSiteUser.Id;
-                    model[model.Count - 1].From = tempSiteUser.FullName;
-                    model[model.Count - 1].IsFromUser = true;
+                    stringTempId = tempMessage.ApplicationUserId;
+                    if (db.Kindergardens.Any(k => k.Id == stringTempId))
+                    {
+                        tempKindergarden = db.Kindergardens.Where(su => su.Id == stringTempId).First();
+                        model[model.Count - 1].FromId = tempKindergarden.Id;
+                        model[model.Count - 1].From = tempKindergarden.Name;
+                        model[model.Count - 1].IsFromUser = false;
+                    }
+                    if (db.SiteUsers.Any(su => su.Id == stringTempId))
+                    {
+                        tempSiteUser = db.SiteUsers.Where(su => su.Id == stringTempId).First();
+                        model[model.Count - 1].FromId = tempSiteUser.Id;
+                        model[model.Count - 1].From = tempSiteUser.FullName;
+                        model[model.Count - 1].IsFromUser = true;
+                    }
                 }
             }
             return model;
@@ -476,6 +483,26 @@ namespace IStudyKindergardens.Repositories
                 db.Messages.Where(m => m.Id == messageId && m.ApplicationUserId == userId).First().IsRead = true;
                 db.SaveChanges();
             }
+        }
+
+        public void HideMessages(List<int> messageId, string userId)
+        {
+            int tempId;
+            for (int i = 0; i < messageId.Count; i++)
+            {
+                tempId = messageId[i];
+                if (db.Messages.Any(m => m.Id == tempId && m.ApplicationUserId == userId))
+                {
+                    db.Messages.Where(m => m.Id == tempId && m.ApplicationUserId == userId).First().IsHiddenForReciver = true;
+                }
+                    ApplicationUserMessage applicationUserMessage = db.ApplicationUserMessages.Where(aum => aum.MessageId == tempId).First();
+                    if (applicationUserMessage.ApplicationUserId == userId)
+                    {
+                        db.Messages.Where(m => m.Id == tempId).First().IsHiddenForSender = true;
+                    }
+            }
+
+            db.SaveChanges();
         }
 
         protected void Dispose(bool disposing)
