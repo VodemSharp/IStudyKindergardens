@@ -1,0 +1,242 @@
+﻿@model IEnumerable<IStudyKindergartens.Models.StatementListItemViewModel>
+@using Microsoft.AspNet.Identity
+@{ 
+    ViewBag.Link = "/Kindergarten/Statements";
+}
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div style="margin-bottom: 15px; padding-left: 0; padding-right: 0;">
+                <div class="row">
+                    <div class="col-md-2">
+                        <a style="width:100%;" href="/Kindergarten/Statements/@User.Identity.GetUserId()" class="btn btn-tumblr btn-flat">Усі</a>
+                    </div>
+                    <div class="col-md-2">
+                        <a style="width:100%;" href="/Kindergarten/NotConsideredStatements/@User.Identity.GetUserId()" class="btn btn-primary btn-flat">Не розглянуті</a>
+                    </div>
+                    <div class="col-md-2">
+                        <a style="width:100%;" href="/Kindergarten/ApprovedStatements/@User.Identity.GetUserId()" class="btn btn-primary btn-flat">Одобрені</a>
+                    </div>
+                    <div class="col-md-2">
+                        <a style="width:100%;" href="/Kindergarten/RejectedStatements/@User.Identity.GetUserId()" class="btn btn-primary btn-flat">Відхилені</a>
+                    </div>
+                    <div class="col-md-2">
+                        <a style="width:100%;" href="/Kindergarten/SelectedStatements/@User.Identity.GetUserId()" class="btn btn-primary btn-flat">Вибрані</a>
+                    </div>
+                    <div class="col-md-2">
+                        <a style="width:100%;" href="/Kindergarten/RemovedStatements/@User.Identity.GetUserId()" class="btn btn-primary btn-flat">Корзина</a>
+                    </div>
+                </div>
+            </div>
+            @foreach (var item in Model)
+            {
+                <div class="box box-primary">
+                    <div class="box-header">
+                        <h3 class="box-title">Для: <a href="/Kindergarten/@item.Statement.KindergartenId">@item.KindergartenName</a></h3>
+                        <br />
+                        <h3 class="box-title">Від: <a href="/User/@item.Statement.SiteUserId">@item.UserName</a></h3>
+                        <br /> <br />
+                        @if (item.Statement.Status == "NotConsidered")
+                        {
+                            <h3 class="box-title status">Статус: Не розглянуто</h3>
+                        }
+                        else if (item.Statement.Status == "Approved")
+                        {
+                            <h3 class="box-title status">Статус: Одобрено</h3>
+                        }
+                        else if (item.Statement.Status == "Rejected")
+                        {
+                            <h3 class="box-title status">Статус: Відхилено</h3>
+                        }
+                        <br />
+                        <h3 class="box-title">Дата та час: @item.Statement.DateTime.ToLongTimeString() @item.Statement.DateTime.ToLongDateString()</h3>
+
+                        <div class="box-tools pull-right">
+                            <a class="btn btn-box-tool btn-hide" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><span class="glyphicon glyphicon-plus hide-box"></span></a>
+                        </div>
+                    </div><!-- /.box-header -->
+                    <div class="box-body" style="display: none;">
+                        <div class="row">
+                            <div class="form-group has-feedback col-md-4">
+                                <label>ПІБ одного з батьків</label>
+                                <p>@item.Statement.SNF</p>
+                            </div>
+                            <div class="form-group has-feedback col-md-4">
+                                <label>ПІБ дитини</label>
+                                <p>@item.Statement.ChildSNF</p>
+                            </div>
+                            <div class="form-group has-feedback col-md-4">
+                                <label>Адреса проживання</label>
+                                <p>@item.Statement.Address</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group has-feedback col-md-4">
+                                <label>Серія і номер паспорта одного з батьків</label>
+                                <p>@item.Statement.SeriesNumberPassport</p>
+                            </div>
+                            <div class="form-group has-feedback col-md-4">
+                                <label>Серія і номер свідоцтва про народження дитини</label>
+                                <p>@item.Statement.ChildBirthCertificate</p>
+                            </div>
+                            <div class="form-group has-feedback col-md-4">
+                                <label>Дата народження дитини</label>
+                                <p>@item.Statement.ChildDateOfBirth</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group has-feedback col-md-4">
+                                <label>Email</label>
+                                <p>@item.Statement.Email</p>
+                            </div>
+                            <div class="form-group has-feedback col-md-4">
+                                <label>Контактний телефон</label>
+                                <p>@item.Statement.PhoneNumber</p>
+                            </div>
+                            <div class="form-group has-feedback col-md-4">
+                                <label>Додатковий контактний телефон</label>
+                                <p>@item.Statement.AdditionalPhoneNumber</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group has-feedback col-md-12">
+                                <label>Вибраний тип групи</label>
+                                <p>@item.Statement.Group</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group has-feedback col-md-12">
+                                <label>Вибрані пільги</label>
+                                @for (int i = 0; i < item.UserPrivileges.Count; i++)
+                                {
+                                    <p>@item.UserPrivileges[i]</p>
+                                }
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group has-feedback col-md-6">
+                                <a href="/Kindergarten/SendToEmail/@item.Statement.Id" style="width: 100%;" class="btn btn-primary btn-flat">Надіслати заявку на пошту</a>
+                            </div>
+                            <div class="form-group has-feedback col-md-6">
+                                @if (item.Statement.IsSelected)
+                                {
+                                    <a style="width: 100%;" class="btn btn-tumblr btn-flat toSelected">Забрати заявку з вибраних</a>
+                                }
+                                else
+                                {
+                                    <a style="width: 100%;" class="btn btn-primary btn-flat toSelected">Добавити заявку у вибрані</a>
+                                }
+                            </div>
+                            @using (Ajax.BeginForm("ToSelected", "Home", new AjaxOptions
+                            {
+                            }))
+                            {
+                                <a style="display: none;" class="labelToSelected"></a>
+                                @Html.Hidden("statementId", item.Statement.Id)
+                                <input type="submit" style="display:none;" />
+                            }
+                            @using (Ajax.BeginForm("FromSelected", "Home", new AjaxOptions
+                            {
+                            }))
+                            {
+                                <a style="display: none;" class="labelFromSelected"></a>
+                                @Html.Hidden("statementId", item.Statement.Id)
+                                <input type="submit" style="display:none;" />
+                            }
+                        </div>
+                        <div class="row">
+                            <div class="form-group has-feedback col-md-4">
+                                <a style="width: 100%;" class="btn btn-primary btn-flat approveStatement">Одобрити заявку</a>
+                            </div>
+                            @using (Ajax.BeginForm("ApproveStatement", "Home", new AjaxOptions
+                            {
+                            }))
+                            {
+                                <a style="display: none;" class="labelApproveStatement"></a>
+                                @Html.Hidden("statementId", item.Statement.Id)
+                                <input type="submit" style="display:none;" />
+                            }
+                            <div class="form-group has-feedback col-md-4">
+                                <a style="width: 100%;" class="btn btn-primary btn-flat rejectStatement">Відхилити заявку</a>
+                            </div>
+                            @using (Ajax.BeginForm("RejectStatement", "Home", new AjaxOptions
+                            {
+                            }))
+                            {
+                                <a style="display: none;" class="labelRejectStatement"></a>
+                                @Html.Hidden("statementId", item.Statement.Id)
+                                <input type="submit" style="display:none;" />
+                            }
+                            <div class="form-group has-feedback col-md-4">
+                                <a style="width: 100%;" class="btn btn-primary btn-flat toRecycleBin">Відправити заявку в корзину</a>
+                            </div>
+                            @using (Ajax.BeginForm("ToRecycleBin", "Home", new AjaxOptions
+                            {
+                            }))
+                            {
+                                <a style="display: none;" class="labelToRecycleBin"></a>
+                                @Html.Hidden("statementId", item.Statement.Id)
+                                <input type="submit" style="display:none;" />
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+@Scripts.Render("~/js/ajax")
+
+<script>
+    $(".toSelected").on("click", function () {
+        var current = this;
+        if ($(current).hasClass("btn-primary")) {
+            $(current).removeClass("btn-primary");
+            $(current).addClass("btn-tumblr");
+            $(current).html("Забрати заявку з вибраних");
+            $(current).parent().parent().children('form').children('.labelToSelected').parent().children('input').click();
+        }
+        else {
+            $(current).removeClass("btn-tumblr");
+            $(current).addClass("btn-primary");
+            $(current).html("Добавити заявку у вибрані");
+            $(current).parent().parent().children('form').children('.labelFromSelected').parent().children('input').click();
+        }
+    });
+
+    $(".approveStatement").on("click", function () {
+        var current = this;
+        $(current).parent().parent().parent().parent().children('.box-header').children('.box-tools').children('a').children('span').click();
+        $(current).parent().parent().parent().parent().children('.box-header').children('.status').html("Статус: Одобрено");
+        $(current).parent().parent().children('form').children('.labelApproveStatement').parent().children('input').click();
+
+    });
+
+    $(".rejectStatement").on("click", function () {
+        var current = this;
+        $(current).parent().parent().parent().parent().children('.box-header').children('.box-tools').children('a').children('span').click();
+        $(current).parent().parent().parent().parent().children('.box-header').children('.status').html("Статус: Відхилено");
+        $(current).parent().parent().children('form').children('.labelRejectStatement').parent().children('input').click();
+    });
+
+    $(".toRecycleBin").on("click", function () {
+        var current = this;
+        $(current).parent().parent().parent().parent().css("display", "none");
+        $(current).parent().parent().children('form').children('.labelToRecycleBin').parent().children('input').click();
+    });
+
+    //$(".hide-box").on("click", function () {
+    //    var current = this;
+    //    if ($(current).parent().parent().parent().parent().children(".box-body").css("display") == "block") {
+    //        $(current).removeClass("glyphicon-minus");
+    //        $(current).addClass("glyphicon-plus");
+    //        $(current).parent().parent().parent().parent().children(".box-body").css("display", "none");
+    //    }
+    //    else {
+    //        $(current).addClass("glyphicon-minus");
+    //        $(current).removeClass("glyphicon-plus");
+    //        $(current).parent().parent().parent().parent().children(".box-body").css("display", "block");
+    //    }
+    //});
+</script>

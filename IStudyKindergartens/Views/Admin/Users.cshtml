@@ -1,0 +1,46 @@
+﻿@model IEnumerable<IStudyKindergartens.Models.SiteUser>
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">Список користувачів</h3>
+                </div><!-- /.box-header -->
+                <div class="box-body table-responsive no-padding">
+                    <table class="table table-hover">
+                        <tbody>
+                            <tr>
+                                <th>Прізвище</th>
+                                <th>Ім'я</th>
+                                <th>Ім'я по батькові</th>
+                                <th>Дата народження</th>
+                                <th>Емейл</th>
+                                <th>Телефон</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.Surname</td>
+                                    <td>@item.Name</td>
+                                    <td>@item.FathersName</td>
+                                    <td>@item.DateOfBirth</td>
+                                    <td>@item.ApplicationUser.Email</td>
+                                    <td>@item.ApplicationUser.PhoneNumber</td>
+                                    <td><a href="/User/@item.Id"><span class="glyphicon glyphicon-asterisk"></span></a></td>
+                                    <td><a href="/User/Edit/@item.Id"><span class="glyphicon glyphicon-edit"></span></a></td>
+                                    <td><a href="/Admin/DeleteUser/@item.Id"><span class="glyphicon glyphicon-remove"></span></a></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <div style="padding: 5px;">
+                        @Html.ActionLink("Додати нового користувача", "AddUser", "Admin")
+                    </div>
+                </div><!-- /.box-body -->
+            </div>
+        </div>
+    </div>
+</section>

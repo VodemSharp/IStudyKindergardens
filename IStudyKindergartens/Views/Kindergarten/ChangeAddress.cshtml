@@ -1,0 +1,30 @@
+﻿@model IStudyKindergartens.Models.ChangeAddressViewModel
+
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-primary">
+                <div class="box-header">
+                    <h3 class="box-title">Редагування адреси закладу</h3>
+                </div>
+                <div class="box-body">
+                    <div class="form-group">
+                        @using (Html.BeginForm("ChangeAddress", "Kindergarten", FormMethod.Post))
+                        {
+                            @Html.AntiForgeryToken()
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.Address, "Адреса для пошуку в google maps:")
+                                @Html.TextBoxFor(m => m.Address, new { @class = "form-control", @placeholder = "Адреса для пошуку в google maps" })
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.Address, "Альтернативна назва адреси для рейтингу:")
+                                @Html.TextBoxFor(m => m.AltAddress, new { @class = "form-control", @placeholder = "Альтернативна назва адреси для рейтингу" })
+                            </div>
+                            <input type="submit" class="btn btn-primary btn-block btn-flat" value="Редагувати">
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

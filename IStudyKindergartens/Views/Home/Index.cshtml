@@ -1,0 +1,103 @@
+﻿@model IEnumerable<IStudyKindergartens.Models.KindergartenListItemViewModel>
+@{
+    ViewBag.Title = "Головна сторінка";
+    if(ViewBag.Type == "MainSearch")
+    {
+        ViewBag.Link = "/";
+    }
+    else if(ViewBag.Type == "AdvancedSearch")
+    {
+        ViewBag.Link = "/AdvancedSearch";
+    }
+}
+<style>
+    .clearfix::after {
+        content: "";
+        clear: both;
+        display: table;
+    }
+
+    .border-radius-null {
+        border-radius: unset;
+    }
+</style>
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            @if (ViewBag.Type != null)
+            {
+                if (ViewBag.Type == "MainSearch")
+                {
+                    @Html.Partial("_MainSearchPartial")
+                }
+                else if (ViewBag.Type == "AdvancedSearch")
+                {
+                    @Html.Partial("_AdvancedSearchPartial")
+                }
+            }
+            @foreach (var item in Model)
+            {
+                <div class="box box-primary">
+                    <div class="box-body">
+                        <div class="item-Kindergarten">
+                            @if (item.PreviewPicture == String.Empty)
+                            {
+                                <img style="width: 200px; height: 200px; float: left;" class="img-thumbnail" src="~/Images/Default/anonymKindergartenRectangle.jpg" />
+                            }
+                            else
+                            {
+                                <img style="width: 200px; height: 200px; float: left;" class="img-thumbnail" src="~/Images/Uploaded/Source/@item.PreviewPicture" />
+                            }
+                            <div style="margin-left: 215px;" class="">
+                                    <div class="row">
+                                        <div class="col-md-9">
+                                            <h3 style="margin-top: 15px;">@item.Kindergarten.Name</h3>
+                                            <a target="_blank" href="https://www.google.com.ua/maps/place/@item.Kindergarten.Address"><span><span class="glyphicon glyphicon-globe"></span> Показати на карті [@item.Address]</span></a>
+                                            <h5 style="text-align: justify; word-wrap: break-word;">@item.ShortInfo</h5>
+                                        </div>
+                                        <div class="col-md-3" style="">
+                                            <h4 style="margin-bottom: 30px;">Рейтинг: <span style="font-weight: bold;">@item.Rating</span></h4>
+                                            @Html.ActionLink("Оцінити", "Rate", "Kindergarten", routeValues: new { @id = item.Kindergarten.Id }, htmlAttributes: new { @style = "width:100%", @class = "btn btn-default btn-flat" })
+                                            @using (Ajax.BeginForm("AddKindergartenForUser", "Home", new AjaxOptions
+                                            {
+                                            }))
+                                            {
+                                                @Html.Hidden("KindergartenId", item.Kindergarten.Id)
+                                                if (item.IsSelected)
+                                                {
+                                                    <input type="submit" value="Відмінити" style="width:100%" class="btn btn-tumblr btn-flat switchSelected" />
+                                                }
+                                                else
+                                                {
+                                                    <input type="submit" value="До вибраних" style="width:100%" class="btn btn-default btn-flat switchSelected" />
+                                                }
+                                            }
+                                            @Html.ActionLink("Перейти", "KindergartenProfile", "Kindergarten", routeValues: new { @id = item.Kindergarten.Id }, htmlAttributes: new { @style = "width:100%", @class = "btn btn-default btn-flat" })
+                                        </div>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+@Scripts.Render("~/js/ajax")
+
+<script>
+    $(".switchSelected").on("click", function () {
+        if ($(this).hasClass("btn-tumblr")) {
+            $(this).removeClass("btn-tumblr");
+            $(this).addClass("btn-default");
+            $(this).attr("value", "До вибраних");
+        }
+        else if ($(this).hasClass("btn-default")) {
+            $(this).removeClass("btn-default");
+            $(this).addClass("btn-tumblr");
+            $(this).attr("value", "Відмінити");
+        }
+    });
+</script>

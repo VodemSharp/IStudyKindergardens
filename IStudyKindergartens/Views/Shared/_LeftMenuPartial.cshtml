@@ -1,0 +1,226 @@
+﻿@using Microsoft.AspNet.Identity
+
+<!-- Left side column. contains the logo and sidebar -->
+<aside class="main-sidebar">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+        <!-- sidebar menu: : style can be found in sidebar.less -->
+        <form action="#" method="get" class="sidebar-form">
+            <div class="input-group">
+                @using (Html.BeginForm("Index", "Home", FormMethod.Get))
+                {
+                    <input type="text" name="search" class="form-control" placeholder="Search...">
+                    <span class="input-group-btn">
+                        <button type="submit" name="search" id="search-btn" class="btn btn-flat"><span class="glyphicon glyphicon-search"></span></button>
+                    </span>
+                }
+            </div>
+        </form>
+        <ul class="sidebar-menu">
+            <li class="header">МЕНЮ</li>
+            @if (ViewBag.Link == "/")
+            {
+                <li class="active">
+                    <a href="/">
+                        <span class="glyphicon glyphicon-stats"></span> <span>Головна</span>
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li>
+                    <a href="/">
+                        <span class="glyphicon glyphicon-stats"></span> <span>Головна</span>
+                    </a>
+                </li>
+            }
+            @if (ViewBag.Link == "/AdvancedSearch")
+            {
+                <li class="active">
+                    <a href="/AdvancedSearch">
+                        <span class="glyphicon glyphicon-search"></span> <span>Розширений пошук</span>
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li>
+                    <a href="/AdvancedSearch">
+                        <span class="glyphicon glyphicon-search"></span> <span>Розширений пошук</span>
+                    </a>
+                </li>
+            }
+            @if (Request.IsAuthenticated && (User.IsInRole("User") || User.IsInRole("Admin") || User.IsInRole("Moderator")))
+            {
+                if (ViewBag.Link == "/Apply")
+                {
+                    <li class="active">
+                        <a href="/Apply">
+                            <span class="glyphicon glyphicon-send"></span> <span>Подати заяву</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li>
+                        <a href="/Apply">
+                            <span class="glyphicon glyphicon-send"></span> <span>Подати заяву</span>
+                        </a>
+                    </li>
+                }
+            }
+            @if (Request.IsAuthenticated && (User.IsInRole("User") || User.IsInRole("Admin") || User.IsInRole("Moderator")))
+            {
+                if (ViewBag.Link == "/MyStatements")
+                {
+                    <li class="active">
+                        <a href="/MyStatements">
+                            <span class="glyphicon glyphicon-folder-open"></span> <span>Подані заяви</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li>
+                        <a href="/MyStatements">
+                            <span class="glyphicon glyphicon-folder-open"></span> <span>Подані заяви</span>
+                        </a>
+                    </li>
+                }
+            }
+            @if (Request.IsAuthenticated && (User.IsInRole("Administrator")))
+            {
+                if (ViewBag.Link == "/Kindergarten/Statements")
+                {
+                    <li class="active">
+                        <a href="/Kindergarten/Statements/@User.Identity.GetUserId()">
+                            <span class="glyphicon glyphicon-folder-open"></span> <span>Подані заяви</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li>
+                        <a href="/Kindergarten/Statements/@User.Identity.GetUserId()">
+                            <span class="glyphicon glyphicon-folder-open"></span> <span>Подані заяви</span>
+                        </a>
+                    </li>
+                }
+            }
+            @if (Request.IsAuthenticated && (User.IsInRole("User") || User.IsInRole("Admin") || User.IsInRole("Moderator")))
+            {
+                if (ViewBag.Link == "/User")
+                {
+                    <li class="active">
+                        <a href="/User/@User.Identity.GetUserId()">
+                            <span class="glyphicon glyphicon-user"></span> <span>Профіль</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li>
+                        <a href="/User/@User.Identity.GetUserId()">
+                            <span class="glyphicon glyphicon-user"></span> <span>Профіль</span>
+                        </a>
+                    </li>
+                }
+                if (ViewBag.Link == "/MyKindergartens")
+                {
+                    <li class="active">
+                        <a href="/MyKindergartens">
+                            <span class="glyphicon glyphicon-home"></span> <span>Мої садочки</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li>
+                        <a href="/MyKindergartens">
+                            <span class="glyphicon glyphicon-home"></span> <span>Мої садочки</span>
+                        </a>
+                    </li>
+                }
+            }
+            @if (Request.IsAuthenticated)
+            {
+                if (ViewBag.Link == "MyMessages")
+                {
+                    <li class="active">
+                        <a href="/MyMessages">
+                            <span class="glyphicon glyphicon-envelope"></span> <span>Повідомлення</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li>
+                        <a href="/MyMessages">
+
+
+                            <span class="glyphicon glyphicon-envelope"></span> <span>Повідомлення</span>
+                        </a>
+                    </li>
+                }
+            }
+            @if (Request.IsAuthenticated && (User.IsInRole("User") || User.IsInRole("Admin") || User.IsInRole("Moderator")))
+            {
+                if (ViewBag.Link == "/Contacts")
+                {
+                    <li class="active">
+                        <a href="/Contacts">
+                            <span class="glyphicon glyphicon-list-alt"></span> <span>Контакти</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li>
+                        <a href="/Contacts">
+                            <span class="glyphicon glyphicon-list-alt"></span> <span>Контакти</span>
+                        </a>
+                    </li>
+                }
+            }
+            @if (Request.IsAuthenticated && (User.IsInRole("Administrator")))
+            {
+                if (ViewBag.Link == "/Kindergarten/Edit")
+                {
+                    <li class="active">
+                        <a href="/Kindergarten/Edit/@User.Identity.GetUserId()">
+                            <span class="glyphicon glyphicon-edit"></span> <span>Редагувати</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li>
+                        <a href="/Kindergarten/Edit/@User.Identity.GetUserId()">
+                            <span class="glyphicon glyphicon-edit"></span> <span>Редагувати</span>
+                        </a>
+                    </li>
+                }
+            }
+            @if (Request.IsAuthenticated && (User.IsInRole("Admin")))
+            {
+                if (ViewBag.Link == "/Admin")
+                {
+                    <li class="active">
+                        <a href="/Admin">
+                            <span class="glyphicon glyphicon-user"></span> <span>Панель упраління</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li>
+                        <a href="/Admin">
+                            <span class="glyphicon glyphicon-user"></span> <span>Панель упраління</span>
+                        </a>
+                    </li>
+                }
+            }
+        </ul>
+    </section>
+    <!-- /.sidebar -->
+</aside>

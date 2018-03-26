@@ -1,0 +1,68 @@
+﻿@model IStudyKindergartens.Models.ReMessageList
+@{
+    ViewBag.Link = "/MyMessages";
+}
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="row">
+                <div class="col-md-4 form-group">
+                    <a style="width:100%;" class="btn btn-tumblr btn-flat" href="/WriteMessage">Надіслати повідомлення</a>
+                </div>
+                <div class="col-md-4 form-group">
+                    <a style="width:100%;" class="btn btn-primary btn-flat" href="/MyMessages">Вхідні повідомлення</a>
+                </div>
+                <div class="col-md-4 form-group">
+                    <a style="width:100%;" class="btn btn-primary btn-flat" href="/SentMessages">Вихідні повідомлення</a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="box box-primary">
+                        <div class="box-header">
+                            <h3 class="box-title">Відповісти на повідомлення</h3>
+                        </div>
+                        <div class="box-body">
+                            @using (Html.BeginForm("MyMessages", "User", FormMethod.Post))
+                            {
+                                @Html.HiddenFor(m => m.IsUser)
+                                @Html.HiddenFor(m => m.ReMessageId)
+                                @Html.HiddenFor(m => m.ReceiverId)
+                                @Html.HiddenFor(m => m.Theme)
+                                <div class="form-group">
+                                    @Html.TextAreaFor(m => m.NewText, htmlAttributes: new { @placeholder = "Введіть текст повідомлення...", @class = "form-control", @rows = "10", @style = "width: 100%;" })
+                                </div>
+                                <div class="form-group">
+                                    <input type="submit" class="btn btn-primary btn-flat" style="width: 100%;" value="Відповісти">
+                                </div>
+                            }
+                            <div class="form-group">
+                                <h4 style="margin-top: 0px;">Тема: @Model.Theme</h4>
+                            </div>
+                            @for (int i = 0; i < Model.ReMessages.Count; i++)
+                            {
+                                <div class="form-group history-message">
+                                    <p style="padding: 15px; border: 1px dashed #ccc">
+                                        <span class="message-time" style="display: none;">[@Model.ReMessages[i].DateTime.ToLongDateString() @Model.ReMessages[i].DateTime.ToLongTimeString()]</span>
+                                        <span style="font-weight: bold">@Model.ReMessages[i].Sender:</span><br />
+                                        @Model.ReMessages[i].Text
+                                    </p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    $("div.history-message").mouseenter(function () {
+        $(this).children('p').children('.message-time').css('display', 'block');
+    });
+
+    $("div.history-message").mouseleave(function () {
+        $(this).children('p').children('.message-time').css('display', 'none');
+    });
+</script>

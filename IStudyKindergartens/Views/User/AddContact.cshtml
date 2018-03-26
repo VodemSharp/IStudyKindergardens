@@ -1,0 +1,119 @@
+﻿@model IEnumerable<IStudyKindergartens.Models.AddContactListItemViewModel>
+@using Microsoft.AspNet.Identity
+@{ 
+    ViewBag.Link = "/Contacts";
+}
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-primary">
+                <div class="box-body">
+                    @using (Html.BeginForm("SearchUser", "User", FormMethod.Post))
+                    {
+                        @Html.Hidden("id", User.Identity.GetUserId())
+                        <div class="input-group">
+                            @Html.TextBox("search", "", htmlAttributes: new { @class = "form-control", @placeholder = "Введіть ПІБ користувача..." })
+                            <span class="input-group-btn">
+                                <input type="submit" class="btn btn-primary btn-flat" value="Пошук" />
+                            </span>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="box box-primary">
+                <div class="box-header">
+                    <h3 class="box-title">Пошук нових контактів</h3>
+                </div><!-- /.box-header -->
+                <div class="box-body table-responsive no-padding">
+                    <table class="table table-hover">
+                        <tbody>
+                            <tr>
+                                <th>Прізвище</th>
+                                <th>Ім'я</th>
+                                <th>Ім'я по батькові</th>
+                                <th>Дата народження</th>
+                                <th>Емейл</th>
+                                <th>Телефон</th>
+                                <th></th>
+                            </tr>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.SiteUser.Surname</td>
+                                    <td>@item.SiteUser.Name</td>
+                                    <td>@item.SiteUser.FathersName</td>
+                                    <td>@item.SiteUser.DateOfBirth</td>
+                                    <td>@item.SiteUser.ApplicationUser.Email</td>
+                                    <td>@item.SiteUser.ApplicationUser.PhoneNumber</td>
+                                    @if (item.isAdded)
+                                    {
+                                        <td hidden><span class="contactUserId">@item.SiteUser.Id</span></td>
+                                        <td><a class="btn btn-tumblr btn-flat removeContact">Видалити</a></td>
+                                    }
+                                    else
+                                    {
+                                        <td hidden><span class="contactUserId">@item.SiteUser.Id</span></td>
+                                        <td><a class="btn btn-primary btn-flat addContact">Додати</a></td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    @using (Ajax.BeginForm("AddContactAjax", "Home", new AjaxOptions
+                    {
+                        OnBegin = "Block",
+                        OnSuccess = "Unblock"
+                    }))
+                    {
+                        @Html.Hidden("addContactUserId", "", htmlAttributes: new { @class = "addContactUserId" })
+                        <input class="addContactUserButton" type="submit" style="display:none;" />
+                    }
+                    @using (Ajax.BeginForm("RemoveContactAjax", "Home", new AjaxOptions
+                    {
+                        OnBegin = "Block",
+                        OnSuccess = "Unblock"
+                    }))
+                    {
+                        @Html.Hidden("removeContactUserId", "", htmlAttributes: new { @class = "removeContactUserId" })
+                        <input class="removeContactUserButton" type="submit" style="display:none;" />
+                    }
+                </div><!-- /.box-body -->
+            </div>
+        </div>
+    </div>
+</section>
+
+@Scripts.Render("~/js/ajax")
+
+<script>
+    function Block() {
+        $(".addContact").attr("disabled", true);
+        $(".removeContact").attr("disabled", true);
+    }
+
+    function Unblock() {
+        $(".addContact").attr("disabled", false);
+        $(".removeContact").attr("disabled", false);
+    }
+
+    $("td").on("click", ".addContact", function () {
+        var current = this;
+        $('.addContactUserId').attr("value", ($(current).parent().parent().children('td').children('.contactUserId').html()));
+        $('.addContactUserButton').click();
+        $(current).html("Видалити");
+        $(current).removeClass("addContact");
+        $(current).removeClass("btn-primary");
+        $(current).addClass("removeContact");
+        $(current).addClass("btn-tumblr");
+    });
+    $("td").on("click", ".removeContact", function () {
+        var current = this;
+        $('.removeContactUserId').attr("value", ($(current).parent().parent().children('td').children('.contactUserId').html()));
+        $('.removeContactUserButton').click();
+        $(current).html("Додати");
+        $(current).removeClass("removeContact");
+        $(current).removeClass("btn-tumblr");
+        $(current).addClass("addContact");
+        $(current).addClass("btn-primary");
+    });
+</script>

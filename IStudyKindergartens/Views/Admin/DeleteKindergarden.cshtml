@@ -1,0 +1,25 @@
+﻿@model IStudyKindergartens.Models.DeleteKindergartenViewModel
+
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-info">
+                <div class="box-header">
+                    <h3 class="box-title">Ви дійсно хочете видалити ДНЗ з назвою @Model.Name</h3>
+                </div><!-- /.box-header -->
+                <div class="box-body">
+                    <div class="row">
+                        @using (Html.BeginForm("DeleteKindergarten", "Admin", FormMethod.Post))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.HiddenFor(m => m.Id)
+                            <div class="form-group has-feedback col-md-12">
+                                <input type="submit" class="btn btn-primary btn-block btn-flat" value="Видалити дошкільний навчальний заклад">
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

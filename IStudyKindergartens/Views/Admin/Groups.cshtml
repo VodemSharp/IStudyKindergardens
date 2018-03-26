@@ -1,0 +1,35 @@
+﻿@model List<IStudyKindergartens.Models.Group>
+
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">Список типів груп</h3>
+                </div><!-- /.box-header -->
+                <div class="box-body table-responsive no-padding">
+                    <table class="table table-hover">
+                        <tbody>
+                            <tr>
+                                <th>Типи груп</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.Value</td>
+                                    <td><a href="/Admin/EditGroup/@item.Id"><span class="glyphicon glyphicon-edit"></span></a></td>
+                                    <td><a href="/Admin/RemoveGroup/@item.Id"><span class="glyphicon glyphicon-remove"></span></a></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <div style="padding: 5px;">
+                        @Html.ActionLink("Додати новий тип груп", "AddGroup", "Admin")
+                    </div>
+                </div><!-- /.box-body -->
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,660 @@
+﻿@model IStudyKindergartens.Models.EditKindergartenViewModel
+@{
+    ViewBag.Title = "Редагування ДНЗ";
+}
+<style>
+    .box-header h4 {
+        font-size: 22px;
+    }
+
+    #edit-text-header {
+        color: #333333;
+        width: 100%;
+        font-size: 18px;
+        font-weight: 500;
+        line-height: 1.1;
+        height: 40px;
+        font-family: 'Source Sans Pro',sans-serif;
+        padding: 5px;
+        border: 1px solid #dddddd;
+    }
+
+    #edit-text-body {
+        color: #333333;
+        width: 100%;
+        height: 200px;
+        font-size: 14px;
+        font-family: 'Source Sans Pro','Helvetica Neue',Helvetica,Arial,sans-serif;
+        font-weight: 400;
+        line-height: 18px;
+        border: 1px solid #dddddd;
+        padding: 10px;
+        text-align: justify;
+    }
+
+    #edit-text-block {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    #edit-text-submit {
+        width: 100%;
+        border-top-right-radius: 0;
+        border-top-left-radius: 0;
+        margin-top: 1px;
+    }
+
+    #edit-text-hide {
+        width: 100%;
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+
+    #edit-image-text-header {
+        color: #333333;
+        width: 100%;
+        font-size: 18px;
+        font-weight: 500;
+        line-height: 1.1;
+        height: 40px;
+        font-family: 'Source Sans Pro',sans-serif;
+        padding: 5px;
+        border: 1px solid #dddddd;
+    }
+
+    #edit-image-text-body {
+        color: #333333;
+        width: 100%;
+        height: 200px;
+        font-size: 14px;
+        font-family: 'Source Sans Pro','Helvetica Neue',Helvetica,Arial,sans-serif;
+        font-weight: 400;
+        line-height: 18px;
+        border: 1px solid #dddddd;
+        padding: 10px;
+        text-align: justify;
+    }
+
+    #edit-image-text-block {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    #edit-image-text-submit {
+        width: 100%;
+        border-top-right-radius: 0;
+        border-top-left-radius: 0;
+        margin-top: 1px;
+    }
+
+    #edit-image-text-hide {
+        width: 100%;
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+
+    #edit-image-submit {
+        width: 100%;
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+
+    .glyphicon-arrow-down {
+        border: 1px solid;
+        padding: 2px;
+        border-radius: 4px;
+        margin-right: 1px;
+    }
+
+    .glyphicon-arrow-up {
+        border: 1px solid;
+        padding: 2px;
+        border-radius: 4px;
+        margin-right: 1px;
+    }
+
+    .glyphicon-remove {
+        border: 1px solid;
+        padding: 2px;
+        border-radius: 4px;
+        margin-right: 1px;
+    }
+
+    .description-block-custom {
+        text-align: left;
+        margin: 5px 0px 5px 0px;
+        display: inline-block;
+        width: 100%;
+    }
+
+        .description-block-custom h4 {
+            margin: 0px 10px 10px 0px;
+            text-align: justify;
+            word-wrap: break-word;
+        }
+
+        .description-block-custom p {
+            margin: 0px 10px 0px 0px;
+            text-align: justify;
+            word-wrap: break-word;
+        }
+
+    .description-image-block-custom {
+        text-align: left;
+        margin: 5px 0px 5px 0px;
+        padding: 10px 10px 10px 10px;
+        border: 1px dashed #ccc;
+        display: inline-block;
+        width: 100%;
+    }
+
+        .description-image-block-custom img {
+            margin: 0px 10px 0px 0px;
+            float: left;
+        }
+
+        .description-image-block-custom * h4 {
+            margin: 0px 10px 10px 0px;
+            text-align: justify;
+            word-wrap: break-word;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .description-image-block-custom * p {
+            margin: 0px 10px 0px 0px;
+            text-align: justify;
+            word-wrap: break-word;
+        }
+
+    .description-image-custom {
+        margin: 0px 0px 5px 0px;
+        width: 100%;
+    }
+
+    .btn-group-vertical {
+        display: block;
+    }
+
+    .photo-album {
+        border: none;
+    }
+
+    .description-block-custom {
+        padding: 10px;
+        border: 1px dashed #ccc;
+    }
+
+        .description-block-custom p {
+            text-align: justify;
+            word-wrap: break-word;
+        }
+
+        .description-block-custom h4 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+    .mini-photo {
+        width: 100%;
+    }
+
+    .preview-image-image {
+        width: 100%;
+    }
+
+    #preview-header {
+        word-wrap: break-word;
+        text-align: justify;
+    }
+
+    #preview-body {
+        word-wrap: break-word;
+        text-align: justify;
+    }
+
+    #preview-image-header {
+        word-wrap: break-word;
+        text-align: justify;
+    }
+
+    #preview-image-body {
+        word-wrap: break-word;
+        text-align: justify;
+    }
+
+    p {
+        white-space: pre-wrap;
+    }
+</style>
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-md-8">
+            @using (Html.BeginForm("Edit", "Kindergarten", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.PictureName, new { id = "modelPictureName" })
+                @Html.HiddenFor(m => m.Name, new { id = "modelName" })
+                <div class="box box-primary">
+                    <div class="box-header" id="kName">
+                        <h4 style="margin:0;"><span id="kNameV">@Model.Name</span> <span id="kNameB" style="color:#367FA9; cursor: pointer;" class="glyphicon glyphicon-edit"></span></h4>
+                    </div>
+                    <div class="box-body">
+                        <div>
+                            <div style="width:100%;" class="btn-group">
+                                <button style="width:50%;" type="button" id="addTextBlock" class="btn btn-default btn-flat">Додати текстовий блок</button>
+                                <button style="width:50%;" type="button" id="addImageTextBlock" class="btn btn-default btn-flat">Додати текстовий блок з картинкою</button>
+                            </div>
+                        </div>
+                        <div id="edit-text-block" style="display: none;">
+                            <a id="edit-text-hide" class="btn btn-default"><span class="glyphicon glyphicon-minus"></span></a>
+                            <input id="edit-text-header" placeholder="Header text" />
+                            <textarea wrap="soft" id="edit-text-body" class="textarea" placeholder="Body text"></textarea>
+                            <a id="edit-text-submit" class="btn btn-primary">Submit</a>
+                            <h4>Preview</h4>
+                            <div class="description-block-custom">
+                                <h4 id="preview-header"></h4>
+                                <p id="preview-body"></p>
+                            </div>
+                        </div>
+                        <div id="edit-image-text-block" style="display: none;">
+                            <a id="edit-image-text-hide" class="btn btn-default"><span class="glyphicon glyphicon-minus"></span></a>
+                            <input id="edit-image-text-header" placeholder="Header text" />
+                            <textarea wrap="soft" id="edit-image-text-body" class="textarea" placeholder="Body text"></textarea>
+                            <form>
+                                <input style="display: none;" type="file" name="uploadFile" id="uploadFile" />
+                                <input style="display: none;" type='reset' id="resetFiles" value='Reset' />
+                            </form>
+                            <a id="edit-image-submit" class="btn btn-default">Upload image</a>
+                            <a id="edit-image-text-submit" class="btn btn-primary">Submit</a>
+                            <h4>Preview</h4>
+                            <div class="description-image-block-custom">
+                                <div>
+                                    <img id="preview-image-image" class="img-rounded img-responsive" style="width: 30%;">
+                                    <h4 id="preview-image-header"></h4>
+                                    <p id="preview-image-body"></p>
+                                    <div style="display: none;" id="loading"><p>Завантаження...</p></div>
+                                </div>
+                            </div>
+                        </div>
+                        <input style="display:none;" id="content-input" name="content" value="" />
+                        <div id="content-form">
+                            @for (int i = 0; i < Model.DescriptionBlocks.Count; i++)
+                            {
+                                if (Model.DescriptionBlocks[i].BlockType == "Text")
+                                {
+                                    List<string> components = Model.DescriptionBlocks[i].BlockComponents;
+                                    <div class='description-block-custom'>
+                                        <span class="glyphicon glyphicon-arrow-up"></span><span class="glyphicon glyphicon-arrow-down"></span><span class="glyphicon glyphicon-remove"></span>
+                                        <input hidden value="text" class="type" />
+                                        <h4 class="component1">@components[0]</h4><p class="component2">@components[1]</p>
+                                    </div>
+                                }
+                                else if (Model.DescriptionBlocks[i].BlockType == "TextImage")
+                                {
+                                    List<string> components = Model.DescriptionBlocks[i].BlockComponents;
+                                    <div class='description-image-block-custom'>
+                                        <span class="glyphicon glyphicon-arrow-up"></span><span class="glyphicon glyphicon-arrow-down"></span><span class="glyphicon glyphicon-remove"></span>
+                                        <input hidden value="text-image" class="type" />
+                                        <div><img id='preview-image-image' class='img-rounded img-responsive component1' style='width: 25%;' src='/Images/Uploaded/Source/@components[0]'><h4 class="component2">@components[1]</h4><p class="component3">@components[2]</p></div>
+                                    </div>
+                                }
+                            }
+                            <input type="submit" id="saveChanges" class="btn btn-block btn-primary btn-flat" value="Зберегти" />
+                        </div>
+
+                    </div><!-- /.box-body -->
+                </div><!-- /.box -->
+            }
+        </div><!-- /.col (left) -->
+        <div class="col-md-4" style="padding-left: 0;">
+            <div class="box box-primary">
+                <div class="box-body">
+                    <img class="img-thumbnail description-image-custom" id="avatar" src="@ViewBag.Picture" />
+                    <div style="display: none;" id="loadingAvatar"><p>Завантаження...</p></div>
+                    <form>
+                        <input style="display: none;" type="file" name="uploadFileAvatar" id="uploadFileAvatar" />
+                        <input style="display: none;" type='reset' id="resetFilesAvatar" value='Reset' />
+                    </form>
+                    <a class="btn btn-block btn-default btn-flat" id="changeModelPicture">Змінити картинку</a>
+                    <a class="btn btn-block btn-default btn-flat" id="deleteModelPicture">Видалити картинку</a>
+                    @Html.ActionLink("Змінити картинку в рейтингу", "ChangeAvatar", "Kindergarten", routeValues: new { @id = Model.Id }, htmlAttributes: new { @class = "btn btn-block btn-default btn-flat", @id = "deleteModelPicture" })
+                    @Html.ActionLink("Змінити адресу закладу", "ChangeAddress", "Kindergarten", routeValues: new { @id = Model.Id }, htmlAttributes: new { @class = "btn btn-block btn-default btn-flat" })
+                    @Html.ActionLink("Редагувати коротку інформацію", "EditShortInfo", "Kindergarten", routeValues: new { @id = Model.Id }, htmlAttributes: new { @class = "btn btn-block btn-default btn-flat" })
+                </div><!-- /.box-body -->
+            </div>
+            @*<div class="box box-primary">
+                    <div class="description-block-custom photo-album"><h4><span class="glyphicon glyphicon-picture"></span> Фотоальбом</h4></div>
+                </div>
+                <div class="box box-primary">
+                    <div class="description-block-custom photo-album"><h4><span class="glyphicon glyphicon-facetime-video"></span> Відеоролики</h4></div>
+                </div>*@
+        </div><!-- /.col (right) -->
+    </div><!-- /.row -->
+</section><!-- /.content -->
+
+<script>
+    $("#kNameB").on("click", function () {
+        if ($('*').is('#kNameI')) {
+            var value = $("#kNameI").val();
+            $("#kNameV").html(value);
+            $("#kNameB").attr("class", "glyphicon glyphicon-edit");
+            $("#modelName").val(value);
+        } else {
+            var kName = $("#kNameV").html();
+            $("#kNameB").attr("class", "glyphicon glyphicon-floppy-disk");
+            $("#kNameV").html("<input style='width:100%;' type='text' id='kNameI'/>");
+            $("#kNameI").attr("style", "width: " + ($("#kNameI").width() - $("#kNameB").width()).toString() + "px;");
+            $("#kNameI").val(kName);
+            $("#kNameI").focus();
+        }
+    });
+
+    $("#addTextBlock").on("click", function () {
+        if ($("#edit-text-block").is(":visible")) {
+            $("#edit-text-block").attr("style", "display: none;");
+        }
+        else {
+            $("#edit-text-block").attr("style", "display: block;");
+            $("#edit-image-text-block").attr("style", "display: none;");
+        }
+    });
+
+    $("#addImageTextBlock").on("click", function () {
+        if ($("#edit-image-text-block").is(":visible")) {
+            $("#edit-image-text-block").attr("style", "display: none;");
+        }
+        else {
+            $("#edit-text-block").attr("style", "display: none;");
+            $("#edit-image-text-block").attr("style", "display: block;");
+        }
+    });
+
+    $("#edit-text-submit").on("click", function () {
+        var div = $('<div>', { class: 'description-block-custom' });
+        var a = '<span class="glyphicon glyphicon-arrow-up"></span><span class="glyphicon glyphicon-arrow-down"></span><span class="glyphicon glyphicon-remove"></span> ';
+        var hidden_input = '<input hidden value="text" class="type"/>';
+        var h4 = $('<h4 class="component1">');
+        h4.html($('#edit-text-header').val());
+        var p = $('<p class="component2">');
+        p.html($('#edit-text-body').val());
+        div.append(a);
+        div.append(hidden_input);
+        div.append(h4);
+        div.append(p);
+        div.insertBefore($("#saveChanges"));
+
+        $("#edit-text-header").val("");
+        $("#edit-text-body").val("");
+        $("#preview-header").html("");
+        $("#preview-body").html("");
+        $("#edit-image-text-block").attr("style", "display: none;");
+        $("#edit-text-block").attr("style", "display: none;");
+    });
+
+    $("#edit-image-submit").on("click", function () {
+        $('#uploadFile').click();
+    });
+
+    function deleteFiles() {
+        $('#resetFiles').click();
+    }
+
+    function deleteFilesAvatar() {
+        $('#resetFilesAvatar').click();
+    }
+
+    $('#changeModelPicture').on('click', function (e) {
+        $('#uploadFileAvatar').click();
+    });
+
+    $('#deleteModelPicture').on('click', function (e) {
+        //ДОРОБИТИ ВИДАЛЕННЯ З ПАПКИ ТЕМП
+        deleteFilesAvatar();
+        $('#avatar').attr('src', '/Images/Default/anonymKindergarten.jpg');
+        $('#modelPictureName').attr('value', 'default');
+
+    });
+
+    $('#uploadFileAvatar').on('change', function (e) {
+        e.preventDefault();
+        var files = document.getElementById('uploadFileAvatar').files;
+        if (files.length > 0) {
+            if (window.FormData !== undefined) {
+                var data = new FormData();
+                for (var x = 0; x < files.length; x++) {
+                    data.append("file" + x, files[x]);
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("UploadPicture", "Home")',
+                    contentType: false,
+                    processData: false,
+                    data: data,
+                    success: function (result) {
+                        if (result == false) {
+                            alert("Не вдалось завантажити файл!");
+                        }
+                        else {
+                            $('#avatar').attr('src', '/Images/Uploaded/Temp/' + result);
+                            $('#modelPictureName').attr('value', result);
+                        }
+                        $("#loadingAvatar").attr("style", "display: none;");
+                    },
+                    error: function (xhr, status, p3) {
+                        alert(xhr.responseText);
+                    },
+                    beforeSend: function () {
+                        $("#loadingAvatar").attr("style", "display: block;");
+                    }
+                    });
+                } else {
+                    alert("Ваш браузер не підтримує HTML5!");
+                }
+            }
+        deleteFilesAvatar();
+    });
+
+    $('#uploadFile').on('change', function (e) {
+        e.preventDefault();
+        var files = document.getElementById('uploadFile').files;
+        if (files.length > 0) {
+            if (window.FormData !== undefined) {
+                var data = new FormData();
+                for (var x = 0; x < files.length; x++) {
+                    data.append("file" + x, files[x]);
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("UploadPicture", "Home")',
+                    contentType: false,
+                    processData: false,
+                    data: data,
+                    success: function (result) {
+                        if (result == false) {
+                            alert("Не вдалось завантажити файл!");
+                        }
+                        else {
+                            $('#preview-image-image').attr('src', '/Images/Uploaded/Temp/' + result);
+                        }
+                        $("#loading").attr("style", "display: none;");
+                    },
+                    error: function (xhr, status, p3) {
+                        alert(xhr.responseText);
+                    },
+                    beforeSend: function () {
+                        $("#loading").attr("style", "display: block;");
+                    }
+                    });
+                } else {
+                    alert("Ваш браузер не підтримує HTML5!");
+                }
+            }
+        deleteFiles();
+    });
+
+$("#edit-image-text-submit").on("click", function () {
+var div = $('<div>', { class: 'description-image-block-custom' });
+
+var a = '<span class="glyphicon glyphicon-arrow-up"></span><span class="glyphicon glyphicon-arrow-down"></span><span class="glyphicon glyphicon-remove"></span> ';
+var hidden_input = '<input hidden value="text-image" class="type"/>';
+var div_inner = $('<div>');
+
+var img = '<img id="preview-image-image" class="img-rounded img-responsive component1" style="width: 25%;" src="' + $('#preview-image-image').attr("src") + '">';
+var h4 = $('<h4 class="component2">');
+h4.html($('#edit-image-text-header').val());
+var p = $('<p class="component3">');
+p.html($('#edit-image-text-body').val());
+
+div_inner.append(img);
+div_inner.append(h4);
+div_inner.append(p);
+
+div.append(a);
+div.append(hidden_input);
+div.append(div_inner);
+div.insertBefore($("#saveChanges"));
+
+$("#edit-text-header").val("");
+$("#edit-text-body").val("");
+$("#preview-header").html("");
+$("#preview-body").html("");
+$("#edit-image-text-block").attr("style", "display: none;");
+$("#edit-text-block").attr("style", "display: none;");
+});
+
+$("#edit-text-block").on("click", "#edit-text-hide", function () {
+if ($("#edit-text-block").is(":visible")) {
+$("#edit-text-block").attr("style", "display: none;");
+}
+});
+
+$("#edit-image-text-block").on("click", "#edit-image-text-hide", function () {
+if ($("#edit-image-text-block").is(":visible")) {
+$("#edit-image-text-block").attr("style", "display: none;");
+}
+});
+
+$(window).resize(function () {
+$("#kNameI").attr("style", "width: 100%;");
+$("#kNameI").attr("style", "width: " + ($("#kNameI").width() - $("#kNameB").width()).toString() + "px;");
+});
+
+$(".box-body").on("click", ".glyphicon-remove", function () {
+$(this).closest('div').remove();
+});
+
+$(".box-body").on("click", ".glyphicon-arrow-up", function () {
+var clicked = this;
+var previos;
+$(".glyphicon-arrow-up").each(function (index, element) {
+if (clicked == element) {
+if (index != 0) {
+    var previos_class = $(previos).parent().attr("class");
+    $(previos).parent().attr("class", $(element).parent().attr("class"));
+    $(element).parent().attr("class", previos_class);
+
+    var content = $(previos).parent().html();
+    $(previos).parent().html($(element).parent().html());
+    $(element).parent().html(content);
+}
+return;
+}
+previos = element;
+});
+});
+
+$(".box-body").on("click", ".glyphicon-arrow-down", function () {
+var clicked = this;
+var isNext = false;
+$(".glyphicon-arrow-down").each(function (index, element) {
+if (isNext) {
+var next_class = $(clicked).parent().attr("class");
+$(clicked).parent().attr("class", $(element).parent().attr("class"));
+$(element).parent().attr("class", next_class);
+
+var content = $(clicked).parent().html();
+$(clicked).parent().html($(element).parent().html());
+$(element).parent().html(content);
+}
+if (clicked == element) {
+isNext = true;
+}
+});
+});
+
+$('#edit-text-header').on("change", function () {
+$('#preview-header').html($('#edit-text-header').val());
+});
+
+$('#edit-text-header').on("input", function () {
+$('#preview-header').html($('#edit-text-header').val());
+});
+
+$('#edit-text-header').on("paste", function () {
+$('#preview-header').html($('#edit-text-header').val());
+});
+
+$('#edit-text-body').on("change", function () {
+$('#preview-body').html($('#edit-text-body').val());
+});
+
+$('#edit-text-body').on("input", function () {
+$('#preview-body').html($('#edit-text-body').val());
+});
+
+$('#edit-text-body').on("paste", function () {
+$('#preview-body').html($('#edit-text-body').val());
+});
+
+$('#edit-image-text-header').on("change", function () {
+$('#preview-image-header').html($('#edit-image-text-header').val());
+});
+
+$('#edit-image-text-header').on("input", function () {
+$('#preview-image-header').html($('#edit-image-text-header').val());
+});
+
+$('#edit-image-text-header').on("paste", function () {
+$('#preview-image-header').html($('#edit-image-text-header').val());
+});
+
+$('#edit-image-text-body').on("change", function () {
+$('#preview-image-body').html($('#edit-image-text-body').val());
+});
+
+$('#edit-image-text-body').on("input", function () {
+$('#preview-image-body').html($('#edit-image-text-body').val());
+});
+
+$('#edit-image-text-body').on("paste", function () {
+$('#preview-image-body').html($('#edit-image-text-body').val());
+});
+
+    $('#saveChanges').mousedown(function () {
+        var result = "";
+        var temp;
+        $("#content-form div").each(function (index, element) {
+            if ($(element).children(".type").attr("value") == "text") {
+                result += 'text|';
+                result += $(element).children(".component1").text() + '|';
+                result += $(element).children(".component2").text() + ':';
+            }
+            else if ($(element).children(".type").attr("value") == "text-image") {
+                result += 'text-image|';
+                temp = $(element).children("div").children(".component1").attr("src"); //split('/Images/Uploaded/Temp/');
+                temp = temp.substring(('/Images/Uploaded').length, temp.length);
+                result += temp + '|';
+                result += $(element).children("div").children(".component2").text() + '|';
+                result += $(element).children("div").children(".component3").text() + ':';
+            }
+        });
+        result = result.substring(0, result.length - 1);
+        result = result.replace(/\n/g, '$ENTER$');
+        result = result.replace('<br/>', '$ENTER$');
+$('#content-input').attr("value", result);
+});
+</script>

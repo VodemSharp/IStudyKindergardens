@@ -1,0 +1,107 @@
+﻿<style>
+    #userPicture {
+        max-width: 100%;
+    }
+</style>
+<link href="~/Content/dist/cropper.css" rel="stylesheet">
+<script src="~/Scripts/cropper.js"></script>
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-primary">
+                <div class="box-body">
+                    <div id="cropperDIV">
+                        <div>
+                            <img id="userPicture" src="~/Images/Default/anonymKindergarten.jpg" />
+                        </div>
+                        <div style="margin-top:5px; width:100%;" id="uploadFileDiv" class="img-thumbnail">
+                            <form>
+                                <input style="display: none;" type="file" name="uploadFile" id="uploadFile" />
+                                <input style="display: none;" type='reset' id="resetFiles" value='Reset' />
+                            </form>
+                            <a style="width:100%;" id="uploadFileLink" class="btn btn-default btn-block btn-flat">Завантажити картинку</a>
+                            @using (Html.BeginForm("ChangeAvatar", "Kindergarten", FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.Hidden("left", null, new { id = "left" })
+                                @Html.Hidden("top", null, new { id = "top" })
+                                @Html.Hidden("right", null, new { id = "right" });
+                                @Html.Hidden("bottom", null, new { id = "bottom" });
+                                @Html.Hidden("src", null, new { id = "src" });
+
+                                <a style="width:100%;" id="saveFileLink" class="btn btn-default btn-block btn-flat">Зберегти картинку</a>
+                                <input type="submit" style="width:100%; display: none;" id="saveFile" class="btn btn-default btn-block btn-flat" value="Зберегти картинку" />
+
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script type="text/javascript">
+    var image = document.getElementById('userPicture');
+
+    var cropper = new Cropper(image, {
+        aspectRatio: 1 / 1,
+        viewMode: 1
+    });
+
+function deleteFiles() {
+		$('#resetFiles').click();
+	}
+	$('#uploadFileLink').on('click', function (e) {
+		$('#uploadFile').click();
+	});
+	$('#uploadFile').on('change', function (e) {
+        e.preventDefault();
+        var files = document.getElementById('uploadFile').files;
+        if (files.length > 0) {
+            if (window.FormData !== undefined) {
+                var data = new FormData();
+                for (var x = 0; x < files.length; x++) {
+                    data.append("file" + x, files[x]);
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("UploadPicture", "Home")',
+                    contentType: false,
+                    processData: false,
+					data: data,
+					success: function (result) {
+						if (result == false) {
+							alert("Не вдалось завантажити файл!");
+						}
+						else {
+							$('#userPicture').attr('src', '/Images/Uploaded/Temp/' + result);
+						}
+                        $("#loading").attr("style", "display: none;");
+                        cropper.replace('/Images/Uploaded/Temp/' + result);
+					},
+                    error: function (xhr, status, p3) {
+                        alert(xhr.responseText);
+					},
+					beforeSend: function () {
+						$("#loading").attr("style", "display: block;");
+					}
+				});
+            } else {
+                alert("Ваш браузер не підтримує HTML5!");
+            }
+		}
+		deleteFiles();
+    });
+
+    $("#saveFileLink").on("click",function (e) {
+        var info = cropper.getData();
+        $("#left").attr("value", info.x);
+        $("#top").attr("value", info.y);
+        $("#right").attr("value", info.x+info.width);
+        $("#bottom").attr("value", info.y + info.height);
+        $("#src").attr("value", $("#userPicture").attr("src"));
+        $("#saveFile").click();
+    });
+</script>
