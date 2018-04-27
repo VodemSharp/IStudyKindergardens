@@ -1,4 +1,5 @@
-﻿using IStudyKindergartens.Models;
+﻿using IStudyKindergartens.HelpClasses;
+using IStudyKindergartens.Models;
 using IStudyKindergartens.Models.Kindergartens;
 using IStudyKindergartens.Models.Ratings;
 using IStudyKindergartens.Models.Statements;
@@ -30,9 +31,10 @@ namespace IStudyKindergartens.Controllers
         private readonly IKindergartenManager _KindergartenManager;
         private readonly IRatingManager _ratingManager;
         private readonly IStatementManager _statementManager;
+        private readonly IApplicationManager _applicationManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AdminController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, ISiteUserManager siteUserManager, IKindergartenManager KindergartenManager, RoleManager<IdentityRole> roleManager, IRatingManager ratingManager, IStatementManager statementManager)
+        public AdminController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, ISiteUserManager siteUserManager, IKindergartenManager KindergartenManager, RoleManager<IdentityRole> roleManager, IRatingManager ratingManager, IStatementManager statementManager, IApplicationManager applicationManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -41,6 +43,7 @@ namespace IStudyKindergartens.Controllers
             _roleManager = roleManager;
             _ratingManager = ratingManager;
             _statementManager = statementManager;
+            _applicationManager = applicationManager;
         }
 
         [HttpGet]
@@ -189,37 +192,23 @@ namespace IStudyKindergartens.Controllers
                 {
                     var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
                     string password = Guid.NewGuid().ToString("N");
-                    var result = UserManager.Create(user, password);
-                    //
-                    try
+                    if (ApplicationManager.IsEmailExist(model.Email))
                     {
-                        MailMessage msg = new MailMessage("istudy.network@gmail.com", model.Email, "IStudy password", GetAnswer(model.Email, password))
+                        ModelState.AddModelError("Email", "Такий емейл вже використовується");
+                        return View(model);
+                    }
+                    else
+                    {
+                        var result = UserManager.Create(user, password);
+                        if (result.Succeeded)
                         {
-                            IsBodyHtml = true
-                        };
-                        SmtpClient sc = new SmtpClient("smtp.gmail.com", 587)
-                        {
-                            UseDefaultCredentials = false
-                        };
-                        NetworkCredential cre = new NetworkCredential("istudy.network@gmail.com", "istudyrepublika");
-                        sc.Credentials = cre;
-                        sc.EnableSsl = true;
-                        sc.Send(msg);
+                            KindergartenManager.AddKindergarten(model, user.Id, Server);
+                            UserManager.AddToRole(user.Id, "Administrator");
+                            MailCustom.Mail(model.Email, "IStudy password", GetAnswer(model.Email, password));
+                            return RedirectToAction("Kindergartens", "Admin");
+                        }
+                        AddErrors(result);
                     }
-                    catch (Exception)
-                    {
-
-                    }
-                    //
-
-                    if (result.Succeeded)
-                    {
-                        KindergartenManager.AddKindergarten(model, user.Id, Server);
-                        UserManager.AddToRole(user.Id, "Administrator");
-                        return RedirectToAction("Kindergartens", "Admin");
-                    }
-
-                    AddErrors(result);
                 }
                 return View(model);
             }
@@ -236,7 +225,63 @@ namespace IStudyKindergartens.Controllers
         {
             if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
             {
-                return View(StatementManager.GetFormatStatementListViewModel());
+                ViewBag.Type = "All";
+                return View("~/Views/Kindergarten/Statements.cshtml", StatementManager.GetFormatStatementListViewModel("none", false, "none", true));
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public ActionResult SelectedStatements()
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                ViewBag.Type = "Selected";
+                return View("~/Views/Kindergarten/Statements.cshtml", StatementManager.GetFormatStatementListViewModel("none", false, "Selected", true));
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public ActionResult RemovedStatements()
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                ViewBag.Type = "Removed";
+                return View("~/Views/Kindergarten/Statements.cshtml", StatementManager.GetFormatStatementListViewModel("none", false, "Removed", true));
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public ActionResult ApprovedStatements()
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                ViewBag.Type = "Approved";
+                return View("~/Views/Kindergarten/Statements.cshtml", StatementManager.GetFormatStatementListViewModel("none", false, "Approved", true));
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public ActionResult RejectedStatements()
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                ViewBag.Type = "Rejected";
+                return View("~/Views/Kindergarten/Statements.cshtml", StatementManager.GetFormatStatementListViewModel("none", false, "Rejected", true));
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public ActionResult NotConsideredStatements()
+        {
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                ViewBag.Type = "NotConsidered";
+                return View("~/Views/Kindergarten/Statements.cshtml", StatementManager.GetFormatStatementListViewModel("none", false, "NotConsidered", true));
             }
             return RedirectToAction("Index", "Home");
         }
@@ -542,6 +587,14 @@ namespace IStudyKindergartens.Controllers
             get
             {
                 return _roleManager;
+            }
+        }
+
+        public IApplicationManager ApplicationManager
+        {
+            get
+            {
+                return _applicationManager;
             }
         }
 

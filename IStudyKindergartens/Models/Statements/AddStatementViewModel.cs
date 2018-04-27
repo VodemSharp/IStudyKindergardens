@@ -10,64 +10,51 @@ namespace IStudyKindergartens.Models.Statements
     public class AddStatementViewModel
     {
         [Required(ErrorMessage = "Вкажіть своє П.І.П.!")]
-        [Display(Name = "SNF")]
         public string SNF { get; set; }
 
         [Required(ErrorMessage = "Вкажіть серію, номер паспорта одного з батьків!")]
-        [Display(Name = "SeriesNumberPassport")]
         public string SeriesNumberPassport { get; set; }
 
         [Required(ErrorMessage = "Вкажіть П.І.П. дитини!")]
-        [Display(Name = "ChildSNF")]
         public string ChildSNF { get; set; }
 
-        [Required(ErrorMessage = "Вкажіть свою дату народження!")]
-        [Display(Name = "CheckDateOfBirth")]
-        public string ChildDateOfBirth { get; set; }
+        [Required(ErrorMessage = "Вкажіть дату народження дитини!")]
+        [DataType(DataType.Date, ErrorMessage = "Не коректно вказана дата народження!")]
+        [Remote("CheckDate", "Home")]
+        public string DateOfBirth { get; set; }
 
         [Required(ErrorMessage = "Вкажіть серію, номер свідоцтва про народження дитини!")]
-        [Display(Name = "ChildBirthCertificate")]
         public string ChildBirthCertificate { get; set; }
 
         [Required(ErrorMessage = "Виберіть дошкільний навчальний заклад!")]
-        [Display(Name = "SelectedKindergartenId")]
         public string SelectedKindergartenId { get; set; }
 
-        [Display(Name = "Kindergartens")]
         public SelectList Kindergartens { get; set; }
 
         [Required(ErrorMessage = "Вкажіть адресу проживання!")]
-        [Display(Name = "KindergartenId")]
         public string Address { get; set; }
 
         [Required(ErrorMessage = "Вкажіть свій електронний адрес!")]
-        [Display(Name = "Email")]
-        [DataType(DataType.EmailAddress, ErrorMessage = "Не коректно вказаний емейл!")]
+        [DataType(DataType.EmailAddress, ErrorMessage = "Не коректно вказаний email!")]
+        [RegularExpression(@"^[A-Za-z0-9](([_\.\-]?[a-zA-Z0-9]+)*)@([A-Za-z0-9]+)(([\.\-‌​]?[a-zA-Z0-9]+)*)\.([A-Za-z]{2,})$", ErrorMessage = "Не коректно вказаний email!")]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Вкажіть свій номер телефону!")]
-        [Display(Name = "PhoneNumber")]
+        [RegularExpression(@"\([0-9]{3}\)\ [0-9]{3}\-[0-9]{4}", ErrorMessage = "Формат телефону: '(000) 000-0000'!")]
         public string PhoneNumber { get; set; }
 
-        [Display(Name = "AdditionalPhoneNumber")]
         public string AdditionalPhoneNumber { get; set; }
 
-        [Display(Name = "Privileges")]
         public List<PrivilegesInnerViewModel> Privileges { get; set; }
 
-        [Display(Name = "Groups")]
         public List<string> Groups { get; set; }
 
         [Required(ErrorMessage = "Виберіть тип групи!")]
-        [Display(Name = "SelectedGroup")]
         public string SelectedGroup { get; set; }
 
-        [Required(ErrorMessage = "Підтвердіть згоду на використання персональних даних!")]
-        [Display(Name = "Consent")]
         public bool Consent { get; set; }
 
         [Required(ErrorMessage = "Введіть код перевірки!")]
-        [Display(Name = "Captcha")]
         public string Captcha { get; set; }
     }
 }

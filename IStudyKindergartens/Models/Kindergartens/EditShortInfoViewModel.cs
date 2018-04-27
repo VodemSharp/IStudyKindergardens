@@ -10,8 +10,7 @@ namespace IStudyKindergartens.Models.Kindergartens
     {
         public string Id { get; set; }
 
-        [Display(Name = "ShortInfo")]
-        [StringLength(350, ErrorMessage = "So long...")]
+        [MaxLength(350, ErrorMessage = "Максимальна довжина інформації - 350 символів!")]
         public string ShortInfo { get; set; }
     }
 }

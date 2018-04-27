@@ -1,4 +1,4 @@
-﻿@model IStudyKindergartens.Models.SendMessageToViewModel
+﻿@model IStudyKindergartens.Models.Messages.SendMessageToViewModel
 @{
     ViewBag.Link = "/MyMessages";
 }
@@ -21,24 +21,10 @@
                         <a style="width:100%;" class="btn btn-primary btn-flat" href="/WriteMessage">Надіслати повідомлення</a>
                     </div>
                     <div class="col-md-4 form-group">
-                        @if (ViewBag.IsSent)
-                        {
-                            <a style="width:100%;" class="btn btn-primary btn-flat" href="/MyMessages">Вхідні повідомлення</a>
-                        }
-                        else
-                        {
-                            <a style="width:100%;" class="btn btn-tumblr btn-flat" href="/MyMessages">Вхідні повідомлення</a>
-                        }
+                        <a style="width:100%;" class="btn btn-primary btn-flat" href="/MyMessages">Вхідні повідомлення</a>
                     </div>
                     <div class="col-md-4 form-group">
-                        @if (ViewBag.IsSent)
-                        {
-                            <a style="width:100%;" class="btn btn-tumblr btn-flat" href="/SentMessages">Вихідні повідомлення</a>
-                        }
-                        else
-                        {
-                            <a style="width:100%;" class="btn btn-primary btn-flat" href="/SentMessages">Вихідні повідомлення</a>
-                        }
+                        <a style="width:100%;" class="btn btn-primary btn-flat" href="/SentMessages">Вихідні повідомлення</a>
                     </div>
                 }
             </div>
@@ -49,8 +35,9 @@
                             <h3 class="box-title">Надіслати повідомлення</h3>
                         </div>
                         <div class="box-body">
-                            @using (Html.BeginForm("WriteTo", "User", FormMethod.Post))
+                            @using (Html.BeginForm("WriteTo", "Message", FormMethod.Post))
                             {
+                                @Html.AntiForgeryToken()
                                 <div class="form-group">
                                     @Html.HiddenFor(m => m.ToUserId)
                                     @Html.TextBoxFor(m => m.ToUser, new { @disabled = "", @class = "form-control", @placeholder = "Введіть тему повідомлення..." })

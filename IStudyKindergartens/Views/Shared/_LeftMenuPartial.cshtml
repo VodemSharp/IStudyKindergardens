@@ -1,4 +1,9 @@
 ﻿@using Microsoft.AspNet.Identity
+@using IStudyKindergartens.Repositories
+@{
+    IMessageManager messageManager = new MessageManager();
+    int countOfUnreadMessages = messageManager.GetCountUnreadMessages(User.Identity.GetUserId());
+}
 
 <!-- Left side column. contains the logo and sidebar -->
 <aside class="main-sidebar">
@@ -11,7 +16,7 @@
                 {
                     <input type="text" name="search" class="form-control" placeholder="Search...">
                     <span class="input-group-btn">
-                        <button type="submit" name="search" id="search-btn" class="btn btn-flat"><span class="glyphicon glyphicon-search"></span></button>
+                        <button type="submit" id="search-btn" class="btn btn-flat"><span class="glyphicon glyphicon-search"></span></button>
                     </span>
                 }
             </div>
@@ -22,7 +27,7 @@
             {
                 <li class="active">
                     <a href="/">
-                        <span class="glyphicon glyphicon-stats"></span> <span>Головна</span>
+                        <span class="glyphicon glyphicon-th-large"></span> <span>Головна</span>
                     </a>
                 </li>
             }
@@ -30,7 +35,23 @@
             {
                 <li>
                     <a href="/">
-                        <span class="glyphicon glyphicon-stats"></span> <span>Головна</span>
+                        <span class="glyphicon glyphicon-th-large"></span> <span>Головна</span>
+                    </a>
+                </li>
+            }
+            @if (ViewBag.Link == "/Search")
+            {
+                <li class="active">
+                    <a href="/Search">
+                        <span class="glyphicon glyphicon-stats"></span> <span>Список садочків</span>
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li>
+                    <a href="/Search">
+                        <span class="glyphicon glyphicon-stats"></span> <span>Список садочків</span>
                     </a>
                 </li>
             }
@@ -149,6 +170,10 @@
                     <li class="active">
                         <a href="/MyMessages">
                             <span class="glyphicon glyphicon-envelope"></span> <span>Повідомлення</span>
+                            @if (countOfUnreadMessages != 0)
+                            {
+                                <small class="label pull-right bg-yellow">@countOfUnreadMessages</small>
+                            }
                         </a>
                     </li>
                 }
@@ -156,9 +181,11 @@
                 {
                     <li>
                         <a href="/MyMessages">
-
-
                             <span class="glyphicon glyphicon-envelope"></span> <span>Повідомлення</span>
+                            @if (countOfUnreadMessages != 0)
+                            {
+                                <small class="label pull-right bg-yellow">@countOfUnreadMessages</small>
+                            }
                         </a>
                     </li>
                 }

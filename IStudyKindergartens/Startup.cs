@@ -39,6 +39,7 @@ namespace IStudyKindergartens
             builder.RegisterType<RatingManager>().As<IRatingManager>();
             builder.RegisterType<StatementManager>().As<IStatementManager>();
             builder.RegisterType<MessageManager>().As<IMessageManager>();
+            builder.RegisterType<ApplicationManager>().As<IApplicationManager>();
 
             // создаем новый контейнер с теми зависимостями, которые определены выше
             var container = builder.Build();

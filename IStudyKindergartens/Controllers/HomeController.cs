@@ -1,5 +1,6 @@
 ﻿using IStudyKindergartens.HelpClasses;
 using IStudyKindergartens.Models;
+using IStudyKindergartens.Models.Kindergartens;
 using IStudyKindergartens.Models.Statements;
 using IStudyKindergartens.Repositories;
 using Microsoft.AspNet.Identity;
@@ -21,21 +22,34 @@ namespace IStudyKindergartens.Controllers
         private readonly IRatingManager _ratingManager;
         private readonly IStatementManager _statementManager;
         private readonly IMessageManager _messageManager;
+        private readonly IApplicationManager _applicationManager;
 
-        public HomeController(IKindergartenManager KindergartenManager, IRatingManager ratingManager, ISiteUserManager siteUserManager, IStatementManager statementManager, IMessageManager messageManager)
+        public HomeController(IKindergartenManager KindergartenManager, IRatingManager ratingManager, ISiteUserManager siteUserManager, IStatementManager statementManager, IMessageManager messageManager, IApplicationManager applicationManager)
         {
             _siteUserManager = siteUserManager;
             _KindergartenManager = KindergartenManager;
             _ratingManager = ratingManager;
             _statementManager = statementManager;
             _messageManager = messageManager;
+            _applicationManager = applicationManager;
         }
 
         [HttpGet]
-        public ActionResult Index(string search)
+        public ActionResult Index()
+        {
+            ViewBag.Link = "/";
+            return View();
+        }
+
+        [HttpGet]
+        [Route("Search")]
+        public ActionResult Search(string search, int currentPage = 1)
         {
             ViewBag.Type = "MainSearch";
-            return View(KindergartenManager.GetFormatKindergartenListViewModel(false, User.Identity.GetUserId(), search, null, null, -1, -1));
+            List<KindergartenListItemViewModel> kindergartenListItemViewModels = KindergartenManager.GetFormatKindergartenListViewModel(false, User.Identity.GetUserId(), search, null, null, (currentPage - 1) * 5, 5);
+            ViewBag.CountOfPages = Convert.ToInt32(kindergartenListItemViewModels.Count / 5) + 1;
+            ViewBag.CurrentPage = currentPage;
+            return View(kindergartenListItemViewModels);
         }
 
         [HttpGet]
@@ -43,7 +57,7 @@ namespace IStudyKindergartens.Controllers
         public ActionResult AdvancedSearch(string search, string searchBy, string sortBy)
         {
             ViewBag.Type = "AdvancedSearch";
-            return View("Index", KindergartenManager.GetFormatKindergartenListViewModel(false, User.Identity.GetUserId(), search, searchBy, sortBy, -1, -1));
+            return View("Search", KindergartenManager.GetFormatKindergartenListViewModel(false, User.Identity.GetUserId(), search, searchBy, sortBy, -1, -1));
         }
 
         [HttpPost]
@@ -113,7 +127,7 @@ namespace IStudyKindergartens.Controllers
         [HttpPost]
         public JsonResult AddKindergartenForUser(string KindergartenId)
         {
-            if (User.Identity.IsAuthenticated)
+            if (User.Identity.IsAuthenticated && (User.IsInRole("Admin") || User.IsInRole("User")))
             {
                 try
                 {
@@ -181,26 +195,30 @@ namespace IStudyKindergartens.Controllers
 
         [HttpPost]
         [Route("Apply/{id=}")]
+        [ValidateAntiForgeryToken]
         public ActionResult Apply(AddStatementViewModel model)
         {
-            if (User.Identity.IsAuthenticated)
+            if (User.Identity.IsAuthenticated && (User.IsInRole("Admin") || User.IsInRole("User")))
             {
-                if (model.Captcha != Session["code"].ToString())
-                {
-                    ModelState.AddModelError("Captcha", "Неправильно введений код перевірки!");
-                }
-                if (model.Consent == false)
-                {
-                    ModelState.AddModelError("Consent", "Потрібне підтвердження!");
-                }
                 if (ModelState.IsValid)
                 {
-                    StatementManager.ApplyStatement(model, User.Identity.GetUserId());
-                    return RedirectToAction("Index", "Home");
+                    if (model.Captcha != Session["code"].ToString())
+                    {
+                        ModelState.AddModelError("Captcha", "Неправильно введений код перевірки!");
+                    }
+                    if (model.Consent == false)
+                    {
+                        ModelState.AddModelError("Consent", "Потрібне підтвердження!");
+                    }
+                    if (ModelState.IsValid)
+                    {
+                        StatementManager.ApplyStatement(model, User.Identity.GetUserId());
+                        return RedirectToAction("Index", "Home");
+                    }
+                    List<Kindergarten> Kindergartens = KindergartenManager.GetKindergartens().ToList();
+                    model.Kindergartens = new SelectList(Kindergartens, "Id", "Name");
+                    return View(model);
                 }
-                List<Kindergarten> Kindergartens = KindergartenManager.GetKindergartens().ToList();
-                model.Kindergartens = new SelectList(Kindergartens, "Id", "Name");
-                return View(model);
             }
             return RedirectToAction("Index", "Home");
         }
@@ -220,7 +238,7 @@ namespace IStudyKindergartens.Controllers
         {
             int intStatementId = Convert.ToInt32(statementId);
             Statement statement = StatementManager.GetStatementById(intStatementId);
-            if (User.Identity.IsAuthenticated && User.Identity.GetUserId() == statement.KindergartenId)
+            if (User.Identity.IsAuthenticated && User.Identity.GetUserId() == statement.KindergartenId || User.IsInRole("Admin"))
             {
                 try
                 {
@@ -236,7 +254,7 @@ namespace IStudyKindergartens.Controllers
         {
             int intStatementId = Convert.ToInt32(statementId);
             Statement statement = StatementManager.GetStatementById(intStatementId);
-            if (User.Identity.IsAuthenticated && User.Identity.GetUserId() == statement.KindergartenId)
+            if (User.Identity.IsAuthenticated && User.Identity.GetUserId() == statement.KindergartenId || User.IsInRole("Admin"))
             {
                 try
                 {
@@ -252,7 +270,7 @@ namespace IStudyKindergartens.Controllers
         {
             int intStatementId = Convert.ToInt32(statementId);
             Statement statement = StatementManager.GetStatementById(intStatementId);
-            if (User.Identity.IsAuthenticated && User.Identity.GetUserId() == statement.KindergartenId)
+            if (User.Identity.IsAuthenticated && User.Identity.GetUserId() == statement.KindergartenId || User.IsInRole("Admin"))
             {
                 try
                 {
@@ -304,30 +322,45 @@ namespace IStudyKindergartens.Controllers
         [Route("RemoveStatement/{id}")]
         public ActionResult RemoveStatement(int id)
         {
-            Statement statement = StatementManager.GetStatementById(id);
-            if (User.Identity.IsAuthenticated &&
-                ((User.IsInRole("User") && statement.SiteUserId == User.Identity.GetUserId())
-                || (User.IsInRole("Admin") && statement.SiteUserId == User.Identity.GetUserId())))
+            try
             {
-                Kindergarten Kindergarten = KindergartenManager.GetKindergartenById(statement.KindergartenId);
-                SiteUser siteUser = SiteUserManager.GetSiteUserById(statement.SiteUserId);
-                StatementListItemViewModel model = new StatementListItemViewModel
+                Statement statement = StatementManager.GetStatementById(id);
+                if (User.Identity.IsAuthenticated &&
+                    ((User.IsInRole("User") && statement.SiteUserId == User.Identity.GetUserId())
+                    || (User.IsInRole("Admin") && statement.SiteUserId == User.Identity.GetUserId())))
                 {
-                    Statement = statement,
-                    UserPrivileges = StatementManager.GetUserPrivilegesByStatementId(id),
-                    KindergartenName = Kindergarten.Name,
-                    UserName = String.Format("{0} {1} {2}", siteUser.Surname, siteUser.Name, siteUser.FathersName)
-                };
-                return View(model);
+                    Kindergarten Kindergarten = KindergartenManager.GetKindergartenById(statement.KindergartenId);
+                    SiteUser siteUser = SiteUserManager.GetSiteUserById(statement.SiteUserId);
+                    StatementListItemViewModel model = new StatementListItemViewModel
+                    {
+                        Statement = statement,
+                        UserPrivileges = StatementManager.GetUserPrivilegesByStatementId(id),
+                        KindergartenName = Kindergarten.Name,
+                        UserName = String.Format("{0} {1} {2}", siteUser.Surname, siteUser.Name, siteUser.FathersName)
+                    };
+                    return View(model);
+                }
             }
-            return RedirectToAction("Index", "Home");
+            catch { }
+            return RedirectToAction("MyStatements", "Home");
         }
 
         [HttpPost]
         [Route("RemoveStatement")]
         public ActionResult RemoveStatement(StatementListItemViewModel model)
         {
-            StatementManager.RemoveStatement(model.Statement.Id);
+            try
+            {
+                Statement statement = StatementManager.GetStatementById(model.Statement.Id);
+                if (User.Identity.IsAuthenticated &&
+                    ((User.IsInRole("User") && statement.SiteUserId == User.Identity.GetUserId())
+                    || (User.IsInRole("Admin") && statement.SiteUserId == User.Identity.GetUserId())))
+                {
+                    StatementManager.RemoveStatement(model.Statement.Id);
+                    return RedirectToAction("MyStatements", "Home");
+                }
+            }
+            catch { }
             return RedirectToAction("MyStatements", "Home");
         }
 
@@ -369,6 +402,46 @@ namespace IStudyKindergartens.Controllers
             return Json(false);
         }
 
+        #region RemoteMethods
+
+        public JsonResult IsEmailExist(string Email)
+        {
+            if (ApplicationManager.IsEmailExist(Email))
+            {
+                return Json("Користувач з таким email вже існує!",
+                JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json(true, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        public JsonResult CheckDate(string DateOfBirth)
+        {
+            if (!DateTime.TryParse(DateOfBirth, out DateTime parsedDate))
+            {
+                return Json("Не коректний формат дати народження!",
+                    JsonRequestBehavior.AllowGet);
+            }
+            else if (DateTime.Now < parsedDate)
+            {
+                return Json("Це дата народження майбутнього!",
+                    JsonRequestBehavior.AllowGet);
+            }
+            else if (new DateTime(1900, 1, 1) > parsedDate)
+            {
+                return Json("Ви не можете бути настільки старі!",
+                    JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json(true, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        #endregion
+
         #region Properties
 
         public IKindergartenManager KindergartenManager
@@ -408,6 +481,14 @@ namespace IStudyKindergartens.Controllers
             get
             {
                 return _ratingManager;
+            }
+        }
+
+        public IApplicationManager ApplicationManager
+        {
+            get
+            {
+                return _applicationManager;
             }
         }
 

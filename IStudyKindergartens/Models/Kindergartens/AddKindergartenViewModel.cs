@@ -9,22 +9,19 @@ namespace IStudyKindergartens.Models.Kindergartens
 {
     public class AddKindergartenViewModel
     {
-        [Display(Name = "PictureName")]
         public string PictureName { get; set; }
 
-        [StringLength(maximumLength: 100)]
+        [MaxLength(100, ErrorMessage = "Максимальна довжина назви - 100 символів!")]
         [Required(ErrorMessage = "Вкажіть назву закладу!")]
-        [Display(Name = "Name")]
         public string Name { get; set; }
 
-        [StringLength(maximumLength: 100)]
+        [MaxLength(100, ErrorMessage = "Максимальна довжина адреси - 100 символів!")]
         [Required(ErrorMessage = "Вкажіть адресу закладу!")]
-        [Display(Name = "Address")]
         public string Address { get; set; }
 
         [Required(ErrorMessage = "Вкажіть електронний адрес закладу!")]
-        [Display(Name = "Email")]
-        [DataType(DataType.EmailAddress, ErrorMessage = "Не коректно вказаний емейл!")]
+        [DataType(DataType.EmailAddress, ErrorMessage = "Не коректно вказаний email!")]
+        [RegularExpression(@"^[A-Za-z0-9](([_\.\-]?[a-zA-Z0-9]+)*)@([A-Za-z0-9]+)(([\.\-‌​]?[a-zA-Z0-9]+)*)\.([A-Za-z]{2,})$", ErrorMessage = "Не коректно вказаний email!")]
         public string Email { get; set; }
     }
 }

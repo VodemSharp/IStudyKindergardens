@@ -3,7 +3,7 @@ namespace IStudyKindergartens.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class RenameAll : DbMigration
+    public partial class InitDB : DbMigration
     {
         public override void Up()
         {

@@ -158,7 +158,7 @@ namespace IStudyKindergartens.Repositories
                 SNF = model.SNF,
                 SeriesNumberPassport = model.SeriesNumberPassport,
                 ChildSNF = model.ChildSNF,
-                ChildDateOfBirth = model.ChildDateOfBirth,
+                ChildDateOfBirth = model.DateOfBirth,
                 ChildBirthCertificate = model.ChildBirthCertificate,
                 Group = model.SelectedGroup,
                 Address = model.Address,
@@ -192,7 +192,7 @@ namespace IStudyKindergartens.Repositories
             {
                 if (isKindergarten)
                 {
-                    statements = db.Statements.OrderBy(s => s.DateTime).ToList();
+                    statements = db.Statements.OrderByDescending(s => s.DateTime).ToList();
                 }
                 else
                 {
@@ -203,7 +203,7 @@ namespace IStudyKindergartens.Repositories
             {
                 if (isKindergarten)
                 {
-                    statements = db.Statements.Where(s => s.KindergartenId == userId).OrderBy(s => s.DateTime).ToList();
+                    statements = db.Statements.Where(s => s.KindergartenId == userId).OrderByDescending(s => s.DateTime).ToList();
                 }
                 else
                 {

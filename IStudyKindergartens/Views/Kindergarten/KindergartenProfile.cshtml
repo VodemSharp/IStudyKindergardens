@@ -126,16 +126,9 @@
                 <div class="box-body">
                     <img class="img-thumbnail description-image-custom" src="@ViewBag.Picture" />
                     <a href="/Apply/@Model.Id" class="btn btn-block btn-primary btn-flat">Подати заяву</a>
-                    <button class="btn btn-block btn-primary btn-flat">Написати повідомлення</button>
-                    <button class="btn btn-block btn-primary btn-flat">Додати до вибраних садочків</button>
+                    <a href="/WriteTo/@Model.Id" class="btn btn-block btn-primary btn-flat">Написати повідомлення</a>
                 </div><!-- /.box-body -->
             </div>
-            @*<div class="box box-primary">
-                    <div class="description-block-custom photo-album"><h4><span class="glyphicon glyphicon-picture"></span> Фотоальбом</h4></div>
-                </div>
-                <div class="box box-primary">
-                    <div class="description-block-custom photo-album"><h4><span class="glyphicon glyphicon-facetime-video"></span> Відеоролики</h4></div>
-                </div>*@
         </div><!-- /.col (right) -->
     </div><!-- /.row -->
 </section><!-- /.content -->

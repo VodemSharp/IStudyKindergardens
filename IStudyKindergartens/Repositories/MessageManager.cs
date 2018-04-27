@@ -12,6 +12,7 @@ namespace IStudyKindergartens.Repositories
         void WriteMessage(string senderUserId, SendMessageViewModel model, int? reMessageId = null);
         void WriteToMessage(string senderUserId, SendMessageToViewModel model);
 
+        int GetCountUnreadMessages(string id);
         ReMessageList GetReMessageList(string userId, int messageId);
         List<MessageUserListItemModel> GetAllSentMessages(string id);
         List<MessageUserListItemModel> GetAllMessages(string id);
@@ -56,6 +57,11 @@ namespace IStudyKindergartens.Repositories
         #endregion
 
         #region GetSomething
+
+        public int GetCountUnreadMessages(string id)
+        {
+            return db.Messages.Where(m => m.ApplicationUserId == id && !m.IsRead).Count();
+        }
 
         private Message GetReMessage(int messageId)
         {
@@ -178,81 +184,50 @@ namespace IStudyKindergartens.Repositories
             return model;
         }
 
-        public MessageUserListItemModel GetMessage(string userId, int messageId)
-        {
-            if (db.ApplicationUserMessages.Any(aum => aum.MessageId == messageId && aum.ApplicationUserId == userId))
-            {
-                Message message = db.Messages.Where(m => m.Id == messageId).First();
-                MessageUserListItemModel model = new MessageUserListItemModel
-                {
-                    Theme = message.Theme,
-                    Text = message.Text,
-                    MessageId = message.Id,
-                    DateTime = message.DateTime
-                };
-
-                ApplicationUserMessage tempApplicationUserMessage = db.ApplicationUserMessages.Where(aum => aum.MessageId == message.Id).First();
-                if (db.Kindergartens.Any(k => k.Id == tempApplicationUserMessage.ApplicationUserId))
-                {
-                    Kindergarten tempKindergarten = db.Kindergartens.Where(su => su.Id == tempApplicationUserMessage.ApplicationUserId).First();
-                    model.FromId = tempKindergarten.Id;
-                    model.From = tempKindergarten.Name;
-                    model.IsFromUser = false;
-                }
-                if (db.SiteUsers.Any(su => su.Id == tempApplicationUserMessage.ApplicationUserId))
-                {
-                    SiteUser tempSiteUser = db.SiteUsers.Where(su => su.Id == tempApplicationUserMessage.ApplicationUserId).First();
-                    model.FromId = tempSiteUser.Id;
-                    model.From = tempSiteUser.FullName;
-                    model.IsFromUser = true;
-                }
-                return model;
-            }
-            return null;
-        }
-
         public ReMessageList GetReMessageList(string userId, int messageId)
         {
             if (db.ApplicationUserMessages.Any(aum => aum.MessageId == messageId))
             {
-                //ПЕРЕВІРКА!
                 Message message = db.Messages.Where(m => m.Id == messageId).First();
-                ReMessageList model = new ReMessageList
+                if (message.ApplicationUserId == userId || db.ApplicationUserMessages.Where(aum => aum.MessageId == messageId).First().ApplicationUserId == userId)
                 {
-                    Theme = message.Theme
-                };
-
-                MessageUserIdPair tempMessageUserIdPair = GetFromUserMessage(messageId);
-                model.ReMessageId = messageId;
-
-                if (message.ApplicationUserId == userId)
-                {
-                    model.ReceiverId = tempMessageUserIdPair.UserId;
-                    model.IsUser = tempMessageUserIdPair.IsUser;
-                }
-                else
-                {
-                    model.ReceiverId = message.ApplicationUserId;
-                    model.IsUser = IsUser(message.ApplicationUserId);
-                }
-
-                model.ReMessages = new List<ReMessageItem> { };
-
-                Message tempMessage = message;
-                for (; ; )
-                {
-                    model.ReMessages.Add(new ReMessageItem { Sender = tempMessageUserIdPair.User, SenderId = tempMessageUserIdPair.UserId, IsUser = tempMessageUserIdPair.IsUser, Text = tempMessage.Text, DateTime = tempMessage.DateTime });
-                    tempMessage = GetReMessage(tempMessage.Id);
-                    if (tempMessage != null)
+                    ReMessageList model = new ReMessageList
                     {
-                        tempMessageUserIdPair = GetFromUserMessage(tempMessage.Id);
+                        Theme = message.Theme
+                    };
+
+                    MessageUserIdPair tempMessageUserIdPair = GetFromUserMessage(messageId);
+                    model.ReMessageId = messageId;
+
+                    if (message.ApplicationUserId == userId)
+                    {
+                        model.ReceiverId = tempMessageUserIdPair.UserId;
+                        model.IsUser = tempMessageUserIdPair.IsUser;
                     }
                     else
                     {
-                        break;
+                        model.ReceiverId = message.ApplicationUserId;
+                        model.IsUser = IsUser(message.ApplicationUserId);
                     }
+
+                    model.ReMessages = new List<ReMessageItem> { };
+
+                    Message tempMessage = message;
+                    for (; ; )
+                    {
+                        model.ReMessages.Add(new ReMessageItem { Sender = tempMessageUserIdPair.User, SenderId = tempMessageUserIdPair.UserId, IsUser = tempMessageUserIdPair.IsUser, Text = tempMessage.Text, DateTime = tempMessage.DateTime });
+                        tempMessage = GetReMessage(tempMessage.Id);
+                        if (tempMessage != null)
+                        {
+                            tempMessageUserIdPair = GetFromUserMessage(tempMessage.Id);
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    return model;
                 }
-                return model;
             }
             return null;
         }

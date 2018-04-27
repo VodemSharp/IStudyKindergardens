@@ -119,19 +119,37 @@ namespace IStudyKindergartens.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        #region Contacts
+
         [HttpGet]
         [Route("Contacts")]
         public ActionResult Contacts()
         {
-            return View(SiteUserManager.GetContactUsers(User.Identity.GetUserId()));
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(SiteUserManager.GetContactUsers(User.Identity.GetUserId()));
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [HttpGet]
         [Route("AddContact")]
         public ActionResult AddContact()
         {
-            return View(SiteUserManager.GetAddContactListViewModel(User.Identity.GetUserId()));
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(SiteUserManager.GetAddContactListViewModel(User.Identity.GetUserId()));
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
         }
+
+        #endregion
 
         #region Properties
 

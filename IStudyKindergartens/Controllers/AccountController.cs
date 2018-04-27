@@ -108,7 +108,7 @@ namespace IStudyKindergartens.Controllers
                     return RedirectToLocal(returnUrl);
                 case SignInStatus.Failure:
                 default:
-                    ModelState.AddModelError("", "Invalid login attempt.");
+                    ModelState.AddModelError("", "Не правильна пара email - пароль");
                     return View(model);
             }
         }

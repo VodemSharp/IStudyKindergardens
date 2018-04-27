@@ -12,7 +12,7 @@ namespace IStudyKindergartens.Models.Messages
         public bool IsUser { get; set; }
         public string Theme { get; set; }
         public int ReMessageId { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Введіть текст повідомлення!")]
         public string NewText { get; set; }
         public List<ReMessageItem> ReMessages { get; set; }
     }

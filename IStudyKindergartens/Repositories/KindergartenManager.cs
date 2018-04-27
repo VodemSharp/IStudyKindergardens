@@ -1,5 +1,4 @@
 ﻿using IStudyKindergartens.Models;
-using IStudyKindergartens.Models.Home;
 using IStudyKindergartens.Models.Kindergartens;
 using System;
 using System.Collections.Generic;

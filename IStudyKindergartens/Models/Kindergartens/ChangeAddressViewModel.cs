@@ -8,16 +8,14 @@ namespace IStudyKindergartens.Models.Kindergartens
 {
     public class ChangeAddressViewModel
     {
-        [Display(Name = "Id")]
         public string Id { get; set; }
 
+        [MaxLength(100, ErrorMessage = "Максимальна довжина адреси - 100 символів!")]
         [Required(ErrorMessage = "Вкажіть адресу закладу!")]
-        [Display(Name = "KindergartenAddress")]
         public string Address { get; set; }
 
-        [StringLength(maximumLength: 100)]
+        [MaxLength(100, ErrorMessage = "Максимальна довжина альтернативної адреси - 100 символів!")]
         [Required(ErrorMessage = "Вкажіть альтернативну адресу закладу!")]
-        [Display(Name = "KindergartenAltAddress")]
         public string AltAddress { get; set; }
     }
 }

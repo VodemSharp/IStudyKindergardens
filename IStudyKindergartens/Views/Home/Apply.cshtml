@@ -1,5 +1,5 @@
-﻿@model IStudyKindergartens.Models.AddStatementViewModel
-@{ 
+﻿@model IStudyKindergartens.Models.Statements.AddStatementViewModel
+@{
     ViewBag.Link = "/Apply";
 }
 <section class="content">
@@ -17,39 +17,44 @@
                                 @Html.AntiForgeryToken()
                                 <div class="row">
                                     <div class="form-group has-feedback col-md-6">
-                                        @Html.LabelFor(m => m.SNF, "ПІБ одного з батьків")
-                                        @Html.TextBoxFor(m => m.SNF, new { @class = "form-control", @placeholder = "Введіть ПІБ одного з батьків..." })
+                                        @Html.LabelFor(m => m.SNF, "ПІП одного з батьків")
+                                        @Html.TextBoxFor(m => m.SNF, new { @class = "form-control", @placeholder = "Введіть ПІП одного з батьків..." })
+                                        @Html.ValidationMessageFor(m => m.SNF, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group has-feedback col-md-6">
-                                        @Html.LabelFor(m => m.ChildSNF, "ПІБ дитини")
-                                        @Html.TextBoxFor(m => m.ChildSNF, new { @class = "form-control", @placeholder = "Введіть ПІБ дитини..." })
+                                        @Html.LabelFor(m => m.ChildSNF, "ПІП дитини")
+                                        @Html.TextBoxFor(m => m.ChildSNF, new { @class = "form-control", @placeholder = "Введіть ПІП дитини..." })
+                                        @Html.ValidationMessageFor(m => m.ChildSNF, "", new { @class = "text-danger" })
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="form-group has-feedback col-md-6">
                                         @Html.LabelFor(m => m.SeriesNumberPassport, "Серія і номер паспорта одного з батьків")
                                         @Html.TextBoxFor(m => m.SeriesNumberPassport, new { @class = "form-control", @placeholder = "Введіть серію і номер паспорта..." })
+                                        @Html.ValidationMessageFor(m => m.SeriesNumberPassport, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group has-feedback col-md-6">
                                         @Html.LabelFor(m => m.ChildBirthCertificate, "Серія і номер свідоцтва про народження дитини")
                                         @Html.TextBoxFor(m => m.ChildBirthCertificate, new { @class = "form-control", @placeholder = "Введіть cерію і номер свідоцтва..." })
+                                        @Html.ValidationMessageFor(m => m.ChildBirthCertificate, "", new { @class = "text-danger" })
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="form-group has-feedback col-md-6">
                                         @Html.LabelFor(m => m.Address, "Адреса проживання")
                                         @Html.TextBoxFor(m => m.Address, new { @class = "form-control", @placeholder = "Введіть адресу проживання..." })
+                                        @Html.ValidationMessageFor(m => m.Address, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group has-feedback col-md-6">
                                         <div class="form-group">
-                                            @Html.LabelFor(m => m.ChildDateOfBirth, "Дата народження дитини")
+                                            @Html.LabelFor(m => m.DateOfBirth, "Дата народження дитини")
                                             <div class="input-group">
                                                 <div class="input-group-addon">
                                                     <span class="glyphicon glyphicon-calendar"></span>
                                                 </div>
-                                                @Html.TextBoxFor(m => m.ChildDateOfBirth, new { @placeholder = "Введіть дату народження дитини", @class = "form-control", @data_inputmask = "'alias': 'dd/mm/yyyy'", @data_mask = "" })
+                                                @Html.TextBoxFor(m => m.DateOfBirth, new { @placeholder = "Введіть дату народження дитини", @class = "form-control", @data_inputmask = "'alias': 'dd/mm/yyyy'", @data_mask = "" })
                                             </div>
-                                            @Html.ValidationMessageFor(m => m.ChildDateOfBirth, "", new { @class = "text-danger" })
+                                            @Html.ValidationMessageFor(m => m.DateOfBirth, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
                                 </div>
@@ -57,6 +62,7 @@
                                     <div class="form-group has-feedback col-md-4">
                                         @Html.LabelFor(m => m.Email, "Email")
                                         @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = "Введіть свій email..." })
+                                        @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group has-feedback col-md-4">
                                         @Html.LabelFor(m => m.PhoneNumber, "Контактний телефон")
@@ -80,8 +86,8 @@
                                         @Html.LabelFor(m => m.SelectedKindergartenId, "Дошкільний навчальний заклад")
                                         <div>
                                             @Html.DropDownListFor(m => m.SelectedKindergartenId, Model.Kindergartens, htmlAttributes: new { @class = "form-control", @style = "width: 100%;" })
-
                                         </div>
+                                        @Html.ValidationMessageFor(m => m.SelectedKindergartenId, "", new { @class = "text-danger" })
                                     </div>
                                 </div>
                                 <div class="row">
@@ -89,6 +95,7 @@
                                         <label>Вибір групи</label>
                                     </div>
                                 </div>
+                                @Html.ValidationMessageFor(m => m.SelectedGroup, "", new { @class = "text-danger" })
                                 for (int i = 0; i < Model.Groups.Count; i++)
                                 {
                                     <div class="row">
@@ -125,7 +132,6 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         @Html.LabelFor(m => m.Captcha, "Код перевірки")
-                                        @Html.ValidationMessageFor(model => model.Captcha)
                                     </div>
                                 </div>
                                 <div class="row">
@@ -136,18 +142,20 @@
                                 <div class="row">
                                     <div class="form-group col-md-12">
                                         @Html.TextBoxFor(m => m.Captcha, new { @placeholder = "Введіть код перевірки...", @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.Captcha, "", new { @class = "text-danger" })
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group">
-                                            <label>
+                                            <label id="ConsentLabel">
                                                 @Html.CheckBoxFor(m => m.Consent)
                                             </label>
                                             <span>&nbsp;Згода на використання персональних даних</span>
                                         </div>
                                     </div>
                                 </div>
+                                @Html.ValidationMessageFor(m => m.Consent, "", new { @class = "text-danger" })
                                 <div class="row">
                                     <div class="col-md-12">
                                         <input type="submit" class="btn btn-primary btn-block btn-flat" value="Добавити">

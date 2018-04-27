@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props')" />
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.7\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.7\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="..\packages\Microsoft.Net.Compilers.2.1.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.2.1.0\build\Microsoft.Net.Compilers.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -13,8 +14,8 @@
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>IStudyKindergardens</RootNamespace>
-    <AssemblyName>IStudyKindergardens</AssemblyName>
+    <RootNamespace>IStudyKindergartens</RootNamespace>
+    <AssemblyName>IStudyKindergartens</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
@@ -26,6 +27,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TypeScriptToolsVersion>2.6</TypeScriptToolsVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -124,6 +126,9 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
+    <Reference Include="WebActivatorEx, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">
+      <HintPath>..\packages\WebActivatorEx.2.1.0\lib\net40\WebActivatorEx.dll</HintPath>
+    </Reference>
     <Reference Include="WebGrease">
       <Private>True</Private>
       <HintPath>..\packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
@@ -216,12 +221,13 @@
     </Compile>
     <Compile Include="HelpClasses\CaptchaImage.cs" />
     <Compile Include="HelpClasses\CustomImage.cs" />
-    <Compile Include="Migrations\201803261204101_RenameAll.cs" />
-    <Compile Include="Migrations\201803261204101_RenameAll.Designer.cs">
-      <DependentUpon>201803261204101_RenameAll.cs</DependentUpon>
+    <Compile Include="HelpClasses\MailCustom.cs" />
+    <Compile Include="Migrations\201803261758191_InitDB.cs" />
+    <Compile Include="Migrations\201803261758191_InitDB.Designer.cs">
+      <DependentUpon>201803261758191_InitDB.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\Home\KindergartenListViewModel.cs" />
+    <Compile Include="Models\Kindergartens\KindergartenListViewModel.cs" />
     <Compile Include="Models\Identity\AccountViewModels.cs" />
     <Compile Include="Models\Kindergartens\AddKindergartenViewModel.cs" />
     <Compile Include="Models\Kindergartens\ChangeAddressViewModel.cs" />
@@ -248,6 +254,7 @@
     <Compile Include="Models\Messages\SendMessageToViewModel.cs" />
     <Compile Include="Models\Messages\SendMessageViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\ApplicationManager.cs" />
     <Compile Include="Repositories\KindergartenManager.cs" />
     <Compile Include="Repositories\MessageManager.cs" />
     <Compile Include="Repositories\RatingManager.cs" />
@@ -281,8 +288,9 @@
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Images\Default\anonym.png" />
-    <Content Include="Images\Default\anonymKindergarden.jpg" />
-    <Content Include="Images\Default\anonymKindergardenRectangle.jpg" />
+    <Content Include="Images\Default\anonymKindergarten.jpg" />
+    <Content Include="Images\Default\anonymKindergartenRectangle.jpg" />
+    <Content Include="Images\Default\main.png" />
     <Content Include="Images\Uploaded\Source\e4bb98a5-fcb8-473e-afd5-6dfe4239a835.jpg" />
     <Content Include="Images\Uploaded\Temp\e4bb98a5-fcb8-473e-afd5-6dfe4239a835.jpg" />
     <Content Include="Plugins\bootstrap-slider\bootstrap-slider.js" />
@@ -774,12 +782,9 @@
     <Content Include="Plugins\timepicker\bootstrap-timepicker.js" />
     <Content Include="Plugins\timepicker\bootstrap-timepicker.min.css" />
     <Content Include="Plugins\timepicker\bootstrap-timepicker.min.js" />
-    <Content Include="Scripts\bootstrap.js" />
-    <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="Plugins\ckeditor\CHANGES.md" />
     <Content Include="Plugins\ckeditor\LICENSE.md" />
     <Content Include="Plugins\ckeditor\plugins\scayt\LICENSE.md" />
@@ -790,12 +795,25 @@
     <Content Include="Plugins\ckeditor\skins\moono\readme.md" />
     <Content Include="Plugins\input-mask\phone-codes\phone-be.json" />
     <Content Include="Plugins\input-mask\phone-codes\phone-codes.json" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\cropper.js" />
+    <Content Include="Scripts\Custom\Statements\approve-statement.js" />
+    <Content Include="Scripts\Custom\Statements\from-recycle-bin.js" />
+    <Content Include="Scripts\Custom\Statements\btn-hide.js" />
+    <Content Include="Scripts\Custom\Statements\reject-statement.js" />
+    <Content Include="Scripts\Custom\Statements\to-recycle-bin.js" />
+    <Content Include="Scripts\Custom\Statements\to-selected.js" />
+    <Content Include="Scripts\jquery-1.10.2.min.map" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
-    <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
@@ -850,14 +868,14 @@
     <Content Include="Views\User\Edit.cshtml" />
     <Content Include="Views\User\UserProfile.cshtml" />
     <Content Include="Views\Admin\DeleteUser.cshtml" />
-    <Content Include="Views\Admin\AddKindergarden.cshtml" />
+    <Content Include="Views\Admin\AddKindergarten.cshtml" />
     <Content Include="Views\Admin\Questions.cshtml" />
     <Content Include="Views\Admin\AddQuestion.cshtml" />
     <Content Include="Views\Admin\EditQuestion.cshtml" />
     <Content Include="Views\Admin\RemoveQuestion.cshtml" />
     <Content Include="Views\Shared\_MainSearchPartial.cshtml" />
     <Content Include="Views\Shared\_AdvancedSearchPartial.cshtml" />
-    <Content Include="Views\Admin\DeleteKindergarden.cshtml" />
+    <Content Include="Views\Admin\DeleteKindergarten.cshtml" />
     <Content Include="Views\Home\Apply.cshtml" />
     <Content Include="Views\Admin\AddPrivilege.cshtml" />
     <Content Include="Views\Admin\EditPrivilege.cshtml" />
@@ -890,26 +908,20 @@
     <Content Include="Views\Kindergarten\SendToEmail.cshtml" />
     <Content Include="Views\Kindergarten\Statements.cshtml" />
     <Content Include="Views\Admin\Kindergartens.cshtml" />
+    <Content Include="Views\Home\Search.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="fonts\glyphicons-halflings-regular.woff" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="fonts\glyphicons-halflings-regular.eot" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
-    <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201803261204101_RenameAll.resx">
-      <DependentUpon>201803261204101_RenameAll.cs</DependentUpon>
+    <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201803261758191_InitDB.resx">
+      <DependentUpon>201803261758191_InitDB.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
@@ -917,6 +929,7 @@
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets')" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
   <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
@@ -926,7 +939,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>50014</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<IStudyKindergartens.Models.AddContactListItemViewModel>
+﻿@model IEnumerable<IStudyKindergartens.Models.Users.AddContactListItemViewModel>
 @using Microsoft.AspNet.Identity
 @{ 
     ViewBag.Link = "/Contacts";
@@ -45,7 +45,7 @@
                                     <td>@item.SiteUser.DateOfBirth</td>
                                     <td>@item.SiteUser.ApplicationUser.Email</td>
                                     <td>@item.SiteUser.ApplicationUser.PhoneNumber</td>
-                                    @if (item.isAdded)
+                                    @if (item.IsAdded)
                                     {
                                         <td hidden><span class="contactUserId">@item.SiteUser.Id</span></td>
                                         <td><a class="btn btn-tumblr btn-flat removeContact">Видалити</a></td>

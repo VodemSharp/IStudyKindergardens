@@ -1,4 +1,4 @@
-﻿@model IStudyKindergartens.Models.SendMessageViewModel
+﻿@model IStudyKindergartens.Models.Messages.SendMessageViewModel
 @{
     ViewBag.Link = "/MyMessages";
 }
@@ -23,16 +23,19 @@
                             <h3 class="box-title">Надіслати повідомлення</h3>
                         </div>
                         <div class="box-body">
-                            @using (Html.BeginForm("WriteMessage", "User", FormMethod.Post))
+                            @using (Html.BeginForm("WriteMessage", "Message", FormMethod.Post))
                             {
+                                @Html.AntiForgeryToken()
                                 <div class="form-group">
                                     @Html.DropDownListFor(m => m.ToUserId, Model.UserContacts, htmlAttributes: new { @class = "form-control", @style = "width: 100%;" })
+                                    @Html.ValidationMessageFor(m => m.ToUserId)
                                 </div>
                                 <div class="form-group">
                                     @Html.TextBoxFor(m => m.Theme, new { @class = "form-control", @placeholder = "Введіть тему повідомлення..." })
                                 </div>
                                 <div class="form-group">
                                     @Html.TextAreaFor(m => m.Text, htmlAttributes: new { @placeholder = "Введіть текст повідомлення...", @class = "form-control", @rows = "10", @style = "width: 100%;" })
+                                    @Html.ValidationMessageFor(m => m.Text)
                                 </div>
                                 <div class="form-group">
                                     <input type="submit" class="btn btn-primary btn-flat" style="width: 100%;" value="Написати повідомлення">

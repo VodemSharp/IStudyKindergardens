@@ -40,37 +40,33 @@ namespace IStudyKindergartens.Controllers
         [Route("Kindergarten/{id}")]
         public ActionResult KindergartenProfile(string id)
         {
-            if (User.Identity.IsAuthenticated && (User.IsInRole("User") || User.IsInRole("Administrator") || User.IsInRole("Moderator") || User.IsInRole("Admin")))
+            try
             {
+                Kindergarten Kindergarten = KindergartenManager.GetKindergartenById(id);
+                if (Kindergarten == null)
+                {
+                    throw new Exception();
+                }
                 try
                 {
-                    Kindergarten Kindergarten = KindergartenManager.GetKindergartenById(id);
-                    if (Kindergarten == null)
+                    string PictureUID = KindergartenManager.GetPictureUIDById(id);
+                    if (PictureUID == null)
                     {
                         throw new Exception();
                     }
-                    try
-                    {
-                        string PictureUID = KindergartenManager.GetPictureUIDById(id);
-                        if (PictureUID == null)
-                        {
-                            throw new Exception();
-                        }
-                        ViewBag.Picture = "/Images/Uploaded/Source/" + PictureUID;
-                    }
-                    catch (Exception)
-                    {
-                        ViewBag.Picture = "/Images/Default/anonymKindergarten.jpg";
-                    }
-                    ViewBag.Blocks = KindergartenManager.GetDescriptionBlocksById(id);
-                    return View(Kindergarten);
+                    ViewBag.Picture = "/Images/Uploaded/Source/" + PictureUID;
                 }
                 catch (Exception)
                 {
-                    return RedirectToAction("Index", "Home");
+                    ViewBag.Picture = "/Images/Default/anonymKindergarten.jpg";
                 }
+                ViewBag.Blocks = KindergartenManager.GetDescriptionBlocksById(id);
+                return View(Kindergarten);
             }
-            return RedirectToAction("Index", "Home");
+            catch (Exception)
+            {
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [HttpGet]
@@ -99,7 +95,7 @@ namespace IStudyKindergartens.Controllers
                         ViewBag.Picture = "/Images/Default/anonymKindergarten.jpg";
                     }
                     List<DescriptionBlock> descriptionBlocks = KindergartenManager.GetDescriptionBlocksById(id);
-                    EditKindergartenViewModel model = new EditKindergartenViewModel { Id = id, Name = Kindergarten.Name, Address = Kindergarten.Address, Email = Kindergarten.ApplicationUser.Email, DescriptionBlocks = descriptionBlocks };
+                    EditKindergartenViewModel model = new EditKindergartenViewModel { Id = id, Name = Kindergarten.Name, DescriptionBlocks = descriptionBlocks };
                     return View(model);
                 }
                 catch (Exception)
@@ -111,29 +107,37 @@ namespace IStudyKindergartens.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Edit(EditKindergartenViewModel model, string content)
         {
             if (User.Identity.IsAuthenticated && ((User.IsInRole("Administrator") && (model.Id == User.Identity.GetUserId())) || User.IsInRole("Admin")))
             {
-                content = content.Replace("$ENTER$", "\r\n");
-                List<DescriptionBlock> descriptionBlocks = new List<DescriptionBlock> { };
-                List<string> blocks = content.Split(new char[] { ':' }).ToList();
-                List<string> temp;
-                for (int i = 0; i < blocks.Count; i++)
+                if (ModelState.IsValid)
                 {
-                    temp = blocks[i].Split(new char[] { '|' }).ToList();
-                    switch (temp[0])
+                    content = content.Replace("$ENTER$", "\r\n");
+                    List<DescriptionBlock> descriptionBlocks = new List<DescriptionBlock> { };
+                    List<string> blocks = content.Split(new string[] { "$EDGE$" }, StringSplitOptions.None).ToList();
+                    List<string> temp;
+                    for (int i = 0; i < blocks.Count; i++)
                     {
-                        case "text":
-                            descriptionBlocks.Add(new DescriptionBlockText { KindergartenId = model.Id, Header = temp[1], Body = temp[2] });
-                            break;
-                        case "text-image":
-                            descriptionBlocks.Add(new DescriptionBlockTextImage { KindergartenId = model.Id, Image = temp[1], Header = temp[2], Body = temp[3] });
-                            break;
+                        temp = blocks[i].Split(new string[] { "$SLASH$" }, StringSplitOptions.None).ToList();
+                        switch (temp[0])
+                        {
+                            case "text":
+                                descriptionBlocks.Add(new DescriptionBlockText { KindergartenId = model.Id, Header = temp[1], Body = temp[2] });
+                                break;
+                            case "text-image":
+                                descriptionBlocks.Add(new DescriptionBlockTextImage { KindergartenId = model.Id, Image = temp[1], Header = temp[2], Body = temp[3] });
+                                break;
+                        }
                     }
+                    KindergartenManager.EditKindergarten(descriptionBlocks, model.Id, Server, model);
+                    return RedirectToAction("KindergartenProfile", "Kindergarten", new { id = model.Id });
                 }
-                KindergartenManager.EditKindergarten(descriptionBlocks, model.Id, Server, model);
-                return RedirectToAction("KindergartenProfile", "Kindergarten", new { id = model.Id });
+                else
+                {
+                    return View(model);
+                }
             }
             return RedirectToAction("Index", "Home");
         }
@@ -141,18 +145,11 @@ namespace IStudyKindergartens.Controllers
         [HttpGet]
         public ActionResult ChangeAvatar(string id)
         {
-            if (User.Identity.IsAuthenticated && ((User.IsInRole("Administrator") && (id == User.Identity.GetUserId())) || User.IsInRole("Admin")))
+            if (User.Identity.IsAuthenticated && ((User.IsInRole("Administrator") && id == User.Identity.GetUserId()) || User.IsInRole("Admin")))
             {
                 return View();
             }
             return RedirectToAction("Index", "Home");
-        }
-
-        private void Crop(Image image, Rectangle selection, string fileName)
-        {
-            Image newImage = CustomImage.Crop(image, selection);
-            newImage.Save(Server.MapPath("~/Images/Uploaded/Source/" + fileName));
-            image.Dispose();
         }
 
         [HttpPost]
@@ -182,7 +179,7 @@ namespace IStudyKindergartens.Controllers
                         {
                             throw new Exception();
                         }
-                        Crop(Image.FromFile(Server.MapPath("~" + src)), new Rectangle(left_int, top_int, right_int - left_int, bottom_int - top_int), fileName);
+                        CustomImage.Crop(Image.FromFile(Server.MapPath("~" + src)), new Rectangle(left_int, top_int, right_int - left_int, bottom_int - top_int), fileName, Server);
                         KindergartenManager.AddPreviewPicture(id, fileName, Server);
                     }
                     else
@@ -208,13 +205,21 @@ namespace IStudyKindergartens.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult ChangeAddress(ChangeAddressViewModel model)
         {
             if (User.Identity.IsAuthenticated && ((User.IsInRole("Administrator") && (model.Id == User.Identity.GetUserId())) || User.IsInRole("Admin")))
             {
-                KindergartenManager.AddKindergartenClaimWithDel(model.Id, "AltAddress", model.AltAddress);
-                KindergartenManager.EditKindergartenAddress(model.Id, model.Address);
-                return RedirectToAction("KindergartenProfile", "Kindergarten", new { id = model.Id });
+                if (ModelState.IsValid)
+                {
+                    KindergartenManager.AddKindergartenClaimWithDel(model.Id, "AltAddress", model.AltAddress);
+                    KindergartenManager.EditKindergartenAddress(model.Id, model.Address);
+                    return RedirectToAction("KindergartenProfile", "Kindergarten", new { id = model.Id });
+                }
+                else
+                {
+                    return View(model);
+                }
             }
             return RedirectToAction("Index", "Home");
         }
@@ -231,12 +236,20 @@ namespace IStudyKindergartens.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult EditShortInfo(EditShortInfoViewModel model)
         {
             if (User.Identity.IsAuthenticated && ((User.IsInRole("Administrator") && (model.Id == User.Identity.GetUserId())) || User.IsInRole("Admin")))
             {
-                KindergartenManager.AddKindergartenClaimWithDel(model.Id, "ShortInfo", model.ShortInfo);
-                return RedirectToAction("KindergartenProfile", "Kindergarten", new { id = model.Id });
+                if (ModelState.IsValid)
+                {
+                    KindergartenManager.AddKindergartenClaimWithDel(model.Id, "ShortInfo", model.ShortInfo);
+                    return RedirectToAction("KindergartenProfile", "Kindergarten", new { id = model.Id });
+                }
+                else
+                {
+                    return View(model);
+                }
             }
             return RedirectToAction("Index", "Home");
         }
@@ -244,7 +257,7 @@ namespace IStudyKindergartens.Controllers
         [HttpGet]
         public ActionResult Rate(string id)
         {
-            if (User.Identity.IsAuthenticated)
+            if (User.Identity.IsAuthenticated && (User.IsInRole("Admin") || User.IsInRole("User")))
             {
                 List<QuestionRating> questionRatings = RatingManager.GetListOfQuestionRatingById(id, User.Identity.GetUserId());
                 List<int> questionRatingValues = new List<int> { };
@@ -267,7 +280,7 @@ namespace IStudyKindergartens.Controllers
         [HttpPost]
         public ActionResult Rate(QuestionRatingViewModel model, string jsRatings, string jsQuestions)
         {
-            if (User.Identity.IsAuthenticated && jsRatings != "" && jsQuestions != "")
+            if (User.Identity.IsAuthenticated && (User.IsInRole("Admin") || User.IsInRole("User")) && jsRatings != "" && jsQuestions != "")
             {
                 List<string> rating = jsRatings.Split(new char[] { ':' }).ToList();
                 List<string> questionIds = jsQuestions.Split(new char[] { ':' }).ToList();
@@ -289,7 +302,9 @@ namespace IStudyKindergartens.Controllers
         {
             if (User.Identity.IsAuthenticated && (User.IsInRole("Admin") || (User.IsInRole("Administrator") && User.Identity.GetUserId() == id)))
             {
-                return View(StatementManager.GetFormatStatementListViewModel(User.Identity.GetUserId(), true));
+                ViewBag.Id = id;
+                ViewBag.Type = "All";
+                return View(StatementManager.GetFormatStatementListViewModel(id, true));
             }
             return RedirectToAction("Index", "Home");
         }
@@ -299,7 +314,9 @@ namespace IStudyKindergartens.Controllers
         {
             if (User.Identity.IsAuthenticated && (User.IsInRole("Admin") || (User.IsInRole("Administrator") && User.Identity.GetUserId() == id)))
             {
-                return View(StatementManager.GetFormatStatementListViewModel(User.Identity.GetUserId(), true, "Selected"));
+                ViewBag.Id = id;
+                ViewBag.Type = "Selected";
+                return View("~/Views/Kindergarten/Statements.cshtml", StatementManager.GetFormatStatementListViewModel(id, true, "Selected"));
             }
             return RedirectToAction("Index", "Home");
         }
@@ -309,7 +326,9 @@ namespace IStudyKindergartens.Controllers
         {
             if (User.Identity.IsAuthenticated && (User.IsInRole("Admin") || (User.IsInRole("Administrator") && User.Identity.GetUserId() == id)))
             {
-                return View(StatementManager.GetFormatStatementListViewModel(User.Identity.GetUserId(), true, "Removed"));
+                ViewBag.Id = id;
+                ViewBag.Type = "Removed";
+                return View("~/Views/Kindergarten/Statements.cshtml", StatementManager.GetFormatStatementListViewModel(id, true, "Removed"));
             }
             return RedirectToAction("Index", "Home");
         }
@@ -319,7 +338,9 @@ namespace IStudyKindergartens.Controllers
         {
             if (User.Identity.IsAuthenticated && (User.IsInRole("Admin") || (User.IsInRole("Administrator") && User.Identity.GetUserId() == id)))
             {
-                return View(StatementManager.GetFormatStatementListViewModel(User.Identity.GetUserId(), true, "Approved"));
+                ViewBag.Id = id;
+                ViewBag.Type = "Approved";
+                return View("~/Views/Kindergarten/Statements.cshtml", StatementManager.GetFormatStatementListViewModel(id, true, "Approved"));
             }
             return RedirectToAction("Index", "Home");
         }
@@ -329,7 +350,9 @@ namespace IStudyKindergartens.Controllers
         {
             if (User.Identity.IsAuthenticated && (User.IsInRole("Admin") || (User.IsInRole("Administrator") && User.Identity.GetUserId() == id)))
             {
-                return View(StatementManager.GetFormatStatementListViewModel(User.Identity.GetUserId(), true, "Rejected"));
+                ViewBag.Id = id;
+                ViewBag.Type = "Rejected";
+                return View("~/Views/Kindergarten/Statements.cshtml", StatementManager.GetFormatStatementListViewModel(id, true, "Rejected"));
             }
             return RedirectToAction("Index", "Home");
         }
@@ -339,7 +362,9 @@ namespace IStudyKindergartens.Controllers
         {
             if (User.Identity.IsAuthenticated && (User.IsInRole("Admin") || (User.IsInRole("Administrator") && User.Identity.GetUserId() == id)))
             {
-                return View(StatementManager.GetFormatStatementListViewModel(User.Identity.GetUserId(), true, "NotConsidered"));
+                ViewBag.Id = id;
+                ViewBag.Type = "NotConsidered";
+                return View("~/Views/Kindergarten/Statements.cshtml", StatementManager.GetFormatStatementListViewModel(id, true, "NotConsidered"));
             }
             return RedirectToAction("Index", "Home");
         }
@@ -375,7 +400,7 @@ namespace IStudyKindergartens.Controllers
         }
 
         [HttpPost]
-        public ActionResult SendToEmail(int id, string email)
+        public ActionResult SendToEmail(string kindergartenId, int id, string email)
         {
             Statement statement = StatementManager.GetStatementById(id);
             if (User.Identity.IsAuthenticated &&
@@ -394,27 +419,18 @@ namespace IStudyKindergartens.Controllers
                         UserName = siteUser.FullName
                     };
 
-                    MailMessage msg = new MailMessage("istudy.network@gmail.com", email, "Заява в електронну чергу #" + model.Statement.Id, GetAnswer(model))
-                    {
-                        IsBodyHtml = true
-                    };
-                    SmtpClient sc = new SmtpClient("smtp.gmail.com", 587)
-                    {
-                        UseDefaultCredentials = false
-                    };
-                    NetworkCredential cre = new NetworkCredential("istudy.network@gmail.com", "istudyrepublika");
-                    sc.Credentials = cre;
-                    sc.EnableSsl = true;
-                    sc.Send(msg);
+                    MailCustom.Mail(email, "Заява в електронну чергу #" + model.Statement.Id, GetAnswer(model));
 
-                    return RedirectToAction("Statements", "Kindergarten");
+                    return RedirectToAction("Statements", "Kindergarten", new { kindergartenId });
                 }
-                catch { return RedirectToAction("Statements", "Kindergarten"); }
+                catch { return RedirectToAction("Statements", "Kindergarten", new { kindergartenId }); }
             };
             return RedirectToAction("Index", "Home");
         }
 
-        public string GetAnswer(StatementListItemViewModel model)
+        #region Help
+
+        private string GetAnswer(StatementListItemViewModel model)
         {
             string result = "<html><head><style> .bold{ font-weight: bold; }</style></head><body><span class='bold'>ПІБ одного з батьків:</span><br>" + model.Statement.SNF + "<br><span class='bold'>ПІБ дитини:</span><br>" + model.Statement.ChildSNF + "<hr><span class='bold'>Серія і номер паспорта одного з батьків:</span><br>" + model.Statement.SeriesNumberPassport + "<br><span class='bold'>Серія і номер свідоцтва про народження дитини:</span><br>" + model.Statement.ChildBirthCertificate + "<hr><span class='bold'>Адреса проживання:</span><br>" + model.Statement.Address + "<br><span class='bold'>Дата народження дитини:</span><br>" + model.Statement.ChildDateOfBirth + "<hr><span class='bold'>Email:</span><br>" + model.Statement.Email + "<br><span class='bold'>Контактний телефон:</span><br>" + model.Statement.PhoneNumber + "<br><span class='bold'>Допоміжний контактний телефон:</span><br>" + model.Statement.AdditionalPhoneNumber + "<hr><span class='bold'>Дошкільний навчальний заклад:</span><br>" + model.KindergartenName + "<br><span class='bold'>Група:</span><br>" + model.Statement.Group + "<br><span class='bold'>Пільги:</span><br>";
             for (int i = 0; i < model.UserPrivileges.Count; i++)
@@ -423,6 +439,8 @@ namespace IStudyKindergartens.Controllers
             }
             return result + "</body></html>";
         }
+
+        #endregion
 
         #region Properties
 

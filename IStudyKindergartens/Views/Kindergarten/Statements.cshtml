@@ -1,7 +1,13 @@
-﻿@model IEnumerable<IStudyKindergartens.Models.StatementListItemViewModel>
+﻿@model IEnumerable<IStudyKindergartens.Models.Statements.StatementListItemViewModel>
 @using Microsoft.AspNet.Identity
-@{ 
+@{
     ViewBag.Link = "/Kindergarten/Statements";
+    string rawUrl = Request.RawUrl;
+    bool isAdmin = false;
+    if (rawUrl.Split(new char[] { '/' })[1] == "Admin")
+    {
+        isAdmin = true;
+    }
 }
 <section class="content">
     <div class="row">
@@ -9,28 +15,154 @@
             <div style="margin-bottom: 15px; padding-left: 0; padding-right: 0;">
                 <div class="row">
                     <div class="col-md-2">
-                        <a style="width:100%;" href="/Kindergarten/Statements/@User.Identity.GetUserId()" class="btn btn-tumblr btn-flat">Усі</a>
+                        @if (!isAdmin)
+                        {
+                            if (ViewBag.Type == "All")
+                            {
+                                <a style="width:100%;" href="/Kindergarten/Statements/@ViewBag.Id" class="btn btn-tumblr btn-flat">Усі</a>
+                            }
+                            else
+                            {
+                                <a style="width:100%;" href="/Kindergarten/Statements/@ViewBag.Id" class="btn btn-primary btn-flat">Усі</a>
+                            }
+                        }
+                        else
+                        {
+                            if (ViewBag.Type == "All")
+                            {
+                                <a style="width:100%;" href="/Admin/Statements/" class="btn btn-tumblr btn-flat">Усі</a>
+                            }
+                            else
+                            {
+                                <a style="width:100%;" href="/Admin/Statements/" class="btn btn-primary btn-flat">Усі</a>
+                            }
+                        }
                     </div>
                     <div class="col-md-2">
-                        <a style="width:100%;" href="/Kindergarten/NotConsideredStatements/@User.Identity.GetUserId()" class="btn btn-primary btn-flat">Не розглянуті</a>
+                        @if (!isAdmin)
+                        {
+                            if (ViewBag.Type == "NotConsidered")
+                            {
+                                <a style="width:100%;" href="/Kindergarten/NotConsideredStatements/@ViewBag.Id" class="btn btn-tumblr btn-flat">Не розглянуті</a>
+                            }
+                            else
+                            {
+                                <a style="width:100%;" href="/Kindergarten/NotConsideredStatements/@ViewBag.Id" class="btn btn-primary btn-flat">Не розглянуті</a>
+                            }
+                        }
+                        else
+                        {
+                            if (ViewBag.Type == "NotConsidered")
+                            {
+                                <a style="width:100%;" href="/Admin/NotConsideredStatements/" class="btn btn-tumblr btn-flat">Не розглянуті</a>
+                            }
+                            else
+                            {
+                                <a style="width:100%;" href="/Admin/NotConsideredStatements/" class="btn btn-primary btn-flat">Не розглянуті</a>
+                            }
+                        }
                     </div>
                     <div class="col-md-2">
-                        <a style="width:100%;" href="/Kindergarten/ApprovedStatements/@User.Identity.GetUserId()" class="btn btn-primary btn-flat">Одобрені</a>
+                        @if (!isAdmin)
+                        {
+                            if (ViewBag.Type == "Approved")
+                            {
+                                <a style="width:100%;" href="/Kindergarten/ApprovedStatements/@ViewBag.Id" class="btn btn-tumblr btn-flat">Схвалені</a>
+                            }
+                            else
+                            {
+                                <a style="width:100%;" href="/Kindergarten/ApprovedStatements/@ViewBag.Id" class="btn btn-primary btn-flat">Схвалені</a>
+                            }
+                        }
+                        else
+                        {
+                            if (ViewBag.Type == "Approved")
+                            {
+                                <a style="width:100%;" href="/Admin/ApprovedStatements/" class="btn btn-tumblr btn-flat">Схвалені</a>
+                            }
+                            else
+                            {
+                                <a style="width:100%;" href="/Admin/ApprovedStatements/" class="btn btn-primary btn-flat">Схвалені</a>
+                            }
+                        }
                     </div>
                     <div class="col-md-2">
-                        <a style="width:100%;" href="/Kindergarten/RejectedStatements/@User.Identity.GetUserId()" class="btn btn-primary btn-flat">Відхилені</a>
+                        @if (!isAdmin)
+                        {
+                            if (ViewBag.Type == "Rejected")
+                            {
+                                <a style="width:100%;" href="/Kindergarten/RejectedStatements/@ViewBag.Id" class="btn btn-tumblr btn-flat">Відхилені</a>
+                            }
+                            else
+                            {
+                                <a style="width:100%;" href="/Kindergarten/RejectedStatements/@ViewBag.Id" class="btn btn-primary btn-flat">Відхилені</a>
+                            }
+                        }
+                        else
+                        {
+                            if (ViewBag.Type == "Rejected")
+                            {
+                                <a style="width:100%;" href="/Admin/RejectedStatements/" class="btn btn-tumblr btn-flat">Відхилені</a>
+                            }
+                            else
+                            {
+                                <a style="width:100%;" href="/Admin/RejectedStatements/" class="btn btn-primary btn-flat">Відхилені</a>
+                            }
+                        }
                     </div>
                     <div class="col-md-2">
-                        <a style="width:100%;" href="/Kindergarten/SelectedStatements/@User.Identity.GetUserId()" class="btn btn-primary btn-flat">Вибрані</a>
+                        @if (!isAdmin)
+                        {
+                            if (ViewBag.Type == "Selected")
+                            {
+                                <a style="width:100%;" href="/Kindergarten/SelectedStatements/@ViewBag.Id" class="btn btn-tumblr btn-flat">Вибрані</a>
+                            }
+                            else
+                            {
+                                <a style="width:100%;" href="/Kindergarten/SelectedStatements/@ViewBag.Id" class="btn btn-primary btn-flat">Вибрані</a>
+                            }
+                        }
+                        else
+                        {
+                            if (ViewBag.Type == "Selected")
+                            {
+                                <a style="width:100%;" href="/Admin/SelectedStatements/" class="btn btn-tumblr btn-flat">Вибрані</a>
+                            }
+                            else
+                            {
+                                <a style="width:100%;" href="/Admin/SelectedStatements/" class="btn btn-primary btn-flat">Вибрані</a>
+                            }
+                        }
                     </div>
                     <div class="col-md-2">
-                        <a style="width:100%;" href="/Kindergarten/RemovedStatements/@User.Identity.GetUserId()" class="btn btn-primary btn-flat">Корзина</a>
+                        @if (!isAdmin)
+                        {
+                            if (ViewBag.Type == "Removed")
+                            {
+                                <a style="width:100%;" href="/Kindergarten/RemovedStatements/@ViewBag.Id" class="btn btn-tumblr btn-flat">Корзина</a>
+                            }
+                            else
+                            {
+                                <a style="width:100%;" href="/Kindergarten/RemovedStatements/@ViewBag.Id" class="btn btn-primary btn-flat">Корзина</a>
+                            }
+                        }
+                        else
+                        {
+                            if (ViewBag.Type == "Removed")
+                            {
+                                <a style="width:100%;" href="/Admin/RemovedStatements/" class="btn btn-tumblr btn-flat">Корзина</a>
+                            }
+                            else
+                            {
+                                <a style="width:100%;" href="/Admin/RemovedStatements/" class="btn btn-primary btn-flat">Корзина</a>
+                            }
+                        }
                     </div>
                 </div>
             </div>
             @foreach (var item in Model)
             {
-                <div class="box box-primary">
+                <div class="box box-primary collapsed-box">
                     <div class="box-header">
                         <h3 class="box-title">Для: <a href="/Kindergarten/@item.Statement.KindergartenId">@item.KindergartenName</a></h3>
                         <br />
@@ -51,8 +183,8 @@
                         <br />
                         <h3 class="box-title">Дата та час: @item.Statement.DateTime.ToLongTimeString() @item.Statement.DateTime.ToLongDateString()</h3>
 
-                        <div class="box-tools pull-right">
-                            <a class="btn btn-box-tool btn-hide" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><span class="glyphicon glyphicon-plus hide-box"></span></a>
+                        <div class="box-tools pull-right div-hide">
+                            <button class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><span class="glyphicon glyphicon-plus"></span></button>
                         </div>
                     </div><!-- /.box-header -->
                     <div class="box-body" style="display: none;">
@@ -113,72 +245,148 @@
                                 }
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="form-group has-feedback col-md-6">
-                                <a href="/Kindergarten/SendToEmail/@item.Statement.Id" style="width: 100%;" class="btn btn-primary btn-flat">Надіслати заявку на пошту</a>
-                            </div>
-                            <div class="form-group has-feedback col-md-6">
-                                @if (item.Statement.IsSelected)
+                        @if (!item.Statement.IsRemoved)
+                        {
+                            <div class="row">
+                                <div class="form-group has-feedback col-md-6">
+                                    <a href="/Kindergarten/SendToEmail/@item.Statement.Id" style="width: 100%;" class="btn btn-primary btn-flat">Надіслати заявку на пошту</a>
+                                </div>
+                                <div class="form-group has-feedback col-md-6">
+                                    @if (item.Statement.IsSelected)
+                                    {
+                                        <a style="width: 100%;" class="btn btn-tumblr btn-flat toSelected">Забрати заявку з вибраних</a>
+                                    }
+                                    else
+                                    {
+                                        <a style="width: 100%;" class="btn btn-primary btn-flat toSelected">Добавити заявку у вибрані</a>
+                                    }
+                                </div>
+                                @using (Ajax.BeginForm("ToSelected", "Home", new AjaxOptions
                                 {
-                                    <a style="width: 100%;" class="btn btn-tumblr btn-flat toSelected">Забрати заявку з вибраних</a>
-                                }
-                                else
+                                }))
                                 {
-                                    <a style="width: 100%;" class="btn btn-primary btn-flat toSelected">Добавити заявку у вибрані</a>
+                                    <a style="display: none;" class="labelToSelected"></a>
+                                    @Html.Hidden("statementId", item.Statement.Id)
+                                    <input type="submit" style="display:none;" />
+                                }
+                                @using (Ajax.BeginForm("FromSelected", "Home", new AjaxOptions
+                                {
+                                }))
+                                {
+                                    <a style="display: none;" class="labelFromSelected"></a>
+                                    @Html.Hidden("statementId", item.Statement.Id)
+                                    <input type="submit" style="display:none;" />
                                 }
                             </div>
-                            @using (Ajax.BeginForm("ToSelected", "Home", new AjaxOptions
+                            if (ViewBag.Type == "All" || ViewBag.Type == "NotConsidered")
                             {
-                            }))
-                            {
-                                <a style="display: none;" class="labelToSelected"></a>
-                                @Html.Hidden("statementId", item.Statement.Id)
-                                <input type="submit" style="display:none;" />
+                                <div class="row">
+                                    <div class="form-group has-feedback col-md-4">
+                                        <a style="width: 100%;" class="btn btn-primary btn-flat approveStatement">Одобрити заявку</a>
+                                    </div>
+                                    @using (Ajax.BeginForm("ApproveStatement", "Home", new AjaxOptions
+                                    {
+                                    }))
+                                    {
+                                        <a style="display: none;" class="labelApproveStatement"></a>
+                                        @Html.Hidden("statementId", item.Statement.Id)
+                                        <input type="submit" style="display:none;" />
+                                    }
+                                    <div class="form-group has-feedback col-md-4">
+                                        <a style="width: 100%;" class="btn btn-primary btn-flat rejectStatement">Відхилити заявку</a>
+                                    </div>
+                                    @using (Ajax.BeginForm("RejectStatement", "Home", new AjaxOptions
+                                    {
+                                    }))
+                                    {
+                                        <a style="display: none;" class="labelRejectStatement"></a>
+                                        @Html.Hidden("statementId", item.Statement.Id)
+                                        <input type="submit" style="display:none;" />
+                                    }
+                                    <div class="form-group has-feedback col-md-4">
+                                        <a style="width: 100%;" class="btn btn-primary btn-flat toRecycleBin">Відправити заявку в корзину</a>
+                                    </div>
+                                    @using (Ajax.BeginForm("ToRecycleBin", "Home", new AjaxOptions
+                                    {
+                                    }))
+                                    {
+                                        <a style="display: none;" class="labelToRecycleBin"></a>
+                                        @Html.Hidden("statementId", item.Statement.Id)
+                                        <input type="submit" style="display:none;" />
+                                    }
+                                </div>
                             }
-                            @using (Ajax.BeginForm("FromSelected", "Home", new AjaxOptions
+                            else if (ViewBag.Type == "Approved")
                             {
-                            }))
-                            {
-                                <a style="display: none;" class="labelFromSelected"></a>
-                                @Html.Hidden("statementId", item.Statement.Id)
-                                <input type="submit" style="display:none;" />
+                                <div class="row">
+                                    <div class="form-group has-feedback col-md-6">
+                                        <a style="width: 100%;" class="btn btn-primary btn-flat approveStatement">Одобрити заявку</a>
+                                    </div>
+                                    @using (Ajax.BeginForm("ApproveStatement", "Home", new AjaxOptions
+                                    {
+                                    }))
+                                    {
+                                        <a style="display: none;" class="labelApproveStatement"></a>
+                                        @Html.Hidden("statementId", item.Statement.Id)
+                                        <input type="submit" style="display:none;" />
+                                    }
+                                    <div class="form-group has-feedback col-md-6">
+                                        <a style="width: 100%;" class="btn btn-primary btn-flat toRecycleBin">Відправити заявку в корзину</a>
+                                    </div>
+                                    @using (Ajax.BeginForm("ToRecycleBin", "Home", new AjaxOptions
+                                    {
+                                    }))
+                                    {
+                                        <a style="display: none;" class="labelToRecycleBin"></a>
+                                        @Html.Hidden("statementId", item.Statement.Id)
+                                        <input type="submit" style="display:none;" />
+                                    }
+                                </div>
                             }
-                        </div>
-                        <div class="row">
-                            <div class="form-group has-feedback col-md-4">
-                                <a style="width: 100%;" class="btn btn-primary btn-flat approveStatement">Одобрити заявку</a>
+                            else if (ViewBag.Type == "Rejected")
+                            {
+                                <div class="row">
+                                    <div class="form-group has-feedback col-md-4">
+                                        <a style="width: 100%;" class="btn btn-primary btn-flat rejectStatement">Відхилити заявку</a>
+                                    </div>
+                                    @using (Ajax.BeginForm("RejectStatement", "Home", new AjaxOptions
+                                    {
+                                    }))
+                                    {
+                                        <a style="display: none;" class="labelRejectStatement"></a>
+                                        @Html.Hidden("statementId", item.Statement.Id)
+                                        <input type="submit" style="display:none;" />
+                                    }
+                                    <div class="form-group has-feedback col-md-6">
+                                        <a style="width: 100%;" class="btn btn-primary btn-flat toRecycleBin">Відправити заявку в корзину</a>
+                                    </div>
+                                    @using (Ajax.BeginForm("ToRecycleBin", "Home", new AjaxOptions
+                                    {
+                                    }))
+                                    {
+                                        <a style="display: none;" class="labelToRecycleBin"></a>
+                                        @Html.Hidden("statementId", item.Statement.Id)
+                                        <input type="submit" style="display:none;" />
+                                    }
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="row">
+                                <div class="form-group has-feedback col-md-12">
+                                    <a style="width: 100%;" class="btn btn-primary btn-flat fromRecycleBin">Відновити заявку</a>
+                                </div>
+                                @using (Ajax.BeginForm("FromRecycleBin", "Home", new AjaxOptions
+                                {
+                                }))
+                                {
+                                    <a style="display: none;" class="labelFromRecycleBin"></a>
+                                    @Html.Hidden("statementId", item.Statement.Id)
+                                    <input type="submit" style="display:none;" />
+                                }
                             </div>
-                            @using (Ajax.BeginForm("ApproveStatement", "Home", new AjaxOptions
-                            {
-                            }))
-                            {
-                                <a style="display: none;" class="labelApproveStatement"></a>
-                                @Html.Hidden("statementId", item.Statement.Id)
-                                <input type="submit" style="display:none;" />
-                            }
-                            <div class="form-group has-feedback col-md-4">
-                                <a style="width: 100%;" class="btn btn-primary btn-flat rejectStatement">Відхилити заявку</a>
-                            </div>
-                            @using (Ajax.BeginForm("RejectStatement", "Home", new AjaxOptions
-                            {
-                            }))
-                            {
-                                <a style="display: none;" class="labelRejectStatement"></a>
-                                @Html.Hidden("statementId", item.Statement.Id)
-                                <input type="submit" style="display:none;" />
-                            }
-                            <div class="form-group has-feedback col-md-4">
-                                <a style="width: 100%;" class="btn btn-primary btn-flat toRecycleBin">Відправити заявку в корзину</a>
-                            </div>
-                            @using (Ajax.BeginForm("ToRecycleBin", "Home", new AjaxOptions
-                            {
-                            }))
-                            {
-                                <a style="display: none;" class="labelToRecycleBin"></a>
-                                @Html.Hidden("statementId", item.Statement.Id)
-                                <input type="submit" style="display:none;" />
-                            }
-                        </div>
+                        }
                     </div>
                 </div>
             }
@@ -188,55 +396,31 @@
 
 @Scripts.Render("~/js/ajax")
 
-<script>
-    $(".toSelected").on("click", function () {
-        var current = this;
-        if ($(current).hasClass("btn-primary")) {
-            $(current).removeClass("btn-primary");
-            $(current).addClass("btn-tumblr");
-            $(current).html("Забрати заявку з вибраних");
-            $(current).parent().parent().children('form').children('.labelToSelected').parent().children('input').click();
-        }
-        else {
-            $(current).removeClass("btn-tumblr");
-            $(current).addClass("btn-primary");
-            $(current).html("Добавити заявку у вибрані");
-            $(current).parent().parent().children('form').children('.labelFromSelected').parent().children('input').click();
-        }
-    });
+<script src="~/Scripts/Custom/Statements/btn-hide.js"></script>
+@if (ViewBag.Type != null)
+{
+    if (ViewBag.Type != "Removed")
+    {
+        <script src="~/Scripts/Custom/Statements/to-selected.js"></script>
+        <script src="~/Scripts/Custom/Statements/to-recycle-bin.js"></script>
+    }
+    else
+    {
+        <script src="~/Scripts/Custom/Statements/from-recycle-bin.js"></script>
+    }
 
-    $(".approveStatement").on("click", function () {
-        var current = this;
-        $(current).parent().parent().parent().parent().children('.box-header').children('.box-tools').children('a').children('span').click();
-        $(current).parent().parent().parent().parent().children('.box-header').children('.status').html("Статус: Одобрено");
-        $(current).parent().parent().children('form').children('.labelApproveStatement').parent().children('input').click();
+    if (ViewBag.Type == "All" || ViewBag.Type == "NotConsidered")
+    {
+        <script src="~/Scripts/Custom/Statements/approve-statement.js"></script>
+        <script src="~/Scripts/Custom/Statements/reject-statement.js"></script>
+    }
 
-    });
-
-    $(".rejectStatement").on("click", function () {
-        var current = this;
-        $(current).parent().parent().parent().parent().children('.box-header').children('.box-tools').children('a').children('span').click();
-        $(current).parent().parent().parent().parent().children('.box-header').children('.status').html("Статус: Відхилено");
-        $(current).parent().parent().children('form').children('.labelRejectStatement').parent().children('input').click();
-    });
-
-    $(".toRecycleBin").on("click", function () {
-        var current = this;
-        $(current).parent().parent().parent().parent().css("display", "none");
-        $(current).parent().parent().children('form').children('.labelToRecycleBin').parent().children('input').click();
-    });
-
-    //$(".hide-box").on("click", function () {
-    //    var current = this;
-    //    if ($(current).parent().parent().parent().parent().children(".box-body").css("display") == "block") {
-    //        $(current).removeClass("glyphicon-minus");
-    //        $(current).addClass("glyphicon-plus");
-    //        $(current).parent().parent().parent().parent().children(".box-body").css("display", "none");
-    //    }
-    //    else {
-    //        $(current).addClass("glyphicon-minus");
-    //        $(current).removeClass("glyphicon-plus");
-    //        $(current).parent().parent().parent().parent().children(".box-body").css("display", "block");
-    //    }
-    //});
-</script>
+    if (ViewBag.Type == "Approved")
+    {
+        <script src="~/Scripts/Custom/Statements/reject-statement.js"></script>
+    }
+    else if (ViewBag.Type == "Rejected")
+    {
+        <script src="~/Scripts/Custom/Statements/approve-statement.js"></script>
+    }
+}

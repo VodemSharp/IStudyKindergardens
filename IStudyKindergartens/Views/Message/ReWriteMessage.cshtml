@@ -1,4 +1,4 @@
-﻿@model IStudyKindergartens.Models.ReMessageList
+﻿@model IStudyKindergartens.Models.Messages.ReMessageList
 @{
     ViewBag.Link = "/MyMessages";
 }
@@ -23,8 +23,9 @@
                             <h3 class="box-title">Відповісти на повідомлення</h3>
                         </div>
                         <div class="box-body">
-                            @using (Html.BeginForm("MyMessages", "User", FormMethod.Post))
+                            @using (Html.BeginForm("MyMessages", "Message", FormMethod.Post))
                             {
+                                @Html.AntiForgeryToken()
                                 @Html.HiddenFor(m => m.IsUser)
                                 @Html.HiddenFor(m => m.ReMessageId)
                                 @Html.HiddenFor(m => m.ReceiverId)

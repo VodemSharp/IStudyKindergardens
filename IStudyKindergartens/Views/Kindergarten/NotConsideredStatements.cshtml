@@ -1,4 +1,4 @@
-﻿@model IEnumerable<IStudyKindergartens.Models.StatementListItemViewModel>
+﻿@model IEnumerable<IStudyKindergartens.Models.Statements.StatementListItemViewModel>
 @using Microsoft.AspNet.Identity
 @{
     ViewBag.Link = "/Kindergarten/Statements";
@@ -189,53 +189,7 @@
 
 @Scripts.Render("~/js/ajax")
 
-<script>
-    $(".toSelected").on("click", function () {
-        var current = this;
-        if ($(current).hasClass("btn-primary")) {
-            $(current).removeClass("btn-primary");
-            $(current).addClass("btn-tumblr");
-            $(current).html("Забрати заявку з вибраних");
-            $(current).parent().parent().children('form').children('.labelToSelected').parent().children('input').click();
-        }
-        else {
-            $(current).removeClass("btn-tumblr");
-            $(current).addClass("btn-primary");
-            $(current).html("Добавити заявку у вибрані");
-            $(current).parent().parent().children('form').children('.labelFromSelected').parent().children('input').click();
-        }
-    });
-
-    $(".approveStatement").on("click", function () {
-        var current = this;
-        $(current).parent().parent().parent().parent().css("display", "none");
-        $(current).parent().parent().children('form').children('.labelApproveStatement').parent().children('input').click();
-
-    });
-
-    $(".rejectStatement").on("click", function () {
-        var current = this;
-        $(current).parent().parent().parent().parent().css("display", "none");
-        $(current).parent().parent().children('form').children('.labelRejectStatement').parent().children('input').click();
-    });
-
-    $(".toRecycleBin").on("click", function () {
-        var current = this;
-        $(current).parent().parent().parent().parent().css("display", "none");
-        $(current).parent().parent().children('form').children('.labelToRecycleBin').parent().children('input').click();
-    });
-
-    $(".hide-box").on("click", function () {
-        var current = this;
-        if ($(current).parent().parent().parent().parent().children(".box-body").css("display") == "block") {
-            $(current).removeClass("glyphicon-minus");
-            $(current).addClass("glyphicon-plus");
-            $(current).parent().parent().parent().parent().children(".box-body").css("display", "none");
-        }
-        else {
-            $(current).addClass("glyphicon-minus");
-            $(current).removeClass("glyphicon-plus");
-            $(current).parent().parent().parent().parent().children(".box-body").css("display", "block");
-        }
-    });
-</script>
+<script src="~/Scripts/Custom/Statements/to-selected.js"></script>
+<script src="~/Scripts/Custom/Statements/approve-statement.js"></script>
+<script src="~/Scripts/Custom/Statements/reject-statement.js"></script>
+<script src="~/Scripts/Custom/Statements/to-recycle-bin.js"></script>

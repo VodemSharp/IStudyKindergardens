@@ -6,12 +6,12 @@ namespace IStudyKindergartens.Models
 {
     public class LoginViewModel
     {
-        [Required]
-        [Display(Name = "Email")]
-        [EmailAddress]
+        [Required(ErrorMessage = "Вкажіть свій електронний адрес!")]
+        [DataType(DataType.EmailAddress, ErrorMessage = "Не коректно вказаний email!")]
+        [RegularExpression(@"^[A-Za-z0-9](([_\.\-]?[a-zA-Z0-9]+)*)@([A-Za-z0-9]+)(([\.\-‌​]?[a-zA-Z0-9]+)*)\.([A-Za-z]{2,})$", ErrorMessage = "Не коректно вказаний email!")]
         public string Email { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Вкажіть свій пароль")]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; }
@@ -19,43 +19,41 @@ namespace IStudyKindergartens.Models
 
     public class RegisterViewModel
     {
-        [StringLength(maximumLength: 100)]
+        [MaxLength(100, ErrorMessage = "Максимальна довжина прізвища - 100 символів!")]
         [Required(ErrorMessage = "Вкажіть своє прізвище!")]
-        [Display(Name = "Surname")]
         public string Surname { get; set; }
 
-        [StringLength(maximumLength: 100)]
+        [MaxLength(100, ErrorMessage = "Максимальна довжина імені - 100 символів!")]
         [Required(ErrorMessage = "Вкажіть своє ім'я!")]
-        [Display(Name = "Name")]
         public string Name { get; set; }
 
-        [StringLength(maximumLength: 100)]
+        [MaxLength(100, ErrorMessage = "Максимальна довжина імені по батькові - 100 символів!")]
         [Required(ErrorMessage = "Вкажіть своє ім'я по батькові!")]
-        [Display(Name = "FathersName")]
         public string FathersName { get; set; }
 
         [Required(ErrorMessage = "Вкажіть свій номер телефону!")]
-        [Display(Name = "PhoneNumber")]
+        [RegularExpression(@"\([0-9]{3}\)\ [0-9]{3}\-[0-9]{4}", ErrorMessage = "Формат телефону: '(000) 000-0000'!")]
         public string PhoneNumber { get; set; }
 
         [Required(ErrorMessage = "Вкажіть свій електронний адрес!")]
-        [Display(Name = "Email")]
-        [DataType(DataType.EmailAddress, ErrorMessage = "Не коректно вказаний емейл!")]
+        [DataType(DataType.EmailAddress, ErrorMessage = "Не коректно вказаний email!")]
+        [RegularExpression(@"^[A-Za-z0-9](([_\.\-]?[a-zA-Z0-9]+)*)@([A-Za-z0-9]+)(([\.\-‌​]?[a-zA-Z0-9]+)*)\.([A-Za-z]{2,})$", ErrorMessage = "Не коректно вказаний email!")]
+        [Remote("IsEmailExist", "Home")]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Вкажіть свою дату народження!")]
-        [Display(Name = "DateOfBirth")]
+        [DataType(DataType.Date, ErrorMessage = "Не коректно вказана дата народження!")]
+        [Remote("CheckDate", "Home")]
         public string DateOfBirth { get; set; }
 
         [Required(ErrorMessage = "Вкажіть пароль!")]
-        [StringLength(100, ErrorMessage = "Пароль повинен бути більше 6 символів", MinimumLength = 6)]
+        [MaxLength(100, ErrorMessage = "Максимальна довжина паролю - 100 символів!")]
+        [MinLength(6, ErrorMessage = "Пароль повинен бути більше 6 символів!")]
         [DataType(DataType.Password)]
-        [Display(Name = "Password")]
         public string Password { get; set; }
 
         [Required(ErrorMessage = "Повторіть пароль!")]
         [DataType(DataType.Password)]
-        [Display(Name = "Confirm password")]
         [System.ComponentModel.DataAnnotations.Compare("Password", ErrorMessage = "Паролі не співпадають!")]
         public string ConfirmPassword { get; set; }
     }

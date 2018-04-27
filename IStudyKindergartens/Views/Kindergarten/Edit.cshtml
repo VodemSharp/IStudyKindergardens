@@ -1,4 +1,4 @@
-﻿@model IStudyKindergartens.Models.EditKindergartenViewModel
+﻿@model IStudyKindergartens.Models.Kindergartens.EditKindergartenViewModel
 @{
     ViewBag.Title = "Редагування ДНЗ";
 }
@@ -324,12 +324,6 @@
                     @Html.ActionLink("Редагувати коротку інформацію", "EditShortInfo", "Kindergarten", routeValues: new { @id = Model.Id }, htmlAttributes: new { @class = "btn btn-block btn-default btn-flat" })
                 </div><!-- /.box-body -->
             </div>
-            @*<div class="box box-primary">
-                    <div class="description-block-custom photo-album"><h4><span class="glyphicon glyphicon-picture"></span> Фотоальбом</h4></div>
-                </div>
-                <div class="box box-primary">
-                    <div class="description-block-custom photo-album"><h4><span class="glyphicon glyphicon-facetime-video"></span> Відеоролики</h4></div>
-                </div>*@
         </div><!-- /.col (right) -->
     </div><!-- /.row -->
 </section><!-- /.content -->
@@ -345,7 +339,7 @@
             var kName = $("#kNameV").html();
             $("#kNameB").attr("class", "glyphicon glyphicon-floppy-disk");
             $("#kNameV").html("<input style='width:100%;' type='text' id='kNameI'/>");
-            $("#kNameI").attr("style", "width: " + ($("#kNameI").width() - $("#kNameB").width()).toString() + "px;");
+            $("#kNameI").attr("style", "width: " + ($("#kNameI").width() - $("#kNameB").width() - 5).toString() + "px;");
             $("#kNameI").val(kName);
             $("#kNameI").focus();
         }
@@ -639,20 +633,20 @@ $('#preview-image-body').html($('#edit-image-text-body').val());
         var temp;
         $("#content-form div").each(function (index, element) {
             if ($(element).children(".type").attr("value") == "text") {
-                result += 'text|';
-                result += $(element).children(".component1").text() + '|';
-                result += $(element).children(".component2").text() + ':';
+                result += 'text$SLASH$';
+                result += $(element).children(".component1").text() + '$SLASH$';
+                result += $(element).children(".component2").text() + '$EDGE$';
             }
             else if ($(element).children(".type").attr("value") == "text-image") {
-                result += 'text-image|';
+                result += 'text-image$SLASH$';
                 temp = $(element).children("div").children(".component1").attr("src"); //split('/Images/Uploaded/Temp/');
                 temp = temp.substring(('/Images/Uploaded').length, temp.length);
-                result += temp + '|';
-                result += $(element).children("div").children(".component2").text() + '|';
-                result += $(element).children("div").children(".component3").text() + ':';
+                result += temp + '$SLASH$';
+                result += $(element).children("div").children(".component2").text() + '$SLASH$';
+                result += $(element).children("div").children(".component3").text() + '$EDGE$';
             }
         });
-        result = result.substring(0, result.length - 1);
+        result = result.substring(0, result.length - 6);
         result = result.replace(/\n/g, '$ENTER$');
         result = result.replace('<br/>', '$ENTER$');
 $('#content-input').attr("value", result);
